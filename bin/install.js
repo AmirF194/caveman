@@ -30,6 +30,11 @@ const PORTABLE = require('./lib/portable-process');
 const PLATFORM_PATHS = require('./lib/platform-paths');
 
 const REPO = 'JuliusBrussee/caveman';
+// Mirrors the `engines.node` floor in package.json. Hardcoded rather than read
+// from disk because this file also runs detached from a checkout (the curl
+// fallback path); `tests/installer/node-floor.test.mjs` fails the build if the
+// two drift apart.
+const MIN_NODE_MAJOR = 18;
 // Pin remote fetches to an immutable release tag, not the moving `main`
 // branch (issue #261). A push to main must never silently change what a
 // curl|bash / detached-script install downloads and executes. Bump this to
@@ -457,7 +462,37 @@ function spawnOk(r) {
   return !!r && !r.error && r.status === 0;
 }
 
+// The absolute node path baked into settings.json at install time. Preferring
+// the PATH entry over process.execPath is what survives a `brew upgrade node`
+// (#805): Homebrew runs the installer as the versioned Cellar binary
+// (/opt/homebrew/Cellar/node/26.5.0/bin/node), which stops existing on the next
+// upgrade, while /opt/homebrew/bin/node is the stable symlink that follows it.
+//
+// The candidate has to be EXERCISED, not just located. `command -v node` will
+// happily name a stale version-manager shim, a dangling symlink, or a shell
+// function, and a path that is merely on PATH but does not run is strictly
+// worse than what it replaces — process.execPath is by construction a working
+// node, since it is the one executing this line. So a candidate is only
+// preferred once it has actually reported a version; anything else falls back.
+// Same reason the result is not symlink-resolved: the stable symlink IS the
+// wanted answer, and realpath would walk it straight back to the Cellar path.
 function absoluteNodePath() {
+  if (!IS_WIN) {
+    try {
+      const r = child_process.spawnSync('/bin/sh', ['-c', 'command -v node'], { encoding: 'utf8' });
+      const candidate = (r.stdout || '').trim().split(/\r?\n/, 1)[0];
+      if (r.status === 0 && candidate && path.isAbsolute(candidate)) {
+        const resolved = path.resolve(candidate);
+        const probe = child_process.spawnSync(resolved, ['--version'], { encoding: 'utf8' });
+        const major = /^v(\d+)\./.exec((probe.stdout || '').trim());
+        // Running is necessary but not sufficient: a PATH node below the
+        // package's `engines` floor would be persisted into settings.json and
+        // run every hook on an unsupported runtime. process.execPath already
+        // satisfies the floor, since it is running this installer.
+        if (spawnOk(probe) && major && Number(major[1]) >= MIN_NODE_MAJOR) return resolved;
+      }
+    } catch (_) {}
+  }
   return process.execPath;
 }
 
@@ -578,7 +613,73 @@ function installGemini(ctx) {
       return;
     }
   }
-  const r = runSpawn('gemini', ['extensions', 'install', `https://github.com/${REPO}`], null, opts.dryRun);
+  // Under `curl | bash`, stdin is the script, not a terminal. Gemini CLI reads
+  // its workspace-trust and extension-consent answers from stdin, so the
+  // install never ends. See issues #400 and #676. Two parts remove the two
+  // prompts.
+  //   GEMINI_CLI_TRUST_WORKSPACE=true trusts cwd for this process only. It is
+  //     what `--skip-trust` sets. That flag belongs to the root chat command
+  //     and never reaches the `extensions` subcommand.
+  //   --consent answers the extension-install warning. Do not pass it without
+  //     the variable. Alone, it also answers the trust prompt with yes, and
+  //     that writes cwd into trustedFolders.json permanently.
+  // Gemini CLI v0.41.0 adds `--skip-trust` and GEMINI_CLI_TRUST_WORKSPACE in
+  // one commit, upstream PR #25814. An older CLI ignores the variable. So the
+  // installer probes the root help one time. `--skip-trust` in the text shows
+  // that this CLI reads the variable. Without the flag, the installer runs the
+  // same command as before this change: the caller directory, no variable, and
+  // no `--consent`. On an older CLI, `--consent` answers the trust prompt with
+  // yes, and that trusts the caller directory permanently.
+  // Gemini CLI v0.11.0 adds `--consent`, which is older than `--skip-trust`.
+  // So a CLI with `--skip-trust` also has `--consent`. This is an assumption
+  // about the upstream release order.
+  const help = captureSpawn('gemini', ['--help']);
+  const sessionTrust = help.status === 0
+    && /--skip-trust\b/.test(`${help.stdout || ''}${help.stderr || ''}`);
+  const url = `https://github.com/${REPO}`;
+  let r;
+  if (!sessionTrust) {
+    const tail = "Installing from the current directory with the CLI's own trust and consent prompts.";
+    if (help.status === 0) {
+      note(`  this Gemini CLI has no --skip-trust (added in v0.41.0). ${tail}`);
+    } else {
+      const code = help.error ? (help.error.code || 'spawn error')
+        : (help.status === null ? 'spawn error' : help.status);
+      note(`  could not read \`gemini --help\` (exit ${code}). ${tail}`);
+    }
+    r = runSpawn('gemini', ['extensions', 'install', url], null, opts.dryRun);
+  } else {
+    // A trusted cwd lets Gemini CLI load .gemini/ config and .env files. Gemini
+    // CLI also searches every parent directory up to the root for those files.
+    // So run the install from a new empty scratch directory below the user's
+    // own ~/.caveman/tmp. Every parent then belongs to the user or to root, and
+    // trust covers nothing. A directory below /tmp is not safe, because another
+    // local user can plant /tmp/.env. A directory below ~/.gemini/tmp is not
+    // safe, because Gemini CLI keeps per-project state there under the cwd
+    // name. The scratch directory comes from mkdtemp, so this run owns it and
+    // removes only it. Never remove a fixed path, because it can hold data from
+    // an earlier process. If the directory cannot be made, report a failure and
+    // do not start Gemini CLI. A GitHub source does not use cwd.
+    const env = Object.assign({}, process.env, { GEMINI_CLI_TRUST_WORKSPACE: 'true' });
+    const scratchParent = path.join(os.homedir(), '.caveman', 'tmp');
+    note(`  env: GEMINI_CLI_TRUST_WORKSPACE=true. Trust applies to this process only, in a new empty scratch directory below ${scratchParent}. trustedFolders.json stays unchanged.`);
+    let cwd;
+    if (!opts.dryRun) {
+      try {
+        fs.mkdirSync(scratchParent, { recursive: true });
+        cwd = fs.mkdtempSync(path.join(scratchParent, 'gemini-install-'));
+      } catch (e) {
+        results.failed.push(['gemini', `could not create scratch directory below ${scratchParent}: ${e.message}`]);
+        process.stdout.write('\n');
+        return;
+      }
+    }
+    try {
+      r = runSpawn('gemini', ['extensions', 'install', url, '--consent'], { env, cwd }, opts.dryRun);
+    } finally {
+      if (cwd) { try { fs.rmSync(cwd, { recursive: true, force: true }); } catch (_) {} }
+    }
+  }
   if (spawnOk(r)) results.installed.push('gemini');
   else results.failed.push(['gemini', 'gemini extensions install failed']);
   process.stdout.write('\n');
@@ -1163,7 +1264,7 @@ async function runInit(ctx) {
   if (opts.dryRun) args.push('--dry-run');
   if (opts.force)  args.push('--force');
   if (local && fs.existsSync(local)) {
-    const r = runSpawn(absoluteNodePath(), [local, ...args], null, opts.dryRun);
+    const r = runSpawn(process.execPath, [local, ...args], null, opts.dryRun);
     return spawnOk(r);
   }
   // Curl-pipe fallback
@@ -1175,7 +1276,7 @@ async function runInit(ctx) {
   try {
     const tmp = path.join(scratch, 'caveman-init.js');
     await downloadTo(INIT_SCRIPT_URL, tmp);
-    const r = child_process.spawnSync(absoluteNodePath(), [tmp, ...args], { stdio: 'inherit' });
+    const r = child_process.spawnSync(process.execPath, [tmp, ...args], { stdio: 'inherit' });
     return spawnOk(r);
   } catch (e) {
     warn('  ' + e.message);

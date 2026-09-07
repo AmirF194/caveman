@@ -426,6 +426,32 @@ func TestNormalizeTermsIsBoundedAndFailClosed(t *testing.T) {
 	}
 }
 
+func TestSafeTermRejectsGitHubAppInstallationToken(t *testing.T) {
+	// Fixture split mid-token so GitHub push protection never sees a
+	// contiguous secret-shaped literal.
+	token := "ghs_" + "1eyj0expiredtestfixturenotarealtoken"
+	if safeTerm(token) {
+		t.Fatalf("safeTerm(%q) = true, want false (ghs_ is a GitHub App installation token prefix)", token)
+	}
+	if !safeTerm("auth") {
+		t.Fatalf("safeTerm(\"auth\") = false, want true for an ordinary term")
+	}
+}
+
+func TestSafeTermRejectsGitHubOAuthAndAppTokens(t *testing.T) {
+	// gho_/ghu_/ghr_ are non-migrating prefixes, unlike ghs_. Fixtures split
+	// mid-token so push protection never sees a contiguous secret literal.
+	for name, token := range map[string]string{
+		"oauth access token":       "gho_" + "1eyj0expiredtestfixturenotarealtoken",
+		"app user-to-server token": "ghu_" + "1eyj0expiredtestfixturenotarealtoken",
+		"app refresh token":        "ghr_" + "1eyj0expiredtestfixturenotarealtoken",
+	} {
+		if safeTerm(token) {
+			t.Fatalf("safeTerm(%q) = true, want false for %s", token, name)
+		}
+	}
+}
+
 func TestImpactTestsUsesDirectAndPackageRelationshipsWithoutCoverageClaims(t *testing.T) {
 	repoMap := Map{Files: []File{
 		{Path: "auth/refresh.go", Package: "auth"},
