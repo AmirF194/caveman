@@ -8990,10 +8990,22 @@ function gatewayNoProxyEnv(gw: string, env: NodeJS.ProcessEnv = process.env): No
   } catch {
     return {};
   }
+  // Only a loopback listener needs the exemption. A managed gateway is a public
+  // host that the operator's proxy is supposed to carry; exempting it there
+  // sends the agent straight at a firewall that drops direct egress.
+  if (wrapMode(gw) !== "local") return {};
   if (!resolveProxyUrl(target, env)) return {};
-  const name = env.no_proxy !== undefined && env.NO_PROXY === undefined ? "no_proxy" : "NO_PROXY";
-  const current = (env.no_proxy ?? env.NO_PROXY ?? "").trim();
-  return { [name]: current ? `${current},${target.hostname}` : target.hostname };
+  // Append to each spelling the operator actually set, reading the value from
+  // the same variable it is written back to. Choosing the name by definedness
+  // and the value with ?? dropped the other spelling's entries.
+  const names = env.NO_PROXY === undefined && env.no_proxy !== undefined ? ["no_proxy"] : ["NO_PROXY"];
+  if (env.NO_PROXY !== undefined && env.no_proxy !== undefined) names.push("no_proxy");
+  const out: NodeJS.ProcessEnv = {};
+  for (const name of names) {
+    const current = (env[name] ?? "").trim();
+    out[name] = current ? `${current},${target.hostname}` : target.hostname;
+  }
+  return out;
 }
 
 function wrapBaseUrlEnv(gw: string): NodeJS.ProcessEnv {
