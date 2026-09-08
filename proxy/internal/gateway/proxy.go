@@ -552,10 +552,16 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 		errCode = copyErrCode
 	}
 	finalUsage := usageScanner.Usage()
-	if errCode == "" && meta.Stream && finalUsage.ProviderError {
+	if errCode == "" && finalUsage.ProviderError {
 		// Provider SDKs raise on these events even though HTTP headers already
 		// committed status 200. Keep the wire intact and record the failed call.
-		errCode = "provider_stream_error"
+		// A non-streaming body carrying an error envelope is the same situation:
+		// without this the row lands as status 200 with no error code and is
+		// counted as a successful request while its measurement says failed.
+		errCode = "provider_error"
+		if meta.Stream {
+			errCode = "provider_stream_error"
+		}
 	}
 	// The session ledger sees the provider's own numbers for the upstream call the
 	// levers actually shaped — not the retrieve-loop total below, whose extra calls
@@ -1274,7 +1280,7 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 	inputCost, outputCost, cachedCost := costBreakdown(meta.Provider, price, usage)
 	total := cost.RoundUSD(inputCost + outputCost + cachedCost)
 	savings := 0.0
-	if authMode == AuthModePAYG && status < 400 && usage.Complete() && !usage.ProviderError {
+	if authMode == AuthModePAYG && status < 400 && errorCode == "" && usage.Complete() && !usage.ProviderError {
 		savings = cacheSavingsUSD(price, usage, optimizers)
 	}
 	if len(usage.CallObservations) > 0 {
@@ -1290,7 +1296,7 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 			multiInput += oneInput
 			multiOutput += oneOutput
 			multiCached += oneCached
-			if authMode == AuthModePAYG && status < 400 && !usage.ProviderError && !callUsage.ProviderError {
+			if authMode == AuthModePAYG && status < 400 && errorCode == "" && !usage.ProviderError && !callUsage.ProviderError {
 				multiSavings += cacheSavingsUSD(callPrice, callUsage, optimizers)
 			}
 		}
@@ -1409,7 +1415,9 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 	requestAccounting(&row, statsMeta, usage, evidence.originalBody, evidence.acceptedBody, retrieved)
 	// The legacy inferred-dollar field now uses the whole-request net delta too.
 	// Marker/tool overhead and regressions must not disappear behind segment wins.
-	if authMode == AuthModePAYG && comp != nil && comp.bookSavings && hasCompressionOptimizer(optimizers) && row.RequestEstimatedInputDeltaUSD != nil {
+	// Not when the tool-schema strip also ran: that delta spans both transforms,
+	// and the strip books a handle and nothing else — no tokens, no dollars.
+	if authMode == AuthModePAYG && comp != nil && comp.bookSavings && toolSchemaHandle == "" && hasCompressionOptimizer(optimizers) && row.RequestEstimatedInputDeltaUSD != nil {
 		row.SavingsUSD = cost.RoundUSD(row.SavingsUSD + *row.RequestEstimatedInputDeltaUSD)
 	}
 	s.sink.Record(row)

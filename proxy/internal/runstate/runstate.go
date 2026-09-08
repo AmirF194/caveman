@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/netip"
 	"net/url"
 	"os"
 	"os/exec"
@@ -291,6 +292,12 @@ func instanceMatches(listen, token string) bool {
 		host = "127.0.0.1"
 	case "::":
 		host = "::1"
+	}
+	// The listen address comes out of a file. config.validateListen keeps the
+	// proxy on loopback; this probe holds itself to the same rule rather than
+	// issuing a request to whatever host that file happens to name.
+	if addr, err := netip.ParseAddr(host); err != nil || !addr.IsLoopback() {
+		return false
 	}
 	target := url.URL{Scheme: "http", Host: net.JoinHostPort(host, port), Path: "/health/live"}
 	transport := &http.Transport{
