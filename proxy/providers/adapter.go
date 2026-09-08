@@ -469,7 +469,6 @@ func (b Base) ResolveUpstreamURL(ctx context.Context, req *http.Request, route R
 
 func (b Base) SanitizeAndMapHeaders(ctx context.Context, req *http.Request, credential Credential, _ *url.URL) (http.Header, error) {
 	out := http.Header{}
-	defer RemoveConnectionHeaders(out, req.Header)
 	copyIfPresent(out, req.Header, "content-type")
 	copyIfPresent(out, req.Header, "content-encoding")
 	copyIfPresent(out, req.Header, "accept")
@@ -479,10 +478,9 @@ func (b Base) SanitizeAndMapHeaders(ctx context.Context, req *http.Request, cred
 	copyIfPresent(out, req.Header, "openai-project")
 	// Pi/OpenClaw SDKs use these end-to-end headers for provider session
 	// affinity and request identity. Preserve them when routing the same model.
-	copyIfPresent(out, req.Header, "session_id")
-	copyIfPresent(out, req.Header, "x-session-id")
-	copyIfPresent(out, req.Header, "x-client-request-id")
-	copyIfPresent(out, req.Header, "x-session-affinity")
+	for _, name := range SessionAffinityHeaders {
+		copyIfPresent(out, req.Header, name)
+	}
 	copyIfPresent(out, req.Header, "anthropic-version")
 	copyIfPresent(out, req.Header, "anthropic-beta")
 	copyIfPresent(out, req.Header, "api-version")
@@ -490,6 +488,11 @@ func (b Base) SanitizeAndMapHeaders(ctx context.Context, req *http.Request, cred
 		copyIfPresent(out, req.Header, "traceparent")
 		copyIfPresent(out, req.Header, "tracestate")
 	}
+	// Strip the caller's hop-by-hop nominations from what was copied FROM the
+	// caller, before this proxy adds anything of its own. Running it afterwards
+	// would let an inbound `Connection: authorization` delete the credential
+	// this function just set and send the request upstream unauthenticated.
+	RemoveConnectionHeaders(out, req.Header)
 	out.Set("user-agent", appendUserAgent(req.UserAgent()))
 	switch b.Provider {
 	case "anthropic":
@@ -562,9 +565,20 @@ func (b Base) SanitizeAndMapHeaders(ctx context.Context, req *http.Request, cred
 	return out, nil
 }
 
+// SessionAffinityHeaders are the end-to-end headers Pi/OpenClaw SDKs use for
+// provider session affinity and request identity. They identify the caller's
+// session, so a mount that is not the provider the caller selected drops them
+// (see openaicompat).
+var SessionAffinityHeaders = []string{"session_id", "x-session-id", "x-client-request-id", "x-session-affinity"}
+
 // RemoveConnectionHeaders removes fields declared private to the inbound
 // connection. Dropping Connection itself is insufficient: the next transport
 // would no longer know which otherwise allowed fields must not be forwarded.
+//
+// Call it on the headers copied from the caller and BEFORE adding credentials,
+// signatures or defaults of this proxy's own: RFC 9110 §7.6.1 nominates fields
+// of the message as received, and a caller must not be able to name a field
+// this hop generates.
 func RemoveConnectionHeaders(out, inbound http.Header) {
 	for name, values := range inbound {
 		if !strings.EqualFold(name, "Connection") {

@@ -376,7 +376,6 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 		upstreamHeaders.Set("user-agent", r.UserAgent())
 	}
 	s.applyUpstreamAuthFallback(adapter.Name(), credential, upstreamHeaders)
-	providers.RemoveConnectionHeaders(upstreamHeaders, r.Header)
 	// Each retry attempt needs a fresh body reader, so the request is built per
 	// attempt from the buffered payload rather than once up front.
 	buildUpstream := func(payload []byte, header http.Header) func() (*http.Request, error) {
@@ -432,7 +431,6 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 			retryHeaders.Set("user-agent", r.UserAgent())
 		}
 		s.applyUpstreamAuthFallback(adapter.Name(), credential, retryHeaders)
-		providers.RemoveConnectionHeaders(retryHeaders, r.Header)
 		s.inflight.Add(1)
 		retryResp, derr := s.doUpstream(r.Context(), buildUpstream(body, retryHeaders))
 		s.inflight.Add(-1)

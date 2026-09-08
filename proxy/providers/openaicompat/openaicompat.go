@@ -193,7 +193,6 @@ func (a namedAdapter) SanitizeAndMapHeaders(ctx context.Context, req *http.Reque
 	if req == nil || req.URL == nil {
 		return out, nil
 	}
-	defer providers.RemoveConnectionHeaders(out, req.Header)
 	a.forwardOpenCodeHeaders(out, req.Header)
 	for _, name := range providerAttributionHeaders[a.prefix] {
 		if values := req.Header.Values(name); len(values) > 0 {
@@ -205,6 +204,9 @@ func (a namedAdapter) SanitizeAndMapHeaders(ctx context.Context, req *http.Reque
 			out[http.CanonicalHeaderKey(name)] = append([]string(nil), values...)
 		}
 	}
+	// Everything above copied more caller fields into out, so re-apply the
+	// caller's hop-by-hop nominations before the credential rewrite below.
+	providers.RemoveConnectionHeaders(out, req.Header)
 	if !a.anthropicMessagesPath(req.URL.Path) {
 		return out, nil
 	}
@@ -238,7 +240,9 @@ var openCodeSessionHeaders = []string{
 // enabled. Keep their values on the matching provider mount; custom aliases
 // use the operator's explicit forward_headers contract instead.
 var providerAttributionHeaders = map[string][]string{
-	"/compat/openrouter": {"HTTP-Referer", "X-OpenRouter-Title", "X-OpenRouter-Categories"},
+	// X-Title is the header most existing OpenRouter clients still send;
+	// OpenRouter documents it as the retained alias of X-OpenRouter-Title.
+	"/compat/openrouter": {"HTTP-Referer", "X-Title", "X-OpenRouter-Title", "X-OpenRouter-Categories"},
 	"/compat/nvidia":     {"X-Billing-Invoke-Origin"},
 }
 
@@ -314,7 +318,13 @@ func ValidateForwardHeaders(names []string) error {
 			return fmt.Errorf("header %q cannot be forwarded", name)
 		}
 		switch lower {
-		case "host", "connection", "keep-alive", "proxy-connection", "proxy-authorization", "proxy-authenticate", "te", "trailer", "transfer-encoding", "upgrade", "content-length", "authorization", "x-api-key", "api-key", "x-goog-api-key", "cookie", "set-cookie":
+		// Routing/framing, credentials, and fields whose value this proxy
+		// constructs. x-forwarded-*/forwarded/x-real-ip would let a caller
+		// choose the client address an upstream rate-limits or allowlists on.
+		case "host", "connection", "keep-alive", "proxy-connection", "proxy-authorization", "proxy-authenticate", "te", "trailer", "transfer-encoding", "upgrade", "content-length", "expect",
+			"authorization", "x-api-key", "api-key", "x-goog-api-key", "x-goog-user-project", "cookie", "set-cookie",
+			"forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto", "x-forwarded-port", "x-real-ip",
+			"user-agent", "content-type":
 			return fmt.Errorf("header %q cannot be forwarded", name)
 		}
 	}

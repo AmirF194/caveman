@@ -45,6 +45,10 @@ func (a Adapter) SanitizeAndMapHeaders(ctx context.Context, req *http.Request, c
 		copyIfPresent(out, req.Header, "x-amzn-bedrock-service-tier")
 		copyIfPresent(out, req.Header, "x-amzn-bedrock-trace")
 	}
+	// Before the signature below covers these headers: a caller must not be able
+	// to nominate a signed header (x-amz-date, x-amz-security-token) — or the
+	// Authorization header itself — for removal after this hop builds it.
+	providers.RemoveConnectionHeaders(out, req.Header)
 	if out.Get("content-type") == "" {
 		out.Set("content-type", "application/json")
 	}
