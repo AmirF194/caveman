@@ -732,3 +732,35 @@ func TestOpenRefusesGenerationChangesAfterSQLiteInitialization(t *testing.T) {
 		})
 	}
 }
+
+// A parent directory whose mode is loose for one instant, an antivirus lock, or
+// an I/O error means "could not verify", not "was replaced". Quarantine is
+// terminal for the process, so latching it on those would make already-stored
+// recoveries unreadable for the rest of a session that is otherwise fine.
+func TestTransientInspectFailureDoesNotQuarantineStore(t *testing.T) {
+	dir := t.TempDir()
+	store, err := OpenWithBudget(filepath.Join(dir, "ccr.db"), DefaultMaxStorageBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	if _, err := store.Put(Recovery{Original: []byte("before")}); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(dir, 0o777); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := store.Put(Recovery{Original: []byte("during")}); err == nil {
+		t.Fatal("a group/world writable parent must fail the operation")
+	}
+	if err := os.Chmod(dir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	handle, err := store.Put(Recovery{Original: []byte("after")})
+	if err != nil {
+		t.Fatalf("restored parent mode left the store quarantined: %v", err)
+	}
+	if got, err := store.Get(handle); err != nil || string(got) != "after" {
+		t.Fatalf("Get after recovery = %q, %v", got, err)
+	}
+}

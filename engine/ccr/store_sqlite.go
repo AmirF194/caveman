@@ -193,11 +193,21 @@ func openWithBudgetHooks(path string, maxBytes int64, afterPrepare, afterOpen fu
 	// pooled connection would be a second, empty database.
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
+	walJournal := false
 	if canonicalPath != ":memory:" {
 		if err := persistSQLiteWAL(db); err != nil {
 			closeSQLiteAfterOpenFailure(db, canonicalPath)
 			return nil, fmt.Errorf("configure sqlite journal: %w", err)
 		}
+		// A filesystem that cannot back -shm (NFS, SMB, some roaming profiles)
+		// leaves the DSN's journal_mode request unapplied. Requiring the WAL
+		// sidecars there would report a perfectly good database as replaced.
+		mode, err := sqliteJournalMode(db)
+		if err != nil {
+			closeSQLiteAfterOpenFailure(db, canonicalPath)
+			return nil, fmt.Errorf("read sqlite journal mode: %w", err)
+		}
+		walJournal = strings.EqualFold(mode, "wal")
 	}
 	if err := RetryOnBusy(func() error { _, e := db.Exec(schema); return e }); err != nil {
 		closeSQLiteAfterOpenFailure(db, canonicalPath)
@@ -216,7 +226,7 @@ func openWithBudgetHooks(path string, maxBytes int64, afterPrepare, afterOpen fu
 		closeSQLiteAfterOpenFailure(db, canonicalPath)
 		return nil, err
 	}
-	if !before.sameExisting(opened) || (canonicalPath != ":memory:" && (opened[1] == nil || opened[2] == nil)) {
+	if !before.sameExisting(opened) || (walJournal && (opened[1] == nil || opened[2] == nil)) {
 		closeSQLiteAfterOpenFailure(db, canonicalPath)
 		return nil, ErrStorageChanged
 	}

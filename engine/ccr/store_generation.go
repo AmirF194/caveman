@@ -20,6 +20,13 @@ type sqliteGeneration [3]os.FileInfo
 
 var sqliteSuffixes = [...]string{"", "-wal", "-shm"}
 
+// errStorageUnverifiable marks an inspection that failed for a reason which does
+// NOT establish that the database was replaced: an I/O or permission failure, or
+// a parent directory whose mode was loosened. It still wraps ErrStorageChanged,
+// so a caller that only asks "is this store usable right now" is unaffected —
+// only the terminal quarantine decision looks for it.
+var errStorageUnverifiable = errors.New("storage identity could not be verified")
+
 func inspectSQLiteGeneration(path string) (sqliteGeneration, error) {
 	var files sqliteGeneration
 	if path == ":memory:" {
@@ -27,23 +34,32 @@ func inspectSQLiteGeneration(path string) (sqliteGeneration, error) {
 	}
 	parent := filepath.Dir(path)
 	resolved, err := filepath.EvalSymlinks(parent)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return files, fmt.Errorf("%w: %w: inspect database parent: %v", ErrStorageChanged, errStorageUnverifiable, err)
+	}
 	if err != nil || resolved != parent {
 		return files, fmt.Errorf("%w: database parent changed", ErrStorageChanged)
 	}
 	info, err := os.Stat(parent)
+	if errors.Is(err, os.ErrNotExist) {
+		return files, fmt.Errorf("%w: database parent changed", ErrStorageChanged)
+	}
 	if err != nil {
-		return files, fmt.Errorf("%w: inspect database parent: %v", ErrStorageChanged, err)
+		return files, fmt.Errorf("%w: %w: inspect database parent: %v", ErrStorageChanged, errStorageUnverifiable, err)
 	}
 	if err := validateSQLiteParentSecurity(parent, info); err != nil {
-		return files, fmt.Errorf("%w: %v", ErrStorageChanged, err)
+		return files, fmt.Errorf("%w: %w: %v", ErrStorageChanged, errStorageUnverifiable, err)
 	}
 	for i, suffix := range sqliteSuffixes {
 		info, err := inspectSQLiteFile(path + suffix)
 		if errors.Is(err, os.ErrNotExist) && i != 0 {
 			continue
 		}
-		if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
 			return files, fmt.Errorf("%w: inspect database%s: %v", ErrStorageChanged, suffix, err)
+		}
+		if err != nil {
+			return files, fmt.Errorf("%w: %w: inspect database%s: %v", ErrStorageChanged, errStorageUnverifiable, suffix, err)
 		}
 		if !info.Mode().IsRegular() {
 			return files, fmt.Errorf("%w: refusing non-regular database%s", ErrStorageChanged, suffix)
@@ -120,6 +136,14 @@ func (s *Store) checkGeneration() error {
 		return errors.New("ccr: recovery store is closed")
 	}
 	files, err := inspectSQLiteGeneration(s.path)
+	if errors.Is(err, errStorageUnverifiable) {
+		// "Could not look" is not "was replaced". A momentary stat/permission
+		// failure — an antivirus lock on Windows, EIO on a network home, a
+		// parent directory whose mode was loose for one instant — fails THIS
+		// operation closed, but must not latch the terminal state below and
+		// make already-stored recoveries unreadable for the rest of the process.
+		return err
+	}
 	if err != nil {
 		s.quarantined = err
 		return s.quarantined
@@ -216,4 +240,14 @@ func (s *Store) FindTaskDecision(id string) (Object, error) {
 
 func (s *Store) Summary() (Stats, error) {
 	return withStore(s, s.summary)
+}
+
+// sqliteJournalMode reports the journal mode actually in force, which is not
+// necessarily the one the DSN asked for.
+func sqliteJournalMode(db *sql.DB) (string, error) {
+	var mode string
+	if err := db.QueryRow(`PRAGMA journal_mode`).Scan(&mode); err != nil {
+		return "", err
+	}
+	return mode, nil
 }
