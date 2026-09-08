@@ -6212,12 +6212,18 @@ function stripCodexCavemanProviderToml(text: string): string {
   return out.join("\n").trimEnd();
 }
 
+function codexGatewayBase(gw: string, subscription: boolean): string {
+  // Codex appends /responses to base_url. API-key requests need the OpenAI
+  // version prefix; the dedicated ChatGPT adapter has its own unversioned root.
+  return appendUrlPath(gw, subscription ? "/chatgpt" : "/w/codex/v1");
+}
+
 function codexCavemanProviderToml(gw: string, subscription = true): string {
   return [
     `model_provider = "caveman"`,
     `[model_providers.caveman]`,
     `name = "Caveman"`,
-    `base_url = ${JSON.stringify(subscription ? appendUrlPath(gw, "/chatgpt") : appendUrlPath(gw, "/w/codex"))}`,
+    `base_url = ${JSON.stringify(codexGatewayBase(gw, subscription))}`,
     `wire_api = "responses"`,
     `requires_openai_auth = true`,
   ].join("\n");
@@ -7401,7 +7407,7 @@ function codexNativeMutations(gw: string, mcpBinary: string): NativeMutation[] {
   const configBefore = fileBytes(configPath);
   const subscription = detectCodexWrapAuthMode() === "subscription";
   const native = codexNativeConfig(configBefore?.toString("utf8") ?? "", gw, subscription, mcpBinary);
-  const route = appendUrlPath(gw, subscription ? "/chatgpt" : "/w/codex");
+  const route = codexGatewayBase(gw, subscription);
   return [
     { file: hooksPath, before: hooksBefore, after: Buffer.from(JSON.stringify(hooks, null, 2) + "\n"), kind: "codex-hooks" },
     {
@@ -8418,7 +8424,9 @@ function nativeIntegrationStatus(agent: NativeAgent) {
   const coreResolution = runtimeConfig.resolution.values["think.core"];
   const coreConfigured = coreResolution.value === true;
   const mcp = probeMcpBinary();
-  const expectedRoute = appendUrlPath(gatewayURL(), agent === "claude" ? "/w/claude" : agent === "hermes" ? "/w/hermes/v1" : agent === "gemini" ? "/w/gemini" : agent === "opencode" ? "/w/opencode" : agent === "pi" ? "/w/pi" : agent === "aider" ? "/w/aider/openai/v1" : detectCodexWrapAuthMode() === "subscription" ? "/chatgpt" : "/w/codex");
+  const expectedRoute = agent === "codex"
+    ? codexGatewayBase(gatewayURL(), detectCodexWrapAuthMode() === "subscription")
+    : appendUrlPath(gatewayURL(), agent === "claude" ? "/w/claude" : agent === "hermes" ? "/w/hermes/v1" : agent === "gemini" ? "/w/gemini" : agent === "opencode" ? "/w/opencode" : agent === "pi" ? "/w/pi" : "/w/aider/openai/v1");
   const routeKind: NativeMutation["kind"] = agent === "claude" ? "claude-settings" : agent === "codex" ? "codex-config" : agent === "hermes" ? "hermes-config" : agent === "gemini" ? "gemini-env" : agent === "opencode" ? "opencode-config" : agent === "pi" ? "pi-extension" : "aider-config";
   const routeOperation = journal?.operations.find((operation) => operation.kind === routeKind);
   // Pi's artifact encodes no route: the extension resolves the gateway at

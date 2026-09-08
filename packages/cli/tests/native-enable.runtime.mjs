@@ -206,6 +206,7 @@ test("enable/disable codex owns marked config blocks and preserves unrelated dri
   const installed = readFileSync(configPath, "utf8");
   assert.match(installed, /^# >>> caveman:native-root\nmodel_provider = "caveman"/);
   assert.match(installed, /\[model_providers\.caveman\]/);
+  assert.match(installed, /base_url = "http:\/\/127\.0\.0\.1:8787\/w\/codex\/v1"/);
   assert.match(installed, /\[mcp_servers\.caveman\]/);
   assert.match(readFileSync(hooksPath, "utf8"), /native-hook codex/);
   assert.match(readFileSync(hooksPath, "utf8"), /keep-codex/);

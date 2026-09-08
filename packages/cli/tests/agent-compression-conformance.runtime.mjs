@@ -338,7 +338,8 @@ if (wireProtocol === "anthropic-messages") {
   responseKind = "anthropic";
   body = { model: "claude-sonnet-4-6", max_tokens: 32, stream: false, messages: [{ role: "user", content: prompt }] };
 } else if (wireProtocol === "openai-responses") {
-  path = "/v1/responses";
+  // Native Codex appends the resource, not another API version prefix.
+  path = id === "codex" || new URL(baseURL).pathname.replace(/\\/+$/, "").endsWith("/v1") ? "/responses" : "/v1/responses";
   responseKind = "responses";
   body = { model: "gpt-5.5", stream: false, input: [{ role: "user", content: [{ type: "input_text", text: prompt }] }] };
 } else if (wireProtocol === "gemini-generatecontent") {
