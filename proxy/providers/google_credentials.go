@@ -11,14 +11,15 @@ import (
 // when equivalent Google authentication inputs disagree or are malformed.
 var ErrGoogleRequestCredentials = errors.New("Google request credentials are invalid or conflicting")
 
-// GoogleRequestAPIKey resolves the native header and Google's equivalent key
-// system parameters. The legacy x-api-key alias remains lower priority than
-// the native header; conflicting URL credentials never silently select an account.
+// GoogleRequestAPIKey resolves the credential spellings Google documents: the
+// x-goog-api-key header and the key/$key system parameters. Nothing else counts
+// as a Google credential — in particular x-api-key is another provider's header,
+// so it neither conflicts with these nor selects a Google account here.
+//
+//	https://cloud.google.com/apis/docs/system-parameters
+//	https://ai.google.dev/gemini-api/docs/api-key
 func GoogleRequestAPIKey(req *http.Request) (string, error) {
 	key := strings.TrimSpace(req.Header.Get("x-goog-api-key"))
-	if key == "" {
-		key = strings.TrimSpace(req.Header.Get("x-api-key"))
-	}
 	if strings.ContainsAny(key, "\r\n") {
 		return "", ErrGoogleRequestCredentials
 	}
@@ -57,4 +58,24 @@ func WithoutGoogleAPIKeyQuery(rawQuery string) string {
 		}
 	}
 	return strings.Join(kept, "&")
+}
+
+// oauthQueryParameters are the discouraged-but-documented spellings for an
+// OAuth token in the URL (RFC 6750 §2.3; Google's OAuth 2.0 guide).
+var oauthQueryParameters = [...]string{"access_token", "oauth_token"}
+
+// GoogleRequestCarriesQueryCredential reports a caller credential supplied as a
+// URL query parameter that this proxy does not resolve. The request already
+// names a principal, so no environment credential may be added beside it.
+func GoogleRequestCarriesQueryCredential(req *http.Request) bool {
+	for _, part := range strings.Split(req.URL.RawQuery, "&") {
+		name, value, _ := strings.Cut(part, "=")
+		name, _ = url.QueryUnescape(name)
+		for _, candidate := range oauthQueryParameters {
+			if name == candidate && strings.TrimSpace(value) != "" {
+				return true
+			}
+		}
+	}
+	return false
 }

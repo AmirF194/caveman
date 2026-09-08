@@ -62,11 +62,19 @@ func (c Creds) Resolve(provider string, r *http.Request) providers.Credential {
 		if err != nil {
 			return providers.Credential{Mode: "ephemeral_header"}
 		}
-		// Keep an explicit OAuth credential when its API key came only from the
-		// URL. The adapter retains that caller-supplied key in its native header.
+		if key == "" {
+			// x-api-key is not a Google header. It stays supported as the alias
+			// this proxy has always accepted, but only where Google's own
+			// spellings said nothing — never as a competing account.
+			key = strings.TrimSpace(r.Header.Get("x-api-key"))
+		}
+		// Keep an explicit OAuth credential unless the caller also sent Google's
+		// native key header. A key that arrived only in the URL (or through the
+		// alias) does not displace the principal the caller named in Authorization;
+		// the adapter retains the caller-supplied URL key in its native header.
 		if auth := strings.TrimSpace(r.Header.Get("Authorization")); auth != "" &&
 			!strings.EqualFold(auth, "Bearer no-key-required") &&
-			strings.TrimSpace(r.Header.Get("x-goog-api-key")) == "" && strings.TrimSpace(r.Header.Get("x-api-key")) == "" {
+			strings.TrimSpace(r.Header.Get("x-goog-api-key")) == "" {
 			key = ""
 		}
 	case "azure_openai":
@@ -83,8 +91,14 @@ func (c Creds) Resolve(provider string, r *http.Request) providers.Credential {
 			return providers.Credential{Mode: "ephemeral_header", Key: key, Scheme: "api_key"}
 		}
 	}
-	if key == "" {
+	if key == "" && provider != "gemini" {
 		key = strings.TrimSpace(r.Header.Get("x-api-key"))
+	}
+	if key == "" && (provider == "gemini" || provider == "vertex") && providers.GoogleRequestCarriesQueryCredential(r) {
+		// The caller authenticated in the URL with a token this proxy does not
+		// resolve. Forward it as sent; adding the operator's key beside it would
+		// bill this request to a principal the caller never chose.
+		return providers.Credential{Mode: "ephemeral_header"}
 	}
 	if k := key; k != "" {
 		credential := providers.Credential{Mode: "ephemeral_header", Key: k, AuthFallbackEnv: fallbackEnv}

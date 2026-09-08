@@ -92,3 +92,75 @@ func TestStandaloneGeminiQueryCredentialsEndToEnd(t *testing.T) {
 		})
 	}
 }
+
+// x-api-key is not one of Google's credential spellings (only x-goog-api-key
+// and the key/$key system parameters are). Treating it as one made a client
+// that stamps an unrelated x-api-key conflict with its own ?key=, and let that
+// foreign key displace the Google principal the caller named in Authorization.
+func TestGeminiForeignAPIKeyHeaderNeitherConflictsNorDisplaces(t *testing.T) {
+	const path = "/gemini/v1beta/models/gemini-2.5-pro:generateContent"
+	for _, tc := range []struct {
+		name, query, authorization, wantKey, wantAuth string
+	}{
+		{name: "query key wins over foreign header", query: "?key=caller-query-key", wantKey: "caller-query-key"},
+		{name: "caller OAuth wins over foreign header", authorization: "Bearer caller-oauth", wantAuth: "Bearer caller-oauth"},
+		{name: "foreign header still authenticates alone", wantKey: "sk-ant-foreign"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("GEMINI_API_KEY", "operator-env-account")
+			upstream := &captureUpstreamTransport{response: `{}`}
+			spend, err := store.Open(filepath.Join(t.TempDir(), "caveman.db"), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer spend.Close()
+			srv := New(config.Config{Mode: "record", Providers: map[string]config.ProviderConfig{
+				"gemini": {BaseURL: "https://upstream.test"},
+			}}, spend, Options{HTTPClient: &http.Client{Transport: upstream}})
+			req := httptest.NewRequest(http.MethodPost, path+tc.query, strings.NewReader(`{"contents":[]}`))
+			req.Header.Set("x-api-key", "sk-ant-foreign")
+			if tc.authorization != "" {
+				req.Header.Set("Authorization", tc.authorization)
+				// Google requires the caller's quota project for user OAuth.
+				req.Header.Set("x-goog-user-project", "caller-project")
+			}
+			rec := httptest.NewRecorder()
+			srv.Handler().ServeHTTP(rec, req)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status=%d body=%s", rec.Code, rec.Body.String())
+			}
+			if upstream.headers.Get("x-goog-api-key") != tc.wantKey || upstream.headers.Get("Authorization") != tc.wantAuth {
+				t.Fatalf("upstream credential = %v", upstream.headers)
+			}
+		})
+	}
+}
+
+// A caller that authenticates with an OAuth token in the URL has already named
+// a principal. Adding the operator's environment key beside it would bill that
+// caller's request to an account it never chose.
+func TestGeminiQueryOAuthTokenSuppressesEnvironmentFallback(t *testing.T) {
+	t.Setenv("GEMINI_API_KEY", "operator-env-account")
+	upstream := &captureUpstreamTransport{response: `{}`}
+	spend, err := store.Open(filepath.Join(t.TempDir(), "caveman.db"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer spend.Close()
+	srv := New(config.Config{Mode: "record", Providers: map[string]config.ProviderConfig{
+		"gemini": {BaseURL: "https://upstream.test"},
+	}}, spend, Options{HTTPClient: &http.Client{Transport: upstream}})
+	req := httptest.NewRequest(http.MethodPost,
+		"/gemini/v1beta/models/gemini-2.5-pro:generateContent?access_token=ya29.caller-token", strings.NewReader(`{"contents":[]}`))
+	rec := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status=%d body=%s", rec.Code, rec.Body.String())
+	}
+	if got := upstream.headers.Get("x-goog-api-key"); got != "" {
+		t.Fatalf("operator key added beside a caller URL credential: %q", got)
+	}
+	if !strings.Contains(upstream.url, "access_token=ya29.caller-token") {
+		t.Fatalf("caller URL credential not forwarded: %s", upstream.url)
+	}
+}

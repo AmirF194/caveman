@@ -17,7 +17,7 @@ func TestQueryCredentialsDoNotOverrideResolvedPrincipal(t *testing.T) {
 		{Mode: "ephemeral_header", Key: "resolved-key"},
 		{Mode: "managed", Scheme: "bearer", Key: "resolved-oauth"},
 		{Mode: "ephemeral_header", Scheme: "bearer", Key: "resolved-oauth"},
-		{Mode: "ephemeral_header", Scheme: "bearer", Key: "CALLER-OAUTH"},
+		{Mode: "ephemeral_header", Scheme: "bearer", Key: "caller-oauth"},
 	} {
 		t.Run(credential.Mode+"/"+credential.Scheme+"/"+credential.Key, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodPost, "/gemini/v1beta/models/gemini-2.5-pro:generateContent?key=caller-query-key", nil)
@@ -32,7 +32,14 @@ func TestQueryCredentialsDoNotOverrideResolvedPrincipal(t *testing.T) {
 				t.Fatal(err)
 			}
 			if credential.Scheme == "bearer" {
-				if got.Get("Authorization") != "Bearer "+credential.Key || got.Get("x-goog-api-key") != "" {
+				// The caller's own OAuth credential keeps BOTH of its inputs: the
+				// bearer it authenticated with and the URL key it also supplied.
+				// A separately resolved bearer must not gain that key.
+				wantKey := ""
+				if credential.Key == "caller-oauth" {
+					wantKey = "caller-query-key"
+				}
+				if got.Get("Authorization") != "Bearer "+credential.Key || got.Get("x-goog-api-key") != wantKey {
 					t.Fatalf("query key changed resolved OAuth principal: %v", got)
 				}
 			} else if got.Get("x-goog-api-key") != credential.Key || got.Get("Authorization") != "" {

@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/JuliusBrussee/caveman/proxy/providers"
+	"github.com/JuliusBrussee/caveman/shared/platform/env"
+	"github.com/JuliusBrussee/caveman/shared/platform/ssrf"
 )
 
 // ErrRequestCredentials contains no caller values and is safe for an HTTP error.
@@ -28,6 +30,11 @@ func (a Adapter) ResolveUpstreamURL(ctx context.Context, req *http.Request, rout
 		return nil, err
 	}
 	u.RawQuery = providers.WithoutGoogleAPIKeyQuery(u.RawQuery)
+	if env.IsProduction() {
+		if err := providers.ValidateUpstreamEndpoint(ctx, u, ssrf.ManagedConfig()); err != nil {
+			return nil, err
+		}
+	}
 	return u, nil
 }
 

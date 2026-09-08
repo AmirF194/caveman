@@ -43,7 +43,7 @@ func (a Adapter) ResolveUpstreamURL(ctx context.Context, req *http.Request, rout
 	if !publisherAllowed(publisher) {
 		return nil, fmt.Errorf("vertex publisher %q is not on the allowlist", publisher)
 	}
-	if !modelAllowed(model) {
+	if !modelAllowed(model) && !anthropicCountTokensPath(publisher, model, method) {
 		return nil, fmt.Errorf("vertex model %q is not on the allowlist", model)
 	}
 
@@ -73,9 +73,14 @@ func (a Adapter) ResolveUpstreamURL(ctx context.Context, req *http.Request, rout
 }
 
 func methodAllowed(publisher, method string) bool {
+	// countTokens is publisher-agnostic on aiplatform: the discovery document
+	// defines projects.locations.publishers.models.countTokens for any publisher.
+	if method == "countTokens" {
+		return publisher == "google" || publisher == "anthropic"
+	}
 	switch publisher {
 	case "google":
-		return method == "generateContent" || method == "streamGenerateContent" || method == "countTokens"
+		return method == "generateContent" || method == "streamGenerateContent"
 	case "anthropic":
 		return method == "rawPredict" || method == "streamRawPredict"
 	default:
@@ -157,6 +162,15 @@ func locationFromPredictPath(path string) string {
 
 func publisherAllowed(publisher string) bool {
 	return onAllowlist(publisher, allowlist("CAVE_VERTEX_PUBLISHER_ALLOWLIST", defaultPublishers), false)
+}
+
+// anthropicCountTokensPath recognizes the accounting route the Anthropic SDK
+// builds on Vertex, whose model segment is a fixed literal rather than a model
+// id: POST .../publishers/anthropic/models/count-tokens:rawPredict
+// (anthropic-sdk-python, lib/vertex/_client.py). Rejecting it as an unknown
+// model made every count_tokens call from a Vertex-routed Claude client fail.
+func anthropicCountTokensPath(publisher, model, method string) bool {
+	return publisher == "anthropic" && model == "count-tokens" && method == "rawPredict"
 }
 
 func modelAllowed(model string) bool {

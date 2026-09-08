@@ -50,6 +50,12 @@ func (a Adapter) SanitizeAndMapHeaders(ctx context.Context, req *http.Request, c
 			return nil, providers.ErrGoogleRequestCredentials
 		}
 	}
+	if credential.Mode == "ephemeral_header" && credential.Scheme == "api_key" && key != "" && key != credential.Key {
+		// Both are caller-supplied and they name different Express keys. A managed
+		// credential stays authoritative (it is the gateway's own principal, and
+		// the caller's Authorization is a Caveman credential, not a Google one).
+		return nil, providers.ErrGoogleRequestCredentials
+	}
 	out, err := a.Base.SanitizeAndMapHeaders(ctx, req, credential, upstream)
 	if err == nil && credential.Scheme == "api_key" {
 		out.Del("Authorization")
