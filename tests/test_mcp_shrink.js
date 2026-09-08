@@ -30,6 +30,16 @@ function test(name, fn) {
 
 console.log('mcp-shrink compress tests\n');
 
+test('mixed CJK technical descriptions retain articles, intent, case and whitespace (#575)', () => {
+  for (const input of ['这是一个 a LLM 模型', '这个 the MCP server', 'the Agent 的状态', 'i will 检查这个 bug',
+    '  日本語 the API  \n', '한글 the API', 'カタカナ please a MCP', '𠀀 the API', 'ㄅㄆ the API',
+    'I will use `中文` with the MCP server.']) {
+    const result = compress(input);
+    assert.strictEqual(result.compressed, input);
+    assert.strictEqual(result.before, result.after);
+  }
+});
+
 test('drops articles', () => {
   const { compressed } = compress('The user is the owner of an account');
   assert.match(compressed, /User is owner of account/i);
