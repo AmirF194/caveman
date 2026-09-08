@@ -2,6 +2,7 @@ package ssrf_test
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net"
 	"net/http"
@@ -758,10 +759,22 @@ func TestNewHTTPClient_ProxyRoutesViaOperatorProxyAndKeepsLiteralGuard(t *testin
 		}
 	}
 
+	// Managed mode has no proxy contract. A Proxy set there is a wiring bug and
+	// must be loud: the client refuses every request instead of silently dialing
+	// direct (an ignored config field is the failure mode the invariants forbid).
 	managed := ssrf.ManagedConfig()
 	managed.Proxy = http.ProxyURL(proxyURL)
-	if tr := ssrf.NewHTTPClient(managed).Transport.(*http.Transport); tr.Proxy != nil {
-		t.Fatal("managed mode must ignore cfg.Proxy")
+	managedResp, managedErr := ssrf.NewHTTPClient(managed).Get("https://example.com/")
+	if managedResp != nil {
+		_ = managedResp.Body.Close()
+	}
+	if !errors.Is(managedErr, ssrf.ErrProxyInManagedMode) {
+		t.Fatalf("managed mode + Proxy: err = %v, want ErrProxyInManagedMode", managedErr)
+	}
+	select {
+	case host := <-seen:
+		t.Fatalf("managed mode reached the proxy (Host %q)", host)
+	default:
 	}
 }
 

@@ -149,7 +149,9 @@ type Config struct {
 	// but hostnames resolve at the proxy and hostname policy is the proxy's
 	// ACL. The proxy address itself is dialed unguarded — it is operator
 	// configuration, not request data, and corporate proxies routinely live on
-	// private ranges. Ignored when ManagedMode is true.
+	// private ranges. Managed mode has no proxy contract: setting this there
+	// makes NewHTTPClient return a client that refuses every request with
+	// ErrProxyInManagedMode rather than quietly dialing direct.
 	Proxy func(*http.Request) (*url.URL, error)
 }
 
@@ -169,25 +171,60 @@ func SelfHostedConfig(allowList ...string) Config {
 // Errors are safe to return to callers; they contain the blocked IP but never
 // the original credential material.
 func ValidateURL(ctx context.Context, raw string, cfg Config) error {
-	u, err := url.Parse(raw)
+	host, port, err := parseValidatedURL(raw, cfg)
 	if err != nil {
+		return err
+	}
+	return validateHostPort(ctx, host, port, cfg)
+}
+
+// ValidateURLNoResolve is ValidateURL for a destination this process will reach
+// through an outbound HTTP proxy: every check except DNS resolution, which is
+// the proxy's job. Behind a corporate proxy the process frequently has no
+// outbound DNS at all, so resolving here fails the request before the proxy is
+// ever consulted (#1001); and even where it resolves, the answer describes the
+// client's view, not the proxy's. This is the same policy the proxied dial hook
+// applies: host syntax, the localhost block, and range checks on IP literals.
+// Hostname policy beyond that belongs to the proxy's ACL.
+func ValidateURLNoResolve(raw string, cfg Config) error {
+	host, port, err := parseValidatedURL(raw, cfg)
+	if err != nil {
+		return err
+	}
+	if err := validateHostInput(host); err != nil {
+		return err
+	}
+	if addr, parseErr := netip.ParseAddr(host); parseErr == nil {
+		return checkAddr(addr, host, port, cfg)
+	}
+	if strings.EqualFold(host, "localhost") && !(!cfg.ManagedMode && isInAllowList(host, port, cfg.AllowList)) {
+		return fmt.Errorf("ssrf: host %q is blocked (loopback)", host)
+	}
+	return nil
+}
+
+// parseValidatedURL applies the URL-shape policy — scheme, embedded
+// credentials, managed-mode port — and returns the host/port to check.
+func parseValidatedURL(raw string, cfg Config) (host, port string, err error) {
+	u, parseErr := url.Parse(raw)
+	if parseErr != nil {
 		// net/url.Error includes the raw URL (and may therefore include
 		// credentials or query secrets). Keep this error field-only and stable.
-		return errors.New("ssrf: invalid URL")
+		return "", "", errors.New("ssrf: invalid URL")
 	}
 	if u.Scheme != "https" && !(u.Scheme == "http" && !cfg.ManagedMode) {
-		return fmt.Errorf("ssrf: scheme %q not permitted (managed mode requires https)", u.Scheme)
+		return "", "", fmt.Errorf("ssrf: scheme %q not permitted (managed mode requires https)", u.Scheme)
 	}
 	if u.User != nil {
-		return fmt.Errorf("ssrf: credentials embedded in URL are forbidden")
+		return "", "", fmt.Errorf("ssrf: credentials embedded in URL are forbidden")
 	}
-	host := u.Hostname()
+	host = u.Hostname()
 	if host == "" {
-		return fmt.Errorf("ssrf: URL must contain a host")
+		return "", "", fmt.Errorf("ssrf: URL must contain a host")
 	}
-	port := u.Port()
+	port = u.Port()
 	if cfg.ManagedMode && port != "" && port != "443" {
-		return errors.New("ssrf: managed mode requires port 443")
+		return "", "", errors.New("ssrf: managed mode requires port 443")
 	}
 	if port == "" {
 		if u.Scheme == "https" {
@@ -196,7 +233,7 @@ func ValidateURL(ctx context.Context, raw string, cfg Config) error {
 			port = "80"
 		}
 	}
-	return validateHostPort(ctx, host, port, cfg)
+	return host, port, nil
 }
 
 // ValidateHost resolves host (bare hostname or IP literal) and checks all
@@ -480,7 +517,16 @@ func NewHTTPClient(cfg Config) *http.Client {
 	t.DialTLSContext = nil
 	t.DialTLS = nil
 	t.DialContext = DialContext(cfg)
-	if cfg.Proxy != nil && !cfg.ManagedMode {
+	if cfg.Proxy != nil {
+		if cfg.ManagedMode {
+			// Managed mode has no proxy contract: the guarded boundary must stay on
+			// the destination host. Refusing is the point — silently dropping Proxy
+			// here would leave a configured field as a no-op and send provider
+			// traffic direct with no diagnostic, which is the failure mode the
+			// honesty invariants forbid. Nothing dials, so the security posture is
+			// exactly what it was; only the diagnosis changes.
+			return &http.Client{Transport: refusingTransport{err: ErrProxyInManagedMode}}
+		}
 		t.Proxy, t.DialContext = proxiedHooks(cfg, t.DialContext)
 	}
 	return &http.Client{
@@ -493,6 +539,16 @@ func NewHTTPClient(cfg Config) *http.Client {
 		},
 	}
 }
+
+// ErrProxyInManagedMode reports a wiring bug: a managed-mode Config carrying a
+// Proxy selector. Managed mode never proxies (see Config.Proxy).
+var ErrProxyInManagedMode = errors.New("ssrf: Config.Proxy is not supported in managed mode")
+
+// refusingTransport fails every request with one explanatory error instead of
+// letting a client built from a contradictory Config look like it works.
+type refusingTransport struct{ err error }
+
+func (t refusingTransport) RoundTrip(*http.Request) (*http.Response, error) { return nil, t.err }
 
 // proxiedHooks returns the Transport.Proxy and DialContext pair for a client
 // with cfg.Proxy set. The proxy hook validates what it can about the request
@@ -516,7 +572,7 @@ func proxiedHooks(cfg Config, guarded func(context.Context, string, string) (net
 			}
 			return nil, nil
 		}
-		if err := validateProxiedDestination(req.URL, cfg); err != nil {
+		if err := ValidateURLNoResolve(req.URL.String(), cfg); err != nil {
 			return nil, err
 		}
 		proxyAddrs.Store(proxyDialAddr(u), struct{}{})
@@ -530,26 +586,6 @@ func proxiedHooks(cfg Config, guarded func(context.Context, string, string) (net
 		return guarded(ctx, network, addr)
 	}
 	return proxy, dial
-}
-
-// validateProxiedDestination applies the parts of the policy that need no
-// resolution: host syntax, the localhost block, and range checks on IP literals.
-func validateProxiedDestination(u *url.URL, cfg Config) error {
-	host := u.Hostname()
-	if err := validateHostInput(host); err != nil {
-		return err
-	}
-	port := u.Port()
-	if port == "" {
-		port = defaultPort(u.Scheme)
-	}
-	if addr, err := netip.ParseAddr(host); err == nil {
-		return checkAddr(addr, host, port, cfg)
-	}
-	if strings.EqualFold(host, "localhost") && !isInAllowList(host, port, cfg.AllowList) {
-		return fmt.Errorf("ssrf: host %q is blocked (loopback)", host)
-	}
-	return nil
 }
 
 // proxyDialAddr mirrors net/http's canonicalAddr: the host:port Transport hands
