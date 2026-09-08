@@ -17,6 +17,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"sync/atomic"
@@ -240,6 +241,7 @@ type RequestRecord struct {
 	OutputTokens             int
 	CachedInputTokens        int
 	CacheCreationInputTokens int
+	CacheCreation1hTokens    int
 	ReasoningTokens          int
 	TotalCostUSD             float64
 	SavingsUSD               float64
@@ -277,6 +279,29 @@ type RequestRecord struct {
 	// row is list-price eligible (nil otherwise — never a guessed price).
 	WouldSaveTokens int
 	WouldSaveUSD    *float64
+	// Request measurements count the complete original and accepted normalized JSON
+	// with the same offline tokenizer. They include recovery markers, injected
+	// tools and repeated cached replacements. They are not provider token counts
+	// or a counterfactual for unobserved agent work outside this request.
+	RequestTokensBefore           int
+	RequestTokensAfter            int
+	RequestTokenBasis             string
+	RequestMeasurementStatus      string
+	RequestEstimatedInputDeltaUSD *float64
+	RequestSavingsBasis           string
+	// Price snapshots are the exact catalog model and effective observed tier at
+	// request time. Subscription/OAuth uses these only as API equivalents; these
+	// fields never turn subscription traffic into actual billed dollars.
+	PricingProvider             string
+	PricingModel                string
+	PricingCatalogVersion       string
+	PricingKnown                bool
+	PriceInputPerMillion        float64
+	PriceOutputPerMillion       float64
+	PriceCacheReadPerMillion    float64
+	PriceCacheWritePerMillion   float64
+	PriceCacheWrite1hPerMillion float64
+	PriceReasoningPerMillion    float64
 }
 
 // Server is the standalone proxy lifecycle.
@@ -327,8 +352,11 @@ type Server struct {
 	// the freeze registry every lever consults through LeverAllowed. Sessions are
 	// identified by the caller's x-cave-session value; a request without one gets
 	// no entry and the whole mechanism is inert for it.
-	ledger           *sessionLedger
-	httpClient       *http.Client
+	ledger     *sessionLedger
+	httpClient *http.Client
+	// upstreamProxy mirrors the upstream transport's Proxy selector, published to
+	// adapters through the request context (see providers.WithUpstreamProxy).
+	upstreamProxy    func(*http.Request) (*url.URL, error)
 	sessionMarkerKey []byte
 	sessionFallback  func(time.Time, string, string) (string, string)
 	logger           *slog.Logger
@@ -447,6 +475,22 @@ type Config struct {
 	Logger          *slog.Logger
 }
 
+// BoundUpstreamTransport puts the connection-level bounds on an upstream
+// transport. With no total request deadline (CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS
+// defaults to 0) these are the only thing standing between the proxy and an
+// upstream that connects and then never answers. ResponseHeaderTimeout is a
+// first-header deadline, not a body deadline, so a multi-hour SSE stream still
+// runs unbounded; 15 minutes matches the total cap this default replaced and is
+// far beyond any provider's time-to-first-header, streaming or not. Set
+// CAVE_GATEWAY_RESPONSE_HEADER_TIMEOUT_MS=0 to remove it.
+func BoundUpstreamTransport(t *http.Transport) {
+	t.ResponseHeaderTimeout = time.Duration(env.Int("CAVE_GATEWAY_RESPONSE_HEADER_TIMEOUT_MS", 900000)) * time.Millisecond
+	// Explicit rather than inherited: the clone above copies whatever the process
+	// left on http.DefaultTransport, and an idle keep-alive socket to a provider
+	// must not be held open indefinitely.
+	t.IdleConnTimeout = 90 * time.Second
+}
+
 // New constructs a standalone proxy Server.
 func New(cfg Config) *Server {
 	client := cfg.HTTPClient
@@ -454,7 +498,18 @@ func New(cfg Config) *Server {
 		// Client.Timeout includes the entire response body, including active SSE.
 		// Default to client cancellation; a positive env value is an explicit cap.
 		timeout := time.Duration(env.Int("CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS", 0)) * time.Millisecond
-		client = &http.Client{Timeout: timeout}
+		transport := http.DefaultTransport.(*http.Transport).Clone()
+		BoundUpstreamTransport(transport)
+		client = &http.Client{Timeout: timeout, Transport: transport}
+	}
+	// Adapters that pre-flight their resolved endpoint (bedrock, vertex) need to
+	// know which destinations this client hands to a proxy: on a proxy-only
+	// network the pre-flight's DNS resolve is impossible and the proxy owns
+	// resolution anyway (#1001). Read it off the transport that will carry the
+	// request, so the two can never disagree.
+	var upstreamProxy func(*http.Request) (*url.URL, error)
+	if transport, ok := client.Transport.(*http.Transport); ok {
+		upstreamProxy = transport.Proxy
 	}
 	upstream := cfg.ChatGPTUpstream
 	if upstream == "" {
@@ -491,6 +546,7 @@ func New(cfg Config) *Server {
 		breakpointPlan:       cfg.BreakpointPlan,
 		ledger:               newSessionLedger(),
 		httpClient:           client,
+		upstreamProxy:        upstreamProxy,
 		sessionMarkerKey:     append([]byte(nil), cfg.SessionMarkerKey...),
 		sessionFallback:      cfg.SessionFallback,
 		logger:               cfg.Logger,
@@ -502,6 +558,16 @@ func New(cfg Config) *Server {
 // catch-all. Unlike the managed gateway it serves no SDK/OTLP endpoints — the
 // standalone proxy is a pure base-URL swap.
 func (s *Server) Handler() http.Handler {
+	mux := serveMux(s)
+	if s.upstreamProxy == nil {
+		return mux
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mux.ServeHTTP(w, r.WithContext(providers.WithUpstreamProxy(r.Context(), s.upstreamProxy)))
+	})
+}
+
+func serveMux(s *Server) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health/live", s.health)
 	mux.HandleFunc("GET /health/ready", s.health)
