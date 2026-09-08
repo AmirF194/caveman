@@ -75,7 +75,10 @@ package redact
 import (
 	"log/slog"
 	"net/http"
+	"net/url"
 	"regexp"
+	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -321,15 +324,46 @@ func ScrubHeaders(h http.Header) http.Header {
 	return out
 }
 
-// Error wraps an error's message through String redaction and returns a new
-// string safe for inclusion in logs or HTTP error responses.  The original
-// error is not modified.  Returns the empty string when err is nil.
+// Error removes transport URLs from *url.Error values, including wrapped and
+// joined errors, then applies String redaction. URLs can carry opaque or
+// percent-encoded credentials that token patterns cannot identify. The original
+// error and its unwrap chain are not modified. Returns an empty string for nil.
 func Error(err error) string {
 	if err == nil {
 		return ""
 	}
-	s, _ := String(err.Error())
+	urls := make(map[string]struct{})
+	collectErrorURLs(err, urls)
+	patterns := make([]string, 0, len(urls))
+	for pattern := range urls {
+		patterns = append(patterns, pattern)
+	}
+	// Replace longer URLs first: a joined error can contain one endpoint that is
+	// a prefix of another. Replacing its raw form first would leave the latter's
+	// query credential behind. A single replacer does not rescan replacements.
+	sort.Slice(patterns, func(i, j int) bool { return len(patterns[i]) > len(patterns[j]) })
+	pairs := make([]string, 0, len(patterns)*2)
+	for _, pattern := range patterns {
+		pairs = append(pairs, pattern, "[REDACTED:url]")
+	}
+	s, _ := String(strings.NewReplacer(pairs...).Replace(err.Error()))
 	return s
+}
+
+func collectErrorURLs(err error, urls map[string]struct{}) {
+	if transportErr, ok := err.(*url.Error); ok && transportErr.URL != "" {
+		// net/url quotes URL in Error(); wrappers can also render its raw value.
+		urls[strconv.Quote(transportErr.URL)] = struct{}{}
+		urls[transportErr.URL] = struct{}{}
+	}
+	switch wrapped := err.(type) {
+	case interface{ Unwrap() []error }:
+		for _, cause := range wrapped.Unwrap() {
+			collectErrorURLs(cause, urls)
+		}
+	case interface{ Unwrap() error }:
+		collectErrorURLs(wrapped.Unwrap(), urls)
+	}
 }
 
 // SlogReplaceAttr is a slog.HandlerOptions.ReplaceAttr hook that applies the
