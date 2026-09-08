@@ -63,14 +63,7 @@ Same diagnosis. Same fix. Same `useMemo`. The only thing that died was the throa
 
 Code, commands, file paths, and exact error messages never get cavemanned. Only the prose around them does.
 
-```
-┌──────────────────────────────────────────────────┐
-│   output tokens saved (skill)   ██████░░░    65% │
-│   input tokens saved  (proxy)   ███░░░░░░    33% │
-│   code changed                  ░░░░░░░░░     0% │
-│   vibes                         █████████    OOG │
-└──────────────────────────────────────────────────┘
-```
+
 
 Caveman no make brain smaller. Caveman make *mouth* smaller.
 
@@ -81,7 +74,7 @@ Caveman come in two sizes.
 **Small rock: the skill.** A rule file that makes your agent answer in caveman. MIT, free forever, works in [30+ agents](./INSTALL.md) (Claude Code, Codex, Gemini, Cursor, Windsurf, Cline, Copilot, more). One command:
 
 ```bash
-npx skills add JuliusBrussee/caveman
+npx skills add JuliusBrussee/caveman -g
 ```
 
 Type `/caveman` if your agent doesn't wake up on its own. That the whole install. One rock.
@@ -126,7 +119,7 @@ npm i -g @qwen-code/qwen-code
 caveman qwen
 
 # Codex, Cursor, Windsurf, Cline, and other skills-compatible agents
-npx skills add JuliusBrussee/caveman --skill '*' -a codex --yes  # replace codex with your agent profile
+npx skills add JuliusBrussee/caveman --skill '*' -a codex --yes -g  # replace codex with your agent profile
 ```
 
 **Install broke?** Open your agent in this repo and say: *"Read CLAUDE.md and INSTALL.md, install caveman for me."* Agent read repo, agent fix own brain. Snake eat tail.
@@ -143,45 +136,25 @@ A token is what AI billing counts, roughly three quarters of a word. Your agent 
 
 ### Skill: writing less
 
-Ten ordinary coding prompts through the real Claude API, with the skill and without. Same model, same questions. Output tokens per reply:
-
-| Task                               | Normal   | Caveman | Saved   |
-| ---------------------------------- | -------: | ------: | ------: |
-| Implement React error boundary     | 3454     | 456     | 87%     |
-| Set up PostgreSQL connection pool  | 2347     | 380     | 84%     |
-| Explain git rebase vs merge        | 702      | 292     | 58%     |
-| Refactor callback to async/await   | 387      | 301     | 22%     |
-| **Average across all ten prompts** | **1214** | **294** | **65%** |
-
-Best row and worst row both up there on purpose. Caveman wins big when the agent would have written an essay, and barely at all when the answer was already mostly code.
-
-<details>
-<summary><strong>All ten prompts</strong> · regenerate with <code>uv run python benchmarks/run.py</code></summary>
-
-<br>
+The skill asks for shorter prose. A general output-reduction percentage is not
+currently supported by reviewed raw results from the API benchmark in this
+repository. The older ten-prompt table and its fixed 65% claim have been retired.
 
 <!-- BENCHMARK-TABLE-START -->
-| Task                                    | Normal   | Caveman | Saved   |
-| --------------------------------------- | -------- | ------- | ------- |
-| Explain React re-render bug             | 1180     | 159     | 87%     |
-| Fix auth middleware token expiry        | 704      | 121     | 83%     |
-| Set up PostgreSQL connection pool       | 2347     | 380     | 84%     |
-| Explain git rebase vs merge             | 702      | 292     | 58%     |
-| Refactor callback to async/await        | 387      | 301     | 22%     |
-| Architecture: microservices vs monolith | 446      | 310     | 30%     |
-| Review PR for security issues           | 678      | 398     | 41%     |
-| Docker multi-stage build                | 1042     | 290     | 72%     |
-| Debug PostgreSQL race condition         | 1200     | 232     | 81%     |
-| Implement React error boundary          | 3454     | 456     | 87%     |
-| **Average**                             | **1214** | **294** | **65%** |
+No reviewed API benchmark result is published here yet. Run
+`uv run python benchmarks/run.py` to generate a new result, then review its raw
+response pairs and quality before publishing the generated table.
 <!-- BENCHMARK-TABLE-END -->
 
-</details>
+A separate [committed evaluation snapshot](./evals/README.md) compares skill
+output with a plain `Answer concisely.` control. It measures approximate output
+length, not correctness, billing, or performance of the current skill. Its
+model, date, tokenizer, and limits are recorded alongside it.
 
-> [!IMPORTANT]
-> Before you multiply 65% by your invoice: the skill only shortens **output**. Input and reasoning tokens don't change, and the skill's own rules cost about 1 to 1.5k input tokens every turn. Whole-session savings land lower than the table. On work that was already terse, you can lose money. Speed and readability are the product. The discount is the bonus. Full accounting in [docs/HONEST-NUMBERS.md](./docs/HONEST-NUMBERS.md).
-
-> **Maintainer note.** If you read one linked doc, read that one. I wrote it after [#550](https://github.com/JuliusBrussee/caveman/issues/550), where someone's Cursor A/B went the wrong way and I couldn't reproduce it. Caveman is a shorter agent, not free money. Measure your own setup before you tell your boss anything.
+The rules add input tokens; their cost depends on which rules the host loads,
+when it injects them, and caching. Shorter output alone does not establish net
+savings. `/caveman-stats` reports recorded usage with savings unknown. Full
+accounting and workload limitations: [docs/HONEST-NUMBERS.md](./docs/HONEST-NUMBERS.md).
 
 ### Proxy: reading less
 
@@ -197,7 +170,7 @@ Your agent rereads logs, test output, diffs, and half your repo all day. The pro
 | Dashboard HTML alert   | 140,687            | 154,641         | **+9.9%**  |
 | **Total**              | **885,793**        | **591,673**     | **-33.2%** |
 
-All 18 of 18 exact-answer checks passed, so the squeeze cost nothing in correctness. Method, confidence intervals, and limits: [docs/WRAP-BENCHMARK.md](./docs/WRAP-BENCHMARK.md).
+All 18 of 18 fixture answer checks passed. This does not establish quality on other tasks. These are pinned reported results; the raw harness and run artifacts are not in this checkout. Method, confidence intervals, and limits: [docs/WRAP-BENCHMARK.md](./docs/WRAP-BENCHMARK.md).
 
 > **Maintainer note.** The HTML row is red and it stays red. That case had no compression transform, so caveman paid its own overhead and won nothing back. The day I hide a red row is the day you should stop trusting the green ones.
 
@@ -219,7 +192,7 @@ One rule file, one talking style, plus a small toolbox. `/caveman lite|full|ultr
 | `/caveman-commit`                                                                                                                               | Terse Conventional Commit messages.                                                                                         |
 | `/caveman-review`                                                                                                                               | One-line, actionable review findings.                                                                                       |
 | `/caveman-compress <file>`                                                                                                                      | Smaller Markdown memory files, with the original backed up.                                                                 |
-| `/caveman-stats`                                                                                                                                | Local session token usage and estimated savings in Claude Code.                                                             |
+| `/caveman-stats`                                                                                                                                | Recorded Claude Code token usage; savings unknown without a measured comparison.                                                             |
 | `/caveman-help`                                                                                                                                 | One-screen reminder of every mode and command.                                                                              |
 | `investigate-first`, `lean-build`, `surgical-patch`, `safe-refactor`, `migration`, `verify-and-stop`                                            | Work patterns that write less code, so the agent bills fewer tokens. Your agent picks these up on its own when a task fits. |
 | `/caveman-setup`, `/caveman-discover`, `/caveman-learn`, `/caveman-manage`, `/caveman-optimize`, `/caveman-explore`, `/caveman-evidence-review` | Drive the caveman engine and proxy: set it up, find where tokens go, act on what it finds.                                  |
@@ -284,7 +257,7 @@ caveman browse <url>            # local Chrome over a compressed a11y tree
 caveman mem remember|recall     # durable memory; `mem recover <handle>` = original bytes
 caveman trial -- claude         # A/B a real session, then `trial report`
 caveman toon encode|decode      # the TOON re-encoder, standalone
-caveman stats                   # what caveman actually did, by content type
+caveman stats                   # token history, API estimates, subscription equivalents
 ```
 
 ### Pixel mode
@@ -353,7 +326,7 @@ Frozen ones still install and work. Their best ideas moved in here.
 
 Your agent still talks to the provider you chose. The skill and hooks run entirely on your machine, and nothing here needs an account.
 
-The `caveman` CLI does send anonymous usage stats by default, and here's the honest why: caveman is free, one person maintains it, and those stats are how I find out which commands people actually use and how many tokens caveman actually saves in the wild. That's what keeps this thing free and pointed in the right direction. Fair trade, we think.
+The `caveman` CLI does send anonymous usage stats by default, and here's the honest why: caveman is free, one person maintains it, and those stats are how I find out which commands people actually use and which optimizations run in real workflows. That's what keeps this thing free and pointed in the right direction. Fair trade, we think.
 
 What it sends: which commands ran, plus token counts through and cut. What it never sends: your prompts, your code, your file paths, or anything that could identify you. It tells you all this the first time you run it.
 

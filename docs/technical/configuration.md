@@ -125,7 +125,7 @@ putting secrets in YAML.
 providers:
   bedrock:
     region: eu-west-1
-  azure:
+  azure_openai:
     base_url: https://example-resource.openai.azure.com
 
 compat:
@@ -133,6 +133,25 @@ compat:
     base_url: http://127.0.0.1:11434/v1
     api_key_env: LOCAL_MODEL_API_KEY
 ```
+
+A named compat mount can forward additional provider headers explicitly:
+
+```yaml
+compat:
+  tenant-relay:
+    base_url: https://relay.example/tenant/v1
+    api_key_env: RELAY_API_KEY
+    forward_headers: [X-API-Tenant, CF-AIG-Authorization]
+```
+
+Only that mount forwards the listed headers. Standard provider credentials,
+request framing, cookies, and Caveman control headers cannot be configured this
+way. Headers named by an inbound `Connection` field stay on that connection.
+The proxy publishes header names, never values, with its endpoint identity.
+OpenClaw and Pi keep a provider direct when required configured headers are
+absent from that contract. SDK session-affinity headers (`session_id`,
+`x-session-id`, `x-client-request-id`, `x-session-affinity`) are forwarded as
+standard end-to-end fields.
 
 Self-hosted private or loopback upstreams require an explicit
 `CAVE_SSRF_ALLOWLIST` entry. See [Security and privacy](security-and-privacy.md).
@@ -157,9 +176,15 @@ shell commands would inherit. In both modes `localhost`, loopback addresses, and
 `NO_PROXY` matches are dialed directly, so an allowlisted local model server
 keeps working next to a corporate proxy. `CAVE_UPSTREAM_PROXY` overrides the
 YAML value.
-HTTPS providers tunnel through the proxy with `CONNECT`, so a plain forward
-proxy never sees request bodies or credentials. A proxy that performs TLS
-inspection (below) terminates TLS itself and does see them. The proxy address itself needs no
+When a proxy is selected for a destination, Caveman does not resolve that
+hostname itself — the proxy does, which is what makes this work on a network
+with no outbound DNS at all. HTTPS providers tunnel through the proxy with
+`CONNECT`, so a plain forward proxy never sees request bodies or credentials. A
+proxy that performs TLS inspection (below) terminates TLS itself and does see
+them. A proxy that accepts the connection and then answers nothing is bounded by
+`CAVE_GATEWAY_RESPONSE_HEADER_TIMEOUT_MS` (default 900,000 ms; `0` disables),
+which covers the wait for response headers only and never truncates a running
+stream. The proxy address itself needs no
 `CAVE_SSRF_ALLOWLIST` entry; see
 [Security and privacy](security-and-privacy.md#ssrf-protection) for what the
 guard still checks when a proxy is in use.
@@ -182,14 +207,17 @@ environment set up for curl, Python, or Claude Code works unchanged:
 | `NODE_EXTRA_CA_CERTS` | Node.js, Claude Code |
 
 Every bundle is additive on top of the system store, so public providers keep
-verifying when a bundle holds only the private root. A bundle that is corrupt or
+verifying when a bundle holds only the private root. A `ca_bundle` that is missing, corrupt, or
 truncated fails startup rather than being half-trusted. An inherited variable
-that names a missing file is skipped with a startup warning; a missing
-`ca_bundle` is an error.
+that cannot be loaded for any of those reasons is skipped with a startup
+warning instead.
 
 The wrapped agent talks to the local proxy on loopback. If the agent itself
-reads `HTTPS_PROXY` (Claude Code does), keep `localhost,127.0.0.1` in `NO_PROXY`
-so that hop is not sent to the corporate proxy.
+reads `HTTPS_PROXY` (Claude Code does), that hop would otherwise be handed to the
+corporate proxy and time out. `caveman run` and `caveman native enable` add the
+gateway host to the agent's `NO_PROXY` automatically, appending to whatever you
+already set and keeping your spelling of the variable. Set it yourself only when
+you launch the agent without caveman.
 
 ## Provider credentials
 

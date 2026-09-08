@@ -10,11 +10,11 @@ SLA or a claim that every provider endpoint has been certified.
 | --- | --- | --- |
 | A wrap-owned listener retired after 30 minutes of native inactivity. Missing hooks, an exited wrapper, or suspended heartbeats could leave a live agent pointing at a closed port. | The serve loop has no idle-exit path, including when an older installation exports `CAVEMAN_NATIVE_IDLE_TIMEOUT`. Only an explicit stop or process failure ends it. | `TestServeDoesNotExpire`: real subprocess, isolated databases, accelerated legacy timeout, no heartbeats. |
 | A new wrapper could SIGTERM a shared proxy to change mode/recovery if it found no live wrapper marker. Native and resumed sessions do not necessarily own those markers. | Wrappers never restart a shared listener. Incompatible new runs launch directly with their own provider configuration. Failed local startup also launches directly rather than exporting a dead endpoint. | `wrap-restart.runtime.mjs`: real proxy PIDs/generations remain unchanged, no signal, direct fallback, failed-start route removal, foreign-listener protection. |
-| Go `http.Client.Timeout` defaulted to 900,000 ms and includes reading the response body. An active stream could therefore expire at 15 minutes. | Default is `0`: no total generation deadline. A positive `CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS` remains an explicit operator cap. Caller cancellation still cancels upstream. | Default-client assertion; production SSRF transport with delayed SSE and explicit-cap control; cancellation tests. |
+| Go `http.Client.Timeout` defaulted to 900,000 ms and includes reading the response body. An active stream could therefore expire at 15 minutes. | Default is `0`: no total generation deadline. A positive `CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS` remains an explicit operator cap. Caller cancellation still cancels upstream. An upstream that connects and then sends nothing is bounded instead by the transport's response-header deadline (`CAVE_GATEWAY_RESPONSE_HEADER_TIMEOUT_MS`, default 900,000 ms), which does not cover the body. | Default-client assertion; production SSRF transport with delayed SSE and explicit-cap control; cancellation tests; `TestDefaultUpstreamClientBoundsResponseHeaders` (silent upstream answers 502 instead of hanging). |
 | A response could stream even when the request did not expose a readable JSON `stream` flag. The proxy buffered such responses. | SSE, Bedrock event streams, and recognized JSON-line streams are detected from response `Content-Type`. Headers flush immediately; chunks and unknown events pass through unchanged. | `TestProviderStreamsFlushBeforeCompletion`: nine routes, gated headers/body/end, no JSON stream flag. |
 | The shared header mapper dropped `Content-Encoding` from encoded requests. | Encoded request bytes retain the header and bypass optimization. | `TestEncodedRequestPassesThroughWithoutTransforms`: gzip body preserved in record, compress, pixel, and active modes. |
 | Interrupted upstream streams became a clean downstream EOF, while telemetry showed no error. | The copy error is recorded; HTTP framing is aborted after committed headers. No fabricated completion or replay of a partial stream. | `TestInterruptedStreamsAbortClientFramingWithoutReplay`: Anthropic and ChatGPT routes, HTTP/1.1 and HTTP/2. |
-| Transport and response-read failures were retried on the assumption that no response meant no inference occurred. | Explicit proxy retries only cover dial failures. Ambiguous upload/header failures and truncated bodies are not silently replayed. A complete transformed-request 4xx can still fall back once to original bytes. | Dial retry, ambiguous failure/no replay, and truncated gzip/no replay tests; existing original-body fallback tests. |
+| Transport and response-read failures were retried on the assumption that no response meant no inference occurred. | Explicit proxy retries only cover connection-setup failures: the TCP dial, and the connection to an outbound HTTP proxy, which Go reports as `proxyconnect` rather than `dial`. Ambiguous upload/header failures and truncated bodies are not silently replayed. A complete transformed-request 4xx can still fall back once to original bytes. | Dial retry, proxy-connect retry, ambiguous failure/no replay (including a refused `CONNECT` tunnel), and truncated gzip/no replay tests; existing original-body fallback tests. |
 | A nil telemetry sink could panic after forwarding a successful response. | An omitted sink skips recording, matching the existing ChatGPT path. | Streaming and encoded-request regressions run without a sink. |
 
 Request-body read failures also receive a distinct error instead of being
@@ -86,8 +86,8 @@ client timeout remains active while reading the response body.
 
 There is no proxy session TTL. An idle HTTP keep-alive connection can still be
 closed and reopened normally; this is separate from listener or generation
-lifetime. TCP/TLS setup remains bounded, as do inbound headers/uploads and
-request/response buffering. Default general request buffer is 32 MiB; default
+lifetime. TCP/TLS setup remains bounded, as do the wait for the first upstream
+response header, inbound headers/uploads, and request/response buffering. Default general request buffer is 32 MiB; default
 non-streaming response buffer is 64 MiB. The ChatGPT route streams larger
 request bodies instead of transforming them.
 
@@ -95,7 +95,7 @@ Provider outages, DNS/network loss, sleep-induced socket loss, invalid or expire
 provider credentials, provider context/rate limits, process termination, and
 unsupported routes can still produce errors. Explicit route/auth/security
 allowlists remain enforced; this proxy does not promise every provider API,
-WebSocket upgrade, corporate HTTP proxy, or future wire extension. Unknown routes
+WebSocket upgrade, or future wire extension. Unknown routes
 remain closed. Explicit request deadlines still take effect when configured.
 
 An already-running agent cannot switch away from a process that the OS killed

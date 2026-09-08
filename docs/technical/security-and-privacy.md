@@ -50,9 +50,12 @@ requests reach unrelated local services.
 
 When an outbound proxy is in use (`upstream_proxy`, which by default honours
 `HTTPS_PROXY`), that proxy connects to providers on Caveman's behalf, so the
-boundary moves to it. Caveman still rejects IP-literal and
-`localhost` destinations before selecting it, but hostnames are resolved by the
-proxy, so hostname-level policy is the proxy's own access control. The proxy
+boundary moves to it. Caveman still applies the range checks to IP-literal
+destinations and rejects `localhost` before selecting it, but hostnames are
+resolved by the proxy, so hostname-level policy is the proxy's own access
+control. The same applies to the Bedrock and Vertex endpoint pre-flight: for a
+proxied destination it checks host syntax, `localhost`, and IP-literal ranges
+without resolving. The proxy
 address is operator configuration and is dialed without an allowlist entry.
 Destinations that `NO_PROXY` sends direct keep the full guard and still need a
 `CAVE_SSRF_ALLOWLIST` entry when they are private or loopback.
