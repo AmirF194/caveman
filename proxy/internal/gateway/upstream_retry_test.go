@@ -76,10 +76,38 @@ func TestUpstreamTransportErrorRetries(t *testing.T) {
 	})
 }
 
+// #1001: a corporate proxy that is down fails at proxy connection setup, which
+// net/http reports as Op "proxyconnect", not Op "dial". A dial-only test left
+// the documented retry dead for exactly the proxied population.
+func TestUpstreamProxyConnectFailureRetries(t *testing.T) {
+	attempts := 0
+	s := New(Config{HTTPClient: &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		attempts++
+		if attempts <= 2 {
+			return nil, &net.OpError{Op: "proxyconnect", Net: "tcp", Err: syscall.ECONNREFUSED}
+		}
+		return &http.Response{StatusCode: http.StatusOK, Header: http.Header{}, Body: io.NopCloser(strings.NewReader("{}"))}, nil
+	})}})
+	resp, err := s.doUpstream(context.Background(), func() (*http.Request, error) {
+		return http.NewRequest(http.MethodPost, "https://provider.test/v1/messages", strings.NewReader(`{"model":"test"}`))
+	})
+	if err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("proxy connection setup was not retried: err=%v", err)
+	}
+	_ = resp.Body.Close()
+	if attempts != 3 {
+		t.Fatalf("attempts = %d, want 3", attempts)
+	}
+}
+
 func TestUpstreamAmbiguousFailureNeverReplaysInference(t *testing.T) {
 	for _, failure := range []error{
 		io.ErrUnexpectedEOF,
 		&net.OpError{Op: "write", Net: "tcp", Err: syscall.ECONNRESET},
+		// A CONNECT tunnel refused by the proxy: net/http returns the proxy's
+		// status text as a bare error, so it is not classifiable and is not
+		// replayed. Retrying a proxy ACL denial would only fail more slowly.
+		errors.New("Forbidden"),
 		context.DeadlineExceeded,
 		errors.New("http2: stream error after request upload"),
 	} {

@@ -19,6 +19,7 @@ import (
 
 	"github.com/JuliusBrussee/caveman/proxy/internal/nativeruntime"
 	"github.com/JuliusBrussee/caveman/proxy/providers"
+	"github.com/JuliusBrussee/caveman/proxy/providers/bedrock"
 	"github.com/JuliusBrussee/caveman/proxy/providers/openaicompat"
 	"github.com/JuliusBrussee/caveman/shared/platform/cacheguard"
 	"github.com/JuliusBrussee/caveman/shared/platform/catalog"
@@ -29,7 +30,7 @@ import (
 	"github.com/JuliusBrussee/caveman/shared/platform/redact"
 )
 
-// doUpstream retries only dial failures: the provider has not received a request.
+// doUpstream retries only connection-setup failures: the provider has not received a request.
 // A missing response does NOT prove an inference POST was unprocessed. Upload,
 // header-read and body-read failures must not silently duplicate a billable call.
 // The Go transport separately handles safe retries on stale pooled connections.
@@ -43,12 +44,11 @@ func (s *Server) doUpstream(ctx context.Context, build func() (*http.Request, er
 		if err == nil {
 			return resp, nil
 		}
-		var dialErr *net.OpError
-		if attempt >= 2 || ctx.Err() != nil || !errors.As(err, &dialErr) || dialErr.Op != "dial" {
+		if attempt >= 2 || ctx.Err() != nil || !connectionSetupFailure(err) {
 			return nil, err
 		}
 		if s.logger != nil {
-			s.logger.Warn("upstream transport error; retrying", "attempt", attempt+1, "error", err)
+			s.logger.Warn("upstream transport error; retrying", "attempt", attempt+1, "error", redact.Error(err))
 		}
 		select {
 		case <-ctx.Done():
@@ -56,6 +56,30 @@ func (s *Server) doUpstream(ctx context.Context, build func() (*http.Request, er
 		case <-time.After(time.Duration(attempt+1) * 200 * time.Millisecond):
 		}
 	}
+}
+
+// connectionSetupFailure reports whether err ended the attempt while the
+// connection was still being established — before a single request byte could
+// reach the provider, so a replay cannot duplicate a billable inference.
+//
+// Op=="dial" alone misses the population #1001 is about: when the transport
+// goes through an HTTP proxy, net/http wraps every failure of the connection to
+// that proxy — the TCP dial and the TLS handshake to it — as
+// *net.OpError{Op:"proxyconnect"} (transport.go wrapErr). A proxy that is down
+// or refusing therefore never matched the dial-only test, and the documented
+// retry did not fire for proxied users at all.
+//
+// Deliberately NOT covered: a failed CONNECT tunnel (net/http returns a bare
+// errors.New with the proxy's status text) and a direct TLS handshake error
+// (indistinguishable from a post-write read error). Both are pre-write and
+// would be safe to replay, but neither is identifiable without guessing, and
+// both are deterministic — a retry buys a slower failure, not a success.
+func connectionSetupFailure(err error) bool {
+	var opErr *net.OpError
+	if !errors.As(err, &opErr) {
+		return false
+	}
+	return opErr.Op == "dial" || opErr.Op == "proxyconnect"
 }
 
 func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
@@ -110,6 +134,7 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	nonPAYGLiveZone := (authMode == AuthModeSubscription || authMode == AuthModeOAuth) && s.liveZoneCompressionAllowed(adapter, body)
 	subscriptionPassthrough := authMode == AuthModeSubscription && !nonPAYGLiveZone
 	evidence := requestEvidenceFromHeaders(r.Header)
+	evidence.originalBody = body
 	if correlatedSessionID != "" {
 		evidence.SessionID = correlatedSessionID
 		evidence.SessionCorrelationBasis = "signed_marker"
@@ -156,8 +181,9 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	retrieveInjected := false
 	compressionEligible := false
 	effectiveRuntimeMode := rc.RuntimeMode
+	reqContentEncoding := strings.TrimSpace(r.Header.Get("Content-Encoding"))
 	if strings.TrimSpace(r.Header.Get("x-cave-transforms")) == "caveman.pass-through.v1" ||
-		(strings.TrimSpace(r.Header.Get("Content-Encoding")) != "" && !strings.EqualFold(strings.TrimSpace(r.Header.Get("Content-Encoding")), "identity")) {
+		(reqContentEncoding != "" && !strings.EqualFold(reqContentEncoding, "identity")) {
 		// Framework callers use this request-wide opt-out when their result contract
 		// cannot observe or recover transformed bytes. It suppresses compression,
 		// pixel, and provider-native transforms while preserving configured mode in
@@ -310,6 +336,7 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	transformedHash := sha256.Sum256(transform.Body)
+	evidence.acceptedBody = transform.Body
 	providerCachePrefixSHA256, providerCacheComponentSHA256, cacheBoundaryKnown := providerPrefixEvidence(adapter, transform.Body, meta)
 
 	// Observe-only prefix-monotonicity check (issue #133): compare this request's
@@ -328,20 +355,28 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 
 	upstreamURL, err := adapter.ResolveUpstreamURL(r.Context(), r, providers.RouteContext{})
 	if err != nil {
+		if errors.Is(err, providers.ErrGoogleRequestCredentials) {
+			httpx.Error(w, r, http.StatusBadRequest, "cave_provider_credentials_conflict", providers.ErrGoogleRequestCredentials.Error())
+			return
+		}
 		httpx.Error(w, r, http.StatusBadGateway, "cave_upstream_unavailable", "Upstream route could not be resolved.")
 		return
 	}
 	meta = providers.ApplyResolvedPricingRoute(meta, upstreamURL)
+	if !statsPricingOriginKnown(meta.Provider, upstreamURL) {
+		evidence.statsPricingUnsupportedReason = "custom_provider_origin"
+	}
 	authContext := providers.WithRequestPayloadHash(r.Context(), transform.Body)
 	upstreamHeaders, err := adapter.SanitizeAndMapHeaders(authContext, r, credential, upstreamURL)
 	if err != nil {
-		httpx.Error(w, r, http.StatusBadRequest, "cave_header_mapping_failed", "Headers could not be mapped safely.")
+		providerHeaderError(w, r, err)
 		return
 	}
 	if authMode != AuthModePAYG && r.UserAgent() != "" {
 		upstreamHeaders.Set("user-agent", r.UserAgent())
 	}
 	s.applyUpstreamAuthFallback(adapter.Name(), credential, upstreamHeaders)
+	providers.RemoveConnectionHeaders(upstreamHeaders, r.Header)
 	// Each retry attempt needs a fresh body reader, so the request is built per
 	// attempt from the buffered payload rather than once up front.
 	buildUpstream := func(payload []byte, header http.Header) func() (*http.Request, error) {
@@ -390,25 +425,28 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 		retryAuthContext := providers.WithRequestPayloadHash(r.Context(), body)
 		retryHeaders, rerr := adapter.SanitizeAndMapHeaders(retryAuthContext, r, credential, upstreamURL)
 		if rerr != nil {
-			httpx.Error(w, r, http.StatusBadRequest, "cave_header_mapping_failed", "Headers could not be mapped safely.")
+			providerHeaderError(w, r, rerr)
 			return
 		}
 		if authMode != AuthModePAYG && r.UserAgent() != "" {
 			retryHeaders.Set("user-agent", r.UserAgent())
 		}
 		s.applyUpstreamAuthFallback(adapter.Name(), credential, retryHeaders)
+		providers.RemoveConnectionHeaders(retryHeaders, r.Header)
 		s.inflight.Add(1)
 		retryResp, derr := s.doUpstream(r.Context(), buildUpstream(body, retryHeaders))
 		s.inflight.Add(-1)
 		if derr != nil {
 			httpx.Error(w, r, http.StatusBadGateway, "cave_upstream_unavailable", "Upstream provider unavailable.")
 			estimateWG.Wait() // join the observe estimate; passed uniformly (zeroed at Record on this failed status)
+			evidence.acceptedBody = body
 			s.record(start, 0, requestID, traceID, rc, meta, authMode, http.StatusBadGateway, 0, len(body), rawHash, rawHash, "cave_upstream_unavailable", []string{}, providers.UsageObservation{CacheStatus: "unknown"}, nil, "", false, estimate, evidence, providerCachePrefixSHA256, providerCacheComponentSHA256, cacheBoundaryKnown, cacheBust, compressionEligible)
 			return
 		}
 		resp = retryResp
 		upstreamHeaders = retryHeaders
 		transform = providers.TransformResult{Body: body, OptimizerIDs: []string{}}
+		evidence.acceptedBody = body
 		transformedHash = rawHash
 		providerCachePrefixSHA256, providerCacheComponentSHA256, cacheBoundaryKnown = providerPrefixEvidence(adapter, body, meta)
 		comp = nil
@@ -436,6 +474,7 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	}
 	if replayedOriginal {
 		transform = providers.TransformResult{Body: body, OptimizerIDs: []string{}}
+		evidence.acceptedBody = body
 		transformedHash = rawHash
 		providerCachePrefixSHA256, providerCacheComponentSHA256, cacheBoundaryKnown = providerPrefixEvidence(adapter, body, meta)
 		comp = nil
@@ -500,31 +539,26 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("x-caveman-tripwire", tripwire)
 	}
 	w.WriteHeader(resp.StatusCode)
-	if meta.Stream {
-		_ = http.NewResponseController(w).Flush()
-	}
 
-	counter := &countingWriter{w: w}
 	usageScanner := adapter.NewUsageScanner(resp.Header)
-	_, copyErr := copyFlush(counter, io.TeeReader(resp.Body, usageScanner))
+	counter, copyErrCode := s.streamResponse(w, r, io.TeeReader(resp.Body, usageScanner), meta.Stream, requestID)
 	ttfb := time.Since(start).Milliseconds()
 	if !counter.firstByteAt.IsZero() {
 		ttfb = counter.firstByteAt.Sub(start).Milliseconds()
-	}
-	if copyErr != nil && s.logger != nil {
-		s.logger.Warn("client stream copy failed", "error", redact.Error(copyErr), "request_id", requestID)
 	}
 	errCode := ""
 	if resp.StatusCode >= 400 {
 		errCode = fmt.Sprintf("provider_%d", resp.StatusCode)
 	}
-	if copyErr != nil {
-		errCode = "cave_upstream_body_read_failed"
-		if r.Context().Err() != nil {
-			errCode = "cave_client_canceled"
-		}
+	if copyErrCode != "" {
+		errCode = copyErrCode
 	}
 	finalUsage := usageScanner.Usage()
+	if errCode == "" && meta.Stream && finalUsage.ProviderError {
+		// Provider SDKs raise on these events even though HTTP headers already
+		// committed status 200. Keep the wire intact and record the failed call.
+		errCode = "provider_stream_error"
+	}
 	// The session ledger sees the provider's own numbers for the upstream call the
 	// levers actually shaped — not the retrieve-loop total below, whose extra calls
 	// carry their own prefixes and would blur the cache-creation signal the harm
@@ -538,6 +572,9 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	}
 	s.observeSession(evidence.SessionID, activeLevers, finalUsage, requestID)
 	combinedUsage := finalUsage
+	if resp.Request != nil && !statsPricingOriginKnown(meta.Provider, resp.Request.URL) {
+		evidence.statsPricingUnsupportedReason = "custom_provider_origin"
+	}
 	for _, callUsage := range retrieveCalls {
 		combinedUsage = addUsage(combinedUsage, callUsage)
 	}
@@ -546,11 +583,23 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	}
 	estimateWG.Wait() // join the observe estimate; overlapped the upstream round-trip + response stream
 	s.record(start, ttfb, requestID, traceID, rc, meta, authMode, resp.StatusCode, counter.n, len(body), rawHash, transformedHash, errCode, transform.OptimizerIDs, combinedUsage, comp, toolSchemaHandle, retrieved, estimate, evidence, providerCachePrefixSHA256, providerCacheComponentSHA256, cacheBoundaryKnown, cacheBust, compressionEligible)
-	if copyErr != nil {
+	if copyErrCode != "" {
 		// Headers are committed. Abort HTTP framing instead of returning a clean
 		// EOF for an incomplete SSE/gzip body; never replay a partial response.
 		panic(http.ErrAbortHandler)
 	}
+}
+
+func providerHeaderError(w http.ResponseWriter, r *http.Request, err error) {
+	if errors.Is(err, providers.ErrGoogleRequestCredentials) {
+		httpx.Error(w, r, http.StatusBadRequest, "cave_provider_credentials_conflict", providers.ErrGoogleRequestCredentials.Error())
+		return
+	}
+	if errors.Is(err, bedrock.ErrSigV4Configuration) {
+		httpx.Error(w, r, http.StatusBadRequest, "cave_bedrock_sigv4_configuration", bedrock.ErrSigV4Configuration.Error())
+		return
+	}
+	httpx.Error(w, r, http.StatusBadRequest, "cave_header_mapping_failed", "Headers could not be mapped safely.")
 }
 
 func providerPrefixEvidence(adapter providers.Adapter, body []byte, meta providers.RequestMetadata) (string, string, bool) {
@@ -576,15 +625,19 @@ func providerPrefixEvidence(adapter providers.Adapter, body []byte, meta provide
 }
 
 type requestEvidence struct {
-	SessionID               string
-	SessionCorrelationBasis string
-	AgentBuildSHA256        string
-	EfficiencyPlanSHA256    string
-	ContextBill             string
-	TransformTrace          string
-	TransformLocation       string
-	CacheEpoch              string
-	CachePrefixSHA256       string
+	// Transient references only: counted after response delivery, never persisted.
+	originalBody                  []byte
+	acceptedBody                  []byte
+	statsPricingUnsupportedReason string
+	SessionID                     string
+	SessionCorrelationBasis       string
+	AgentBuildSHA256              string
+	EfficiencyPlanSHA256          string
+	ContextBill                   string
+	TransformTrace                string
+	TransformLocation             string
+	CacheEpoch                    string
+	CachePrefixSHA256             string
 }
 
 func requestEvidenceFromHeaders(headers http.Header) requestEvidence {
@@ -1223,7 +1276,7 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 	inputCost, outputCost, cachedCost := costBreakdown(meta.Provider, price, usage)
 	total := cost.RoundUSD(inputCost + outputCost + cachedCost)
 	savings := 0.0
-	if authMode == AuthModePAYG && status < 400 && usage.Complete() {
+	if authMode == AuthModePAYG && status < 400 && usage.Complete() && !usage.ProviderError {
 		savings = cacheSavingsUSD(price, usage, optimizers)
 	}
 	if len(usage.CallObservations) > 0 {
@@ -1239,7 +1292,7 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 			multiInput += oneInput
 			multiOutput += oneOutput
 			multiCached += oneCached
-			if authMode == AuthModePAYG && status < 400 {
+			if authMode == AuthModePAYG && status < 400 && !usage.ProviderError && !callUsage.ProviderError {
 				multiSavings += cacheSavingsUSD(callPrice, callUsage, optimizers)
 			}
 		}
@@ -1260,11 +1313,8 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 	// the compressed bytes must have actually been processed for the saving to be real.
 	var compRatio, compHandle = 0.0, ""
 	var compBefore, compAfter int
-	if comp != nil {
+	if comp != nil && status >= 200 && status < 300 && errorCode == "" && !usage.ProviderError && !retrieved {
 		compRatio, compBefore, compAfter, compHandle = comp.ratio, comp.before, comp.after, comp.handle
-		if authMode == AuthModePAYG && comp.bookSavings && status < 400 && !retrieved {
-			savings = cost.RoundUSD(savings + compressionSavingsUSD(price, comp.before, comp.after, optimizers, usage))
-		}
 	}
 	// The tool-schema strip has its own CCR original. A strip-only request has no
 	// compressionOutcome at all, so without this the row would name an optimizer
@@ -1294,7 +1344,7 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 	if cacheStatus == "" {
 		cacheStatus = "unknown"
 	}
-	s.sink.Record(RequestRecord{
+	row := RequestRecord{
 		Timestamp:                    time.Now().UTC().Format("2006-01-02 15:04:05.000"),
 		RequestID:                    requestID,
 		TraceID:                      traceID,
@@ -1330,6 +1380,7 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 		OutputTokens:                 usage.OutputTokens,
 		CachedInputTokens:            usage.CachedInputTokens,
 		CacheCreationInputTokens:     usage.CacheCreationInputTokens,
+		CacheCreation1hTokens:        usage.CacheCreation1hTokens,
 		ReasoningTokens:              usage.ReasoningTokens,
 		TotalCostUSD:                 total,
 		SavingsUSD:                   savings,
@@ -1345,11 +1396,25 @@ func (s *Server) record(start time.Time, ttfb int64, requestID, traceID string, 
 		CompressionRatio:             compRatio,
 		CompressionTokensBefore:      compBefore,
 		CompressionTokensAfter:       compAfter,
-		CompressionTokenCountBasis:   standaloneCompressionBasis(comp),
+		CompressionTokenCountBasis:   "",
 		RecoveryHandle:               compHandle,
 		WouldSaveTokens:              wouldSaveTokens,
 		WouldSaveUSD:                 wouldSaveUSD,
-	})
+	}
+	if compBefore > 0 {
+		row.CompressionTokenCountBasis = standaloneCompressionBasis(comp)
+	}
+	statsMeta := meta
+	if evidence.statsPricingUnsupportedReason != "" {
+		statsMeta.PricingUnsupportedReason = evidence.statsPricingUnsupportedReason
+	}
+	requestAccounting(&row, statsMeta, usage, evidence.originalBody, evidence.acceptedBody, retrieved)
+	// The legacy inferred-dollar field now uses the whole-request net delta too.
+	// Marker/tool overhead and regressions must not disappear behind segment wins.
+	if authMode == AuthModePAYG && comp != nil && comp.bookSavings && hasCompressionOptimizer(optimizers) && row.RequestEstimatedInputDeltaUSD != nil {
+		row.SavingsUSD = cost.RoundUSD(row.SavingsUSD + *row.RequestEstimatedInputDeltaUSD)
+	}
+	s.sink.Record(row)
 }
 
 // costBreakdown prices normalized provider usage. Cache and reasoning fields are
@@ -1526,39 +1591,14 @@ func hasCompressionOptimizer(optimizers []string) bool {
 	return false
 }
 
-// compressionSavingsUSD is the inferred dollar value of the input tokens that S4
-// content compression removed before the request reached the provider. It is gated
-// on the compression optimizer id so a request we did not compress can never
-// attribute a saving, and it returns 0 unless the result was actually smaller. In
-// standalone the figure is recorded as `inferred` — never `verified`; this mirrors
-// the cloud gateway's verifiedCacheSavings gating discipline (the gate is the
-// point, not the label).
-//
-// The removed tokens are valued at the model's FULL input rate only when the
-// request was not predominantly served from cache. On cache-heavy traffic, valuing
-// them at the full input rate overstates the saving ~10x — the tokens compression
-// displaced would have been billed at the far cheaper cache-read rate. So, mirroring
-// cacheSavingsUSD's honest counterfactual and the honesty-culture "under-claim,
-// never blend" rule, when cache reads dominated the billed input the removed tokens
-// are valued at the cache-read rate instead (issue #133).
+// compressionSavingsUSD retains the legacy helper contract while pricing signed
+// deltas with observed cache proportions. New records use whole-request counts.
 func compressionSavingsUSD(price cost.Price, before, after int, optimizers []string, usage providers.UsageObservation) float64 {
 	if !hasCompressionOptimizer(optimizers) {
 		return 0
 	}
-	if before <= after {
-		return 0
-	}
-	rate := price.InputPerMillion
-	if usage.CachedInputTokens >= 0 && usage.CacheCreationInputTokens >= 0 {
-		billableFresh := usage.InputTokens - usage.CachedInputTokens - usage.CacheCreationInputTokens
-		if usage.CachedInputTokens > 0 && usage.CachedInputTokens >= billableFresh && price.CacheReadPerMillion > 0 {
-			rate = price.CacheReadPerMillion
-		}
-	}
-	return cost.RoundUSD(cost.EstimateUSD(
-		cost.Price{InputPerMillion: rate},
-		cost.Usage{InputTokens: before - after},
-	))
+	value, _ := weightedInputDeltaUSD(price, before-after, usage)
+	return value
 }
 
 func labelOrDefault(v, fallback string) string {
@@ -1596,6 +1636,33 @@ func (c *countingWriter) Write(p []byte) (int, error) {
 	n, err := c.w.Write(p)
 	c.n += int64(n)
 	return n, err
+}
+
+// streamResponse copies an upstream body to a client whose response headers are
+// already committed. It is the single home for that epilogue: the provider proxy
+// and the ChatGPT route must classify an interrupted copy identically, and this
+// classification is what keeps a truncated stream out of the ledger as a success.
+//
+// It flushes before the first read when the response protocol streams, so the
+// client sees the head of an SSE stream without waiting for a full buffer. The
+// returned code is "" for a clean copy; anything else means the client holds a
+// partial body and the caller must panic(http.ErrAbortHandler) AFTER recording
+// the row, so HTTP framing breaks instead of looking like a clean EOF.
+func (s *Server) streamResponse(w http.ResponseWriter, r *http.Request, src io.Reader, stream bool, requestID string) (*countingWriter, string) {
+	if stream {
+		_ = http.NewResponseController(w).Flush()
+	}
+	counter := &countingWriter{w: w}
+	if _, err := copyFlush(counter, src); err != nil {
+		if s.logger != nil {
+			s.logger.Warn("client stream copy failed", "error", redact.Error(err), "request_id", requestID)
+		}
+		if r.Context().Err() != nil {
+			return counter, "cave_client_canceled"
+		}
+		return counter, "cave_upstream_body_read_failed"
+	}
+	return counter, ""
 }
 
 func copyFlush(dst *countingWriter, src io.Reader) (int64, error) {

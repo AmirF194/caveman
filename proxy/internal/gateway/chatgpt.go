@@ -173,7 +173,7 @@ func (s *Server) chatgpt(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		httpx.Error(w, r, http.StatusBadGateway, "cave_upstream_unreachable", "ChatGPT upstream is unreachable.")
 		requestHashComplete := chatGPTRequestHashComplete(requestBodyFullyRead, r.ContentLength, reqCapture, requestBodyTracker)
-		s.recordChatGPT(rc, r, requestID, traceID, suffix, start, 0, "cave_upstream_unreachable", reqCapture, reqHash.Sum(nil), transformedChatGPTHash(reqHash.Sum(nil), transform.Body), requestHashComplete, nil, 0, false, transform.OptimizerIDs, comp, compressEligible)
+		s.recordChatGPT(rc, r, requestID, traceID, suffix, start, 0, "cave_upstream_unreachable", reqCapture, reqHash.Sum(nil), transformedChatGPTHash(reqHash.Sum(nil), transform.Body), requestHashComplete, nil, 0, false, transform.OptimizerIDs, comp, compressEligible, transform.Body)
 		return
 	}
 	// OAuth backends can reject byte-modified requests for undocumented reasons.
@@ -192,7 +192,7 @@ func (s *Server) chatgpt(w http.ResponseWriter, r *http.Request) {
 		})
 		if doErr != nil {
 			httpx.Error(w, r, http.StatusBadGateway, "cave_upstream_unreachable", "ChatGPT upstream is unreachable.")
-			s.recordChatGPT(rc, r, requestID, traceID, suffix, start, 0, "cave_upstream_unreachable", reqCapture, reqHash.Sum(nil), reqHash.Sum(nil), true, nil, 0, false, nil, nil, compressEligible)
+			s.recordChatGPT(rc, r, requestID, traceID, suffix, start, 0, "cave_upstream_unreachable", reqCapture, reqHash.Sum(nil), reqHash.Sum(nil), true, nil, 0, false, nil, nil, compressEligible, originalBody)
 			return
 		}
 		resp = retryResp
@@ -225,18 +225,8 @@ func (s *Server) chatgpt(w http.ResponseWriter, r *http.Request) {
 
 	respCapture := &cappedBuffer{limit: chatGPTCaptureLimit}
 	stream := streamingResponse(resp.Header)
-	if stream {
-		_ = http.NewResponseController(w).Flush()
-	}
-	counter := &countingWriter{w: w}
-	respBytes, copyErr := copyFlush(counter, io.TeeReader(resp.Body, respCapture))
-	errCode := ""
-	if copyErr != nil {
-		errCode = "cave_upstream_body_read_failed"
-		if r.Context().Err() != nil {
-			errCode = "cave_client_canceled"
-		}
-	}
+	counter, errCode := s.streamResponse(w, r, io.TeeReader(resp.Body, respCapture), stream, requestID)
+	respBytes := counter.n
 
 	// The streaming path forwarded the request without ever holding it whole, so it
 	// captures only what it can state truthfully: the whole body's length and hash,
@@ -256,7 +246,7 @@ func (s *Server) chatgpt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requestHashComplete := chatGPTRequestHashComplete(requestBodyFullyRead, r.ContentLength, reqCapture, requestBodyTracker)
-	s.recordChatGPT(rc, r, requestID, traceID, suffix, start, resp.StatusCode, errCode, reqCapture, reqHash.Sum(nil), transformedChatGPTHash(reqHash.Sum(nil), transform.Body), requestHashComplete, respCapture, respBytes, stream, transform.OptimizerIDs, comp, compressEligible)
+	s.recordChatGPT(rc, r, requestID, traceID, suffix, start, resp.StatusCode, errCode, reqCapture, reqHash.Sum(nil), transformedChatGPTHash(reqHash.Sum(nil), transform.Body), requestHashComplete, respCapture, respBytes, stream, transform.OptimizerIDs, comp, compressEligible, transform.Body)
 
 	// Path, status, and timing only — request headers carry the operator's
 	// OAuth credential and are never logged on this route.
@@ -265,7 +255,9 @@ func (s *Server) chatgpt(w http.ResponseWriter, r *http.Request) {
 			"path", suffix, "status", resp.StatusCode,
 			"latency_ms", time.Since(start).Milliseconds(), "stream", stream, "compressed", comp != nil, "error_code", errCode)
 	}
-	if copyErr != nil {
+	if errCode != "" {
+		// Same contract as the provider proxy: the row is recorded, then framing
+		// is aborted so a partial body is never a clean EOF.
 		panic(http.ErrAbortHandler)
 	}
 }
@@ -278,7 +270,7 @@ func transformedChatGPTHash(raw []byte, transformed []byte) []byte {
 	return sum[:]
 }
 
-func (s *Server) recordChatGPT(rc RequestContext, r *http.Request, requestID, traceID, endpoint string, start time.Time, status int, errCode string, reqCapture *cappedBuffer, reqHash, transformedHash []byte, requestHashComplete bool, respCapture *cappedBuffer, respBytes int64, stream bool, optimizers []string, comp *compressionOutcome, compressionEligible bool) {
+func (s *Server) recordChatGPT(rc RequestContext, r *http.Request, requestID, traceID, endpoint string, start time.Time, status int, errCode string, reqCapture *cappedBuffer, reqHash, transformedHash []byte, requestHashComplete bool, respCapture *cappedBuffer, respBytes int64, stream bool, optimizers []string, comp *compressionOutcome, compressionEligible bool, acceptedBody []byte) {
 	if s.sink == nil {
 		return
 	}
@@ -305,13 +297,13 @@ func (s *Server) recordChatGPT(rc RequestContext, r *http.Request, requestID, tr
 	var compRatio float64
 	var compBefore, compAfter int
 	var compHandle, compBasis string
-	if comp != nil {
+	if comp != nil && status >= 200 && status < 300 && errCode == "" && !usage.ProviderError {
 		compRatio, compBefore, compAfter, compHandle = comp.ratio, comp.before, comp.after, comp.handle
 		if comp.before > comp.after {
 			compBasis = "estimated_engine_o200k"
 		}
 	}
-	s.sink.Record(RequestRecord{
+	row := RequestRecord{
 		// storeTSLayout, not RFC3339Nano: the store's `ts` column is space-separated
 		// and compared/ordered as text. 'T' sorts after ' ', so RFC3339 rows landed
 		// on the wrong side of every `--since` bound and mis-sorted under ORDER BY ts.
@@ -339,6 +331,7 @@ func (s *Server) recordChatGPT(rc RequestContext, r *http.Request, requestID, tr
 		OutputTokens:             usage.OutputTokens,
 		CachedInputTokens:        usage.CachedInputTokens,
 		CacheCreationInputTokens: usage.CacheCreationInputTokens,
+		CacheCreation1hTokens:    usage.CacheCreation1hTokens,
 		ReasoningTokens:          usage.ReasoningTokens,
 		// Subscription traffic is unpriced: zero dollars, never an API-rate
 		// guess (no-fake-savings). Token counts above are the honest meter.
@@ -357,7 +350,24 @@ func (s *Server) recordChatGPT(rc RequestContext, r *http.Request, requestID, tr
 		CompressionTokensAfter:     compAfter,
 		CompressionTokenCountBasis: compBasis,
 		RecoveryHandle:             compHandle,
-	})
+	}
+	var originalBody []byte
+	meta := providers.RequestMetadata{Provider: "chatgpt-subscription", Model: model}
+	if requestHashComplete && reqCapture != nil && !reqCapture.truncated {
+		originalBody = reqCapture.buf.Bytes()
+		if inspected, err := openai.New("").InspectRequest(r.Context(), bytes.NewReader(originalBody), r.Header); err == nil {
+			meta = inspected
+			meta.Provider = "chatgpt-subscription"
+		}
+	}
+	if s.chatGPTUpstream != DefaultChatGPTUpstream {
+		meta.PricingUnsupportedReason = "custom_subscription_origin"
+	}
+	if acceptedBody == nil {
+		acceptedBody = originalBody
+	}
+	requestAccounting(&row, meta, usage, originalBody, acceptedBody, false)
+	s.sink.Record(row)
 }
 
 type eofTrackingReader struct {
