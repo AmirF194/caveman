@@ -66,7 +66,10 @@ func main() {
 	case "learn":
 		runLearn(logger, os.Args[2:])
 	case "status":
-		runStatus(logger, os.Args[2:])
+		// status prints one JSON document on stdout, which the CLI parses whole.
+		// Its diagnostics go to stderr so a config error cannot interleave a
+		// second JSON object into that document.
+		runStatus(slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{ReplaceAttr: redact.SlogReplaceAttr})), os.Args[2:])
 	case "version":
 		runVersion(os.Args[2:])
 	case "native-why":
@@ -194,7 +197,7 @@ func runServe(logger *slog.Logger) {
 		os.Exit(1)
 	}
 	for _, skipped := range cfg.SkippedCABundles {
-		logger.Warn("CA bundle env var names a missing file; skipped", "bundle", skipped)
+		logger.Warn("CA bundle env var names an unusable file; skipped", "env", skipped.Env, "error", skipped.Error)
 	}
 	spend, err := store.Open(dbPath(home), logger)
 	if err != nil {
@@ -281,6 +284,12 @@ func runServe(logger *slog.Logger) {
 	// its requested recovery contract before making a compression claim.
 	state.RecoveryViaMCP = env.String("CAVEMAN_RECOVERY", "") == "mcp"
 	state.CompatUpstreams = compatUpstreams(cfg)
+	state.ProviderUpstreams = standalone.ProviderUpstreams(cfg)
+	state.CompatForwardHeaders = make(map[string][]string)
+	for name, mount := range cfg.CompatUpstreams() {
+		state.CompatForwardHeaders[name] = append([]string(nil), mount.ForwardHeaders...)
+	}
+	srv.Handler = withInstanceIdentity(handler, state.InstanceToken)
 	if err := runstate.Write(home, state); err != nil {
 		_ = listener.Close()
 		logger.Error("cannot write proxy run state", "error", err)
@@ -300,6 +309,18 @@ func runServe(logger *slog.Logger) {
 	if err := runstate.RemoveMatching(home, state.Port, state.InstanceToken); err != nil {
 		logger.Warn("cannot remove proxy run state", "error", err)
 	}
+}
+
+// withInstanceIdentity proves that the health listener is the generation named
+// by its run-state file. The token is never attached to inference traffic.
+func withInstanceIdentity(next http.Handler, token string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && r.URL.Path == "/health/live" {
+			w.Header().Set(runstate.InstanceHeader, token)
+			w.Header().Set("Cache-Control", "no-store")
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 // compatUpstreams flattens the named OpenAI-compatible mounts to name → base URL
@@ -348,15 +369,19 @@ func runStatus(logger *slog.Logger, args []string) {
 		}
 		port = parsed
 	} else {
-		// Status only needs the listen port. A config error elsewhere (a typo'd
-		// CAVE_UPSTREAM_PROXY, say) must not hide the proxy's real state from the
-		// operator who is debugging exactly that.
-		listen := config.DefaultListen
-		if cfg, err := config.Load(env.String("CAVEMAN_CONFIG", filepath.Join(home, "caveman.yaml"))); err == nil {
-			listen = cfg.Listen
-		}
-		parsed, err := runstate.PortFromListen(listen)
+		// Status reads the port from the same config the proxy serves on. A config
+		// that does not load says nothing about the listener: report Unknown with
+		// the reason on stderr rather than probing DefaultListen, which would
+		// report some other port's state as if it were this config's.
+		cfg, err := config.Load(env.String("CAVEMAN_CONFIG", filepath.Join(home, "caveman.yaml")))
 		if err != nil {
+			logger.Error("cannot load caveman.yaml; status is unknown", "error", err)
+			printJSON(runstate.Unknown())
+			return
+		}
+		parsed, err := runstate.PortFromListen(cfg.Listen)
+		if err != nil {
+			logger.Error("caveman.yaml listen is not a usable address", "listen", cfg.Listen, "error", err)
 			printJSON(runstate.Unknown())
 			return
 		}
@@ -388,6 +413,10 @@ func runVersion(args []string) {
 // runStats prints the local spend summary as JSON for `caveman stats`. The
 // summary's basis is always "inferred"; the figures are never re-projected.
 func runStats(logger *slog.Logger, args []string) {
+	if hasArg(args, "--report") {
+		runStatsReport(logger, args)
+		return
+	}
 	home := mustHome(logger)
 	spend, err := store.Open(dbPath(home), logger)
 	if err != nil {
