@@ -8,10 +8,8 @@ package standalone
 import (
 	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"sort"
 	"strings"
 	"time"
@@ -52,14 +50,60 @@ type Creds struct{ cfg config.Config }
 
 func (c Creds) Resolve(provider string, r *http.Request) providers.Credential {
 	fallbackEnv := c.authFallbackEnv(provider, r)
-	if k := strings.TrimSpace(r.Header.Get("x-api-key")); k != "" {
+	// SDKs use provider-specific API-key headers. Resolve the selected provider's
+	// native header before the legacy x-api-key alias or any configured fallback,
+	// otherwise a shared listener can replace the caller's principal with its own.
+	// Never consult another provider's native header on this route.
+	key := ""
+	switch provider {
+	case "gemini":
+		var err error
+		key, err = gemini.RequestAPIKey(r)
+		if err != nil {
+			return providers.Credential{Mode: "ephemeral_header"}
+		}
+		// Keep an explicit OAuth credential when its API key came only from the
+		// URL. The adapter retains that caller-supplied key in its native header.
+		if auth := strings.TrimSpace(r.Header.Get("Authorization")); auth != "" &&
+			!strings.EqualFold(auth, "Bearer no-key-required") &&
+			strings.TrimSpace(r.Header.Get("x-goog-api-key")) == "" && strings.TrimSpace(r.Header.Get("x-api-key")) == "" {
+			key = ""
+		}
+	case "azure_openai":
+		key = strings.TrimSpace(r.Header.Get("api-key"))
+	case "vertex":
+		var err error
+		key, err = providers.GoogleRequestAPIKey(r)
+		if err != nil {
+			return providers.Credential{Mode: "ephemeral_header"}
+		}
+		if key != "" {
+			// Vertex's default credential is OAuth. Mark an explicitly selected
+			// Express API key so it keeps Google's native header instead.
+			return providers.Credential{Mode: "ephemeral_header", Key: key, Scheme: "api_key"}
+		}
+	}
+	if key == "" {
+		key = strings.TrimSpace(r.Header.Get("x-api-key"))
+	}
+	if k := key; k != "" {
 		credential := providers.Credential{Mode: "ephemeral_header", Key: k, AuthFallbackEnv: fallbackEnv}
 		if provider == "bedrock" {
 			credential.AuthKind = "bedrock_api_key"
 		}
 		return credential
 	}
-	if a := r.Header.Get("authorization"); a != "" {
+	if a := strings.TrimSpace(r.Header.Get("authorization")); a != "" {
+		if provider == "bedrock" && !strings.EqualFold(strings.Fields(a)[0], "Bearer") {
+			// SDK SigV4 signatures cover the original authority/path/body and
+			// cannot survive a base-URL swap. Resolve IAM separately from bearer
+			// fallback; the Bedrock adapter checks the caller's requested principal
+			// and signs the actual upstream bytes, or rejects the request.
+			credential := c.cfg.BedrockSigningCredential()
+			credential.Scheme = "sigv4"
+			credential.AuthKind = "aws_access_keys"
+			return credential
+		}
 		credential := providers.Credential{Mode: "ephemeral_header", Key: bearerKey(a), Scheme: "bearer", AuthFallbackEnv: fallbackEnv}
 		if provider == "bedrock" {
 			credential.AuthKind = "bedrock_api_key"
@@ -153,7 +197,7 @@ type Options struct {
 func New(cfg config.Config, sink gateway.TelemetrySink, opts Options) *gateway.Server {
 	client := opts.HTTPClient
 	if client == nil {
-		client = StandaloneHTTPClient(time.Duration(env.Int("CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS", 0))*time.Millisecond, cfg.UpstreamProxyFunc(), cfg.RootCAs())
+		client = StandaloneHTTPClient(cfg, time.Duration(env.Int("CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS", 0))*time.Millisecond)
 	}
 	return gateway.New(gateway.Config{
 		Adapters:             buildAdapters(cfg),
@@ -277,11 +321,23 @@ func (c *engineCompressor) RetrieveOriginal(handle, query string) ([]byte, error
 // OpenAI-compatible adapter stay opt-in because they have no universal endpoint.
 // The named compat mounts come from Config.CompatUpstreams, which includes the
 // built-in OpenCode Go mount.
+// ProviderUpstreams publishes the same native base URLs that buildAdapters uses.
+// Wrappers must match a selected host's endpoint against the running proxy, not
+// a configuration file that may have changed after this listener started.
+func ProviderUpstreams(cfg config.Config) map[string]string {
+	return map[string]string{
+		"anthropic": cfg.BaseURL("anthropic", "https://api.anthropic.com"),
+		"openai":    cfg.BaseURL("openai", "https://api.openai.com"),
+		"gemini":    cfg.BaseURL("gemini", "https://generativelanguage.googleapis.com"),
+	}
+}
+
 func buildAdapters(cfg config.Config) []providers.Adapter {
+	upstreams := ProviderUpstreams(cfg)
 	adapters := []providers.Adapter{
-		anthropic.New(cfg.BaseURL("anthropic", "https://api.anthropic.com")),
-		openai.New(cfg.BaseURL("openai", "https://api.openai.com")),
-		gemini.New(cfg.BaseURL("gemini", "https://generativelanguage.googleapis.com")),
+		anthropic.New(upstreams["anthropic"]),
+		openai.New(upstreams["openai"]),
+		gemini.New(upstreams["gemini"]),
 		bedrock.New(cfg.BedrockBaseURL()),
 	}
 	if u := cfg.BaseURL("azure_openai", ""); u != "" {
@@ -297,7 +353,7 @@ func buildAdapters(cfg config.Config) []providers.Adapter {
 	}
 	sort.Strings(compatNames)
 	for _, name := range compatNames {
-		adapter, err := openaicompat.NewNamed(name, compat[name].BaseURL)
+		adapter, err := openaicompat.NewNamed(name, compat[name].BaseURL, compat[name].ForwardHeaders...)
 		if err != nil {
 			// This error cannot occur through config.Load, which validates every
 			// compat entry with the same ValidateName and ValidateBaseURL. The
@@ -322,21 +378,22 @@ func buildAdapters(cfg config.Config) []providers.Adapter {
 // which requires self-hosted mode: managed mode ignores the allowlist by
 // contract, so building on ManagedConfig here would make the documented escape
 // hatch a silent no-op (loopback/private stay blocked unless allowlisted).
-// proxy (config.Config.UpstreamProxyFunc) is nil for a direct client; rootCAs
-// (config.Config.RootCAs) is nil for Go's default verification.
-func StandaloneHTTPClient(timeout time.Duration, proxy func(*http.Request) (*url.URL, error), rootCAs *x509.CertPool) *http.Client {
-	cfg := ssrf.SelfHostedConfig()
-	cfg.Proxy = proxy
+// The upstream proxy selector and the extra TLS roots come from cfg (a Config
+// that never went through config.Load is direct, on Go's default verification).
+func StandaloneHTTPClient(cfg config.Config, timeout time.Duration) *http.Client {
+	guard := ssrf.SelfHostedConfig()
+	guard.Proxy = cfg.UpstreamProxyFunc()
 	if raw := env.String("CAVE_SSRF_ALLOWLIST", ""); raw != "" {
-		cfg.AllowList = strings.Split(raw, ",")
+		guard.AllowList = strings.Split(raw, ",")
 	}
-	client := ssrf.NewHTTPClient(cfg)
+	client := ssrf.NewHTTPClient(guard)
 	// Go otherwise injects Accept-Encoding: gzip when callers omit it and then
 	// transparently decodes the provider response. Standalone record mode promises
 	// exact response wire bytes, so transport compression must stay disabled.
 	if transport, ok := client.Transport.(*http.Transport); ok {
 		transport.DisableCompression = true
-		if rootCAs != nil {
+		gateway.BoundUpstreamTransport(transport)
+		if rootCAs := cfg.RootCAs(); rootCAs != nil {
 			transport.TLSClientConfig = &tls.Config{RootCAs: rootCAs, MinVersion: tls.VersionTLS12}
 		}
 	}

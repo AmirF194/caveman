@@ -3,6 +3,7 @@ package standalone
 import (
 	"bytes"
 	"compress/gzip"
+	"crypto/sha256"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
@@ -323,7 +324,7 @@ func TestStandaloneProductionTransportPreservesEncodedResponseWireBytes(t *testi
 	srv := New(config.Config{
 		Mode:      "record",
 		Providers: map[string]config.ProviderConfig{"openai": {BaseURL: upstream.URL}},
-	}, spend, Options{HTTPClient: StandaloneHTTPClient(time.Minute, nil, nil)})
+	}, spend, Options{HTTPClient: StandaloneHTTPClient(config.Config{}, time.Minute)})
 
 	for _, tc := range []struct {
 		name           string
@@ -963,15 +964,103 @@ func TestStandaloneGeminiGoogleEnvFallbackEndToEnd(t *testing.T) {
 	}
 }
 
+// Native SDK API-key headers must retain the caller's principal, including when
+// the persistent proxy has an unrelated provider key configured in its process.
+func TestStandaloneNativeProviderHeadersEndToEnd(t *testing.T) {
+	for _, provider := range []struct{ name, path, header, env string }{
+		{"gemini", "/gemini/v1beta/models/gemini-2.5-flash:generateContent", "x-goog-api-key", "GEMINI_API_KEY"},
+		{"azure_openai", "/azure/openai/v1/chat/completions", "api-key", "AZURE_OPENAI_API_KEY"},
+	} {
+		t.Run(provider.name, func(t *testing.T) {
+			for _, scenario := range []struct {
+				name, envKey string
+				otherAuth    bool
+			}{
+				{name: "SDK key only"},
+				{name: "SDK key overrides configured account", envKey: "different-account-key"},
+				{name: "native header takes API-key precedence", envKey: "different-account-key", otherAuth: true},
+			} {
+				t.Run(scenario.name, func(t *testing.T) {
+					t.Setenv(provider.env, scenario.envKey)
+					t.Setenv("GOOGLE_API_KEY", "")
+					upstream := &captureUpstreamTransport{response: `{}`}
+					spend, err := store.Open(filepath.Join(t.TempDir(), "caveman.db"), nil)
+					if err != nil {
+						t.Fatal(err)
+					}
+					defer spend.Close()
+					srv := New(config.Config{
+						Mode: "record",
+						Providers: map[string]config.ProviderConfig{
+							provider.name: {BaseURL: "https://upstream.test"},
+						},
+					}, spend, Options{HTTPClient: &http.Client{Transport: upstream}})
+					const body = `{"model":"model","messages":[],"contents":[]}`
+					req := httptest.NewRequest(http.MethodPost, provider.path, strings.NewReader(body))
+					req.Header.Set(provider.header, "inbound-caller-key")
+					if scenario.otherAuth {
+						req.Header.Set("x-api-key", "legacy-alias-key")
+						req.Header.Set("Authorization", "Bearer another-key")
+					}
+					rec := httptest.NewRecorder()
+					srv.Handler().ServeHTTP(rec, req)
+					if rec.Code != http.StatusOK {
+						t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+					}
+					if got := upstream.headers.Get(provider.header); got != "inbound-caller-key" {
+						t.Errorf("upstream %s = %q, want inbound-caller-key", provider.header, got)
+					}
+					if got := upstream.headers.Get("Authorization"); got != "" {
+						t.Errorf("upstream Authorization = %q, want no competing credential", got)
+					}
+					if string(upstream.body) != body {
+						t.Errorf("record-mode body changed: %s", upstream.body)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestCredsNativeProviderHeadersStayProviderScoped(t *testing.T) {
+	for _, tc := range []struct{ provider, env string }{
+		{"gemini", "GEMINI_API_KEY"},
+		{"azure_openai", "AZURE_OPENAI_API_KEY"},
+		{"anthropic", "ANTHROPIC_API_KEY"},
+		{"openai", "OPENAI_API_KEY"},
+		{"openai_compatible", "OPENAI_COMPAT_API_KEY"},
+	} {
+		t.Run(tc.provider, func(t *testing.T) {
+			t.Setenv(tc.env, "selected-provider-key")
+			req := httptest.NewRequest(http.MethodPost, "/unused", nil)
+			if tc.provider != "gemini" {
+				req.Header.Set("x-goog-api-key", "other-google-key")
+			}
+			if tc.provider != "azure_openai" {
+				req.Header.Set("api-key", "other-azure-key")
+			}
+			creds := Creds{cfg: config.Config{}}
+			if got := creds.Resolve(tc.provider, req); got.Key != "selected-provider-key" || got.AuthFallbackEnv != tc.env {
+				t.Errorf("foreign native header displaced selected provider: %+v", got)
+			}
+			req.Header.Set("Authorization", "Bearer inbound-bearer")
+			if got := creds.Resolve(tc.provider, req); got.Key != "inbound-bearer" || got.Scheme != "bearer" {
+				t.Errorf("foreign native header displaced caller bearer: %+v", got)
+			}
+		})
+	}
+}
+
 // TestStandaloneAzureAuthBoundariesEndToEnd keeps the synthetic placeholder
 // path distinct from real Entra bearer credentials: the exact sentinel may be
-// replaced by AZURE_OPENAI_API_KEY in api-key, while a real bearer remains a
-// fail-closed 400 until an explicit Azure bearer contract is wired.
+// replaced by AZURE_OPENAI_API_KEY in api-key, while a real bearer keeps its
+// scheme and principal, including when another account's env key is configured.
 func TestStandaloneAzureAuthBoundariesEndToEnd(t *testing.T) {
 	const azurePath = "/azure/openai/deployments/gpt-prod/chat/completions?api-version=2024-10-21"
 	const response = `{"id":"azure","model":"gpt-5.5","choices":[{"message":{"role":"assistant","content":"ok"}}],"usage":{"prompt_tokens":1,"completion_tokens":1}}`
 	cases := []struct {
 		name       string
+		path       string
 		inbound    string
 		azureKey   string
 		openaiKey  string
@@ -988,10 +1077,28 @@ func TestStandaloneAzureAuthBoundariesEndToEnd(t *testing.T) {
 			wantAPIKey: "azure-key",
 		},
 		{
-			name:       "real bearer fails closed",
+			name:       "real bearer preserves its scheme and account",
 			inbound:    "Bearer entra-access-token",
 			azureKey:   "azure-key",
-			wantStatus: http.StatusBadRequest,
+			openaiKey:  "openai-unrelated",
+			wantStatus: http.StatusOK,
+			wantAuth:   "Bearer entra-access-token",
+		},
+		{
+			name:       "OpenAI v1 SDK Bearer API key",
+			path:       "/azure/openai/v1/chat/completions",
+			inbound:    "Bearer provider-api-key",
+			azureKey:   "azure-other-account",
+			openaiKey:  "openai-unrelated",
+			wantStatus: http.StatusOK,
+			wantAuth:   "Bearer provider-api-key",
+		},
+		{
+			name:       "JWT-shaped env API key remains opaque",
+			azureKey:   "eyJopaque-api-key",
+			openaiKey:  "openai-unrelated",
+			wantStatus: http.StatusOK,
+			wantAPIKey: "eyJopaque-api-key",
 		},
 	}
 	for _, tc := range cases {
@@ -1009,7 +1116,11 @@ func TestStandaloneAzureAuthBoundariesEndToEnd(t *testing.T) {
 				Mode:      "record",
 				Providers: map[string]config.ProviderConfig{"azure_openai": {BaseURL: "https://upstream.test"}},
 			}, spend, Options{HTTPClient: &http.Client{Transport: upstream}})
-			req := httptest.NewRequest(http.MethodPost, azurePath, strings.NewReader(`{"model":"gpt-5.5","messages":[]}`))
+			path := tc.path
+			if path == "" {
+				path = azurePath
+			}
+			req := httptest.NewRequest(http.MethodPost, path, strings.NewReader(`{"model":"gpt-5.5","messages":[]}`))
 			if tc.inbound != "" {
 				req.Header.Set("authorization", tc.inbound)
 			}
@@ -1030,6 +1141,189 @@ func TestStandaloneAzureAuthBoundariesEndToEnd(t *testing.T) {
 				}
 			} else if upstream.headers != nil {
 				t.Fatalf("upstream was called for rejected Azure bearer: %#v", upstream.headers)
+			}
+		})
+	}
+}
+
+func TestStandaloneBedrockResignsSDKRequests(t *testing.T) {
+	const requestPath = "/bedrock/model/global.anthropic.claude-sonnet-4-6/converse"
+	const input = `{"system":[{"text":"stable policy"}],"messages":[{"role":"user","content":[{"text":"hello"}]}]}`
+	const secret = "configured-signing-secret"
+	for _, tc := range []struct {
+		name, accessKey, session string
+	}{
+		{"IAM takes precedence over configured bearer", "AKIAEXAMPLE", ""},
+		{"temporary IAM retains session token", "ASIAEXAMPLE", "temporary-session-token"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("AWS_ACCESS_KEY_ID", tc.accessKey)
+			t.Setenv("AWS_SECRET_ACCESS_KEY", secret)
+			t.Setenv("AWS_SESSION_TOKEN", tc.session)
+			t.Setenv("AWS_BEARER_TOKEN_BEDROCK", "another-account-bearer")
+			upstream := &captureUpstreamTransport{response: `{}`}
+			spend, err := store.Open(filepath.Join(t.TempDir(), "caveman.db"), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer spend.Close()
+			srv := New(config.Config{
+				Mode:       "active",
+				Optimizers: map[string]bool{"bedrock-cache-points": true},
+				Providers:  map[string]config.ProviderConfig{"bedrock": {BaseURL: "https://bedrock-runtime.us-east-1.amazonaws.com"}},
+			}, spend, Options{HTTPClient: &http.Client{Transport: upstream}})
+			req := httptest.NewRequest(http.MethodPost, requestPath, strings.NewReader(input))
+			inboundAuth := "AWS4-HMAC-SHA256 Credential=" + tc.accessKey + "/20260907/us-east-1/bedrock/aws4_request, SignedHeaders=host;x-amz-date, Signature=" + strings.Repeat("0", 64)
+			req.Header.Set("Authorization", inboundAuth)
+			req.Header.Set("X-Amz-Date", "20260907T000000Z")
+			if tc.session != "" {
+				req.Header.Set("X-Amz-Security-Token", tc.session)
+			}
+			rec := httptest.NewRecorder()
+			srv.Handler().ServeHTTP(rec, req)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+			}
+			outboundAuth := upstream.headers.Get("Authorization")
+			if !strings.HasPrefix(outboundAuth, "AWS4-HMAC-SHA256 Credential="+tc.accessKey+"/") ||
+				!strings.Contains(outboundAuth, "/us-east-1/bedrock/aws4_request") || outboundAuth == inboundAuth {
+				t.Fatalf("request was not re-signed with caller's principal: %q", outboundAuth)
+			}
+			if !bytes.Contains(upstream.body, []byte(`"cachePoint"`)) {
+				t.Fatalf("test did not exercise a changed upstream body: %s", upstream.body)
+			}
+			if got := upstream.headers.Get("X-Amz-Content-Sha256"); got != fmt.Sprintf("%x", sha256.Sum256(upstream.body)) {
+				t.Errorf("payload hash = %q; want hash of actual transformed bytes", got)
+			}
+			if got := upstream.headers.Get("X-Amz-Security-Token"); got != tc.session {
+				t.Errorf("session token = %q, want caller's selected session", got)
+			}
+			for name, values := range upstream.headers {
+				for _, value := range values {
+					if strings.Contains(value, secret) || strings.Contains(value, "another-account-bearer") {
+						t.Errorf("unrelated credential or signing secret leaked in %s", name)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestStandaloneBedrockRejectsUnresolvableSignedRequests(t *testing.T) {
+	const requestPath = "/bedrock/model/anthropic.claude-sonnet-4-6/converse"
+	const inboundAuth = "AWS4-HMAC-SHA256 Credential=ASIAEXAMPLE/20260907/us-east-1/bedrock/aws4_request, SignedHeaders=host;x-amz-date;x-amz-security-token, Signature=0000000000000000000000000000000000000000000000000000000000000000"
+	for _, tc := range []struct {
+		name, accessKey, secret, session, auth string
+	}{
+		{name: "missing IAM credentials"},
+		{name: "partial IAM pair", accessKey: "ASIAEXAMPLE"},
+		{name: "different configured principal", accessKey: "ASIAOTHER", secret: "test-secret", session: "caller-session"},
+		{name: "different configured session", accessKey: "ASIAEXAMPLE", secret: "test-secret", session: "another-session"},
+		{name: "missing temporary session", accessKey: "ASIAEXAMPLE", secret: "test-secret"},
+		{name: "different region", accessKey: "ASIAEXAMPLE", secret: "test-secret", session: "caller-session", auth: strings.Replace(inboundAuth, "/us-east-1/", "/us-west-2/", 1)},
+		{name: "malformed SigV4 scope", accessKey: "ASIAEXAMPLE", secret: "test-secret", session: "caller-session", auth: "AWS4-HMAC-SHA256 Credential=ASIAEXAMPLE"},
+		{name: "unsupported auth scheme", accessKey: "ASIAEXAMPLE", secret: "test-secret", session: "caller-session", auth: "Basic invalid-credential"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("AWS_ACCESS_KEY_ID", tc.accessKey)
+			t.Setenv("AWS_SECRET_ACCESS_KEY", tc.secret)
+			t.Setenv("AWS_SESSION_TOKEN", tc.session)
+			t.Setenv("AWS_BEARER_TOKEN_BEDROCK", "must-not-replace-IAM")
+			upstream := &captureUpstreamTransport{response: `{}`}
+			spend, err := store.Open(filepath.Join(t.TempDir(), "caveman.db"), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer spend.Close()
+			srv := New(config.Config{Mode: "record", Providers: map[string]config.ProviderConfig{
+				"bedrock": {BaseURL: "https://bedrock-runtime.us-east-1.amazonaws.com"},
+			}}, spend, Options{HTTPClient: &http.Client{Transport: upstream}})
+			req := httptest.NewRequest(http.MethodPost, requestPath, strings.NewReader(`{"messages":[]}`))
+			auth := tc.auth
+			if auth == "" {
+				auth = inboundAuth
+			}
+			req.Header.Set("Authorization", auth)
+			req.Header.Set("X-Amz-Security-Token", "caller-session")
+			rec := httptest.NewRecorder()
+			srv.Handler().ServeHTTP(rec, req)
+			if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "cave_bedrock_sigv4_configuration") ||
+				!strings.Contains(rec.Body.String(), "AWS_ACCESS_KEY_ID") {
+				t.Fatalf("want actionable SigV4 error, got status=%d body=%s", rec.Code, rec.Body.String())
+			}
+			if upstream.headers != nil {
+				t.Fatal("unresolved signing identity reached upstream")
+			}
+			for _, value := range []string{"caller-session", "another-session", "test-secret", "must-not-replace-IAM", "ASIAEXAMPLE"} {
+				if strings.Contains(rec.Body.String(), value) {
+					t.Fatalf("response leaked credential material %q", value)
+				}
+			}
+		})
+	}
+}
+
+func TestStandaloneBedrockPreservesEncodedRequestOnWire(t *testing.T) {
+	const body = `{"messages":[{"role":"user","content":[{"text":"hello"}]}]}`
+	var encoded bytes.Buffer
+	zipper := gzip.NewWriter(&encoded)
+	if _, err := io.WriteString(zipper, body); err != nil {
+		t.Fatal(err)
+	}
+	if err := zipper.Close(); err != nil {
+		t.Fatal(err)
+	}
+	for _, auth := range []string{"bearer", "sigv4"} {
+		t.Run(auth, func(t *testing.T) {
+			t.Setenv("CAVE_BEDROCK_REGION", "us-east-1")
+			t.Setenv("AWS_ACCESS_KEY_ID", "AKIAEXAMPLE")
+			t.Setenv("AWS_SECRET_ACCESS_KEY", "test-secret")
+			t.Setenv("AWS_SESSION_TOKEN", "")
+			seen := make(chan struct{}, 1)
+			upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				defer func() { seen <- struct{}{} }()
+				wire, err := io.ReadAll(r.Body)
+				if err != nil {
+					t.Error(err)
+				}
+				if r.Header.Get("Content-Encoding") != "gzip" || r.Header.Get("Accept-Encoding") != "identity" {
+					t.Errorf("encoding headers changed: content=%q accept=%q", r.Header.Get("Content-Encoding"), r.Header.Get("Accept-Encoding"))
+				}
+				if !bytes.Equal(wire, encoded.Bytes()) {
+					t.Error("encoded request bytes changed")
+				}
+				if auth == "sigv4" && r.Header.Get("X-Amz-Content-Sha256") != fmt.Sprintf("%x", sha256.Sum256(wire)) {
+					t.Error("SigV4 payload hash does not cover compressed wire bytes")
+				}
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = io.WriteString(w, `{}`)
+			}))
+			defer upstream.Close()
+			spend, err := store.Open(filepath.Join(t.TempDir(), "caveman.db"), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer spend.Close()
+			srv := New(config.Config{Mode: "active", Optimizers: map[string]bool{"bedrock-cache-points": true}, Providers: map[string]config.ProviderConfig{
+				"bedrock": {BaseURL: upstream.URL},
+			}}, spend, Options{HTTPClient: &http.Client{}})
+			req := httptest.NewRequest(http.MethodPost, "/bedrock/model/global.anthropic.claude-sonnet-4-6/converse", bytes.NewReader(encoded.Bytes()))
+			req.Header.Set("Content-Encoding", "gzip")
+			req.Header.Set("Accept-Encoding", "identity")
+			if auth == "sigv4" {
+				req.Header.Set("Authorization", "AWS4-HMAC-SHA256 Credential=AKIAEXAMPLE/20260907/us-east-1/bedrock/aws4_request, SignedHeaders=host;x-amz-date, Signature="+strings.Repeat("0", 64))
+			} else {
+				req.Header.Set("Authorization", "Bearer bedrock-test-key")
+			}
+			rec := httptest.NewRecorder()
+			srv.Handler().ServeHTTP(rec, req)
+			if rec.Code != http.StatusOK {
+				t.Fatalf("status=%d body=%s", rec.Code, rec.Body.String())
+			}
+			select {
+			case <-seen:
+			default:
+				t.Fatal("request did not reach HTTP upstream")
 			}
 		})
 	}
@@ -1281,14 +1575,17 @@ func TestStandaloneOpenCodeGoAuthEndToEnd(t *testing.T) {
 // beyond the old request cap. Explicit operator deadlines remain supported.
 func TestStandaloneClientLifetimeAndCancellation(t *testing.T) {
 	t.Setenv("CAVE_SSRF_ALLOWLIST", "localhost")
-	client := StandaloneHTTPClient(0, nil, nil)
+	client := StandaloneHTTPClient(config.Config{}, 0)
 	defer client.CloseIdleConnections()
 	if client.Timeout != 0 {
 		t.Fatalf("total timeout = %v", client.Timeout)
 	}
+	// No total deadline means the header deadline is the only bound left on an
+	// upstream that connects and then never answers. It must be set, and it must
+	// be a header deadline only — the long stream below still has to complete.
 	transport := client.Transport.(*http.Transport)
-	if transport.ResponseHeaderTimeout != 0 || !transport.DisableCompression {
-		t.Fatalf("unexpected streaming transport: header timeout=%v compression=%v", transport.ResponseHeaderTimeout, transport.DisableCompression)
+	if transport.ResponseHeaderTimeout != 15*time.Minute || transport.IdleConnTimeout == 0 || !transport.DisableCompression {
+		t.Fatalf("unbounded streaming transport: header timeout=%v idle=%v compression=%v", transport.ResponseHeaderTimeout, transport.IdleConnTimeout, transport.DisableCompression)
 	}
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
@@ -1310,7 +1607,7 @@ func TestStandaloneClientLifetimeAndCancellation(t *testing.T) {
 	if err != nil || string(data) != "data: first\n\ndata: last\n\n" {
 		t.Fatalf("long stream cut: body=%q error=%v", data, err)
 	}
-	bounded := StandaloneHTTPClient(25*time.Millisecond, nil, nil)
+	bounded := StandaloneHTTPClient(config.Config{}, 25*time.Millisecond)
 	defer bounded.CloseIdleConnections()
 	resp, err = bounded.Get(upstream.URL)
 	if err == nil {
