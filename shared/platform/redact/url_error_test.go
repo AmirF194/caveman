@@ -67,3 +67,22 @@ func TestErrorRemovesURLsWithSharedPrefixes(t *testing.T) {
 		t.Fatalf("shared URL prefix left a credential suffix: %s", got)
 	}
 }
+
+// A malformed base URL reaches Error as *url.Error{Op:"parse", URL:"<input>"}.
+// Replacing a one-character URL everywhere shredded the message AND split
+// bearer tokens into fragments too short for String's patterns, so the token
+// survived in clear text. Short, non-endpoint values are left alone.
+func TestErrorLeavesShortNonEndpointURLsAlone(t *testing.T) {
+	const token = "Bearer QQQzRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR-TAIL-SECRET"
+	for _, raw := range []string{"z", ":", "a", "http://"} {
+		err := fmt.Errorf("bad upstream: %w | Authorization: %s", &url.Error{Op: "parse", URL: raw, Err: errors.New("invalid")}, token)
+		got := redact.Error(err)
+		if strings.Contains(got, "SECRET") || strings.Contains(got, "[REDACTED:url]") {
+			t.Fatalf("url %q: %q", raw, got)
+		}
+	}
+	endpoint := &url.Error{Op: "Post", URL: "https://provider.test/v1?key=SUPERSECRET", Err: errors.New("refused")}
+	if got := redact.Error(endpoint); strings.Contains(got, "SUPERSECRET") || !strings.Contains(got, "[REDACTED:url]") {
+		t.Fatalf("real endpoint not redacted: %q", got)
+	}
+}
