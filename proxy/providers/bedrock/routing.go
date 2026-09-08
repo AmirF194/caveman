@@ -199,7 +199,7 @@ func (a Adapter) ResolveUpstreamURL(ctx context.Context, req *http.Request, rout
 	base.RawQuery = req.URL.RawQuery
 
 	if env.IsProduction() {
-		if err := ssrf.ValidateURL(ctx, base.String(), ssrf.ManagedConfig()); err != nil {
+		if err := providers.ValidateUpstreamEndpoint(ctx, base, ssrf.ManagedConfig()); err != nil {
 			return nil, err
 		}
 		hostKind, _, ok := bedrockHostKind(base.Hostname())
@@ -256,7 +256,7 @@ func MantleBaseURL(region string) string {
 
 func actionAllowed(action string) bool {
 	switch action {
-	case "invoke", "invoke-with-response-stream", "converse", "converse-stream":
+	case "invoke", "invoke-with-response-stream", "converse", "converse-stream", "count-tokens":
 		return true
 	default:
 		return false
