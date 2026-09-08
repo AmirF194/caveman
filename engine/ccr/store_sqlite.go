@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -22,11 +23,18 @@ import (
 
 // Store is a SQLite-backed recovery store.
 type Store struct {
-	db       *sql.DB
-	maxBytes int64
+	mu          sync.Mutex
+	db          *sql.DB
+	maxBytes    int64
+	path        string
+	files       sqliteGeneration
+	closed      bool
+	quarantined error
 }
 
 const DefaultMaxStorageBytes int64 = 512 << 20 // 512 MiB retained payloads
+
+const minimumStoragePages int64 = 16
 
 const schema = `
 CREATE TABLE IF NOT EXISTS recoveries (
@@ -145,8 +153,18 @@ func OpenWithBudget(path string, maxBytes int64) (*Store, error) {
 }
 
 func openWithBudget(path string, maxBytes int64, afterPrepare func()) (*Store, error) {
+	return openWithBudgetHooks(path, maxBytes, afterPrepare, nil)
+}
+
+func openWithBudgetHooks(path string, maxBytes int64, afterPrepare, afterOpen func()) (*Store, error) {
 	if maxBytes <= 0 {
 		return nil, fmt.Errorf("ccr max storage bytes must be positive")
+	}
+	// SQLite pages are at least 512 bytes. Reject budgets that cannot satisfy
+	// CCR's minimum page count before preparing files or opening a connection.
+	// The actual database page size is checked by configureStorageBudget.
+	if maxBytes < minimumStoragePages*512 {
+		return nil, fmt.Errorf("ccr storage budget %d is below minimum %d", maxBytes, minimumStoragePages*512)
 	}
 	canonicalPath, err := PrepareSQLitePathCanonical(path)
 	if err != nil {
@@ -155,7 +173,17 @@ func openWithBudget(path string, maxBytes int64, afterPrepare func()) (*Store, e
 	if afterPrepare != nil {
 		afterPrepare()
 	}
-	db, err := sql.Open("sqlite", SQLiteDSN(canonicalPath))
+	before, err := inspectSQLiteGeneration(canonicalPath)
+	if err != nil {
+		return nil, err
+	}
+	dsn := SQLiteDSN(canonicalPath)
+	if canonicalPath != ":memory:" {
+		// PrepareSQLitePathCanonical already created the file. Never recreate
+		// it if it vanishes between preparation and the driver's open.
+		dsn += "&mode=rw"
+	}
+	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("open sqlite %q: %w", canonicalPath, err)
 	}
@@ -165,20 +193,42 @@ func openWithBudget(path string, maxBytes int64, afterPrepare func()) (*Store, e
 	// pooled connection would be a second, empty database.
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
+	if canonicalPath != ":memory:" {
+		if err := persistSQLiteWAL(db); err != nil {
+			closeSQLiteAfterOpenFailure(db, canonicalPath)
+			return nil, fmt.Errorf("configure sqlite journal: %w", err)
+		}
+	}
 	if err := RetryOnBusy(func() error { _, e := db.Exec(schema); return e }); err != nil {
-		_ = db.Close()
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
 		return nil, fmt.Errorf("migrate sqlite %q: %w", canonicalPath, err)
 	}
 	if err := RetryOnBusy(func() error { return ensureMetadataColumn(db) }); err != nil {
-		_ = db.Close()
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
 		return nil, fmt.Errorf("migrate sqlite metadata %q: %w", canonicalPath, err)
 	}
 	if err := configureStorageBudget(db, maxBytes); err != nil {
-		_ = db.Close()
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
 		return nil, fmt.Errorf("configure sqlite storage budget %q: %w", canonicalPath, err)
 	}
+	opened, err := inspectSQLiteGeneration(canonicalPath)
+	if err != nil {
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
+		return nil, err
+	}
+	if !before.sameExisting(opened) || (canonicalPath != ":memory:" && (opened[1] == nil || opened[2] == nil)) {
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
+		return nil, ErrStorageChanged
+	}
+	// The schema/budget queries have opened the WAL. Capture the resulting
+	// journals before final permission checks, so losing a newly-created
+	// journal is distinguishable from normal creation during SQLite open.
+	before = opened
+	if afterOpen != nil {
+		afterOpen()
+	}
 	if err := secureSQLiteFiles(canonicalPath); err != nil {
-		_ = db.Close()
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
 		return nil, err
 	}
 	// CCR is one local embedded database. Serialize access through one connection:
@@ -186,7 +236,16 @@ func openWithBudget(path string, maxBytes int64, afterPrepare func()) (*Store, e
 	// stores on the same schema-bearing connection.
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
-	return &Store{db: db, maxBytes: maxBytes}, nil
+	files, err := inspectSQLiteGeneration(canonicalPath)
+	if err != nil {
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
+		return nil, err
+	}
+	if !before.same(files) {
+		closeSQLiteAfterOpenFailure(db, canonicalPath)
+		return nil, ErrStorageChanged
+	}
+	return &Store{db: db, maxBytes: maxBytes, path: canonicalPath, files: files}, nil
 }
 
 // PrepareSQLitePath creates or tightens a persistent SQLite file before the
@@ -240,8 +299,16 @@ func PrepareSQLitePathCanonical(path string) (string, error) {
 }
 
 func secureSQLiteFiles(path string) error {
-	if err := PrepareSQLitePath(path); err != nil {
+	if path == ":memory:" {
+		return nil
+	}
+	if _, err := inspectSQLiteGeneration(path); err != nil {
 		return err
+	}
+	for _, suffix := range sqliteSuffixes {
+		if err := secureSQLiteFile(path+suffix, false); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -296,8 +363,8 @@ func configureStorageBudget(db *sql.DB, maxBytes int64) error {
 		return errors.New("invalid sqlite page size")
 	}
 	maxPages := maxBytes / pageSize
-	if maxPages < 16 {
-		return fmt.Errorf("budget %d is below SQLite minimum %d", maxBytes, 16*pageSize)
+	if maxPages < minimumStoragePages {
+		return fmt.Errorf("budget %d is below CCR storage minimum %d", maxBytes, minimumStoragePages*pageSize)
 	}
 	var applied int64
 	if err := db.QueryRow(fmt.Sprintf(`PRAGMA max_page_count=%d`, maxPages)).Scan(&applied); err != nil {
@@ -345,13 +412,10 @@ func ensureMetadataColumn(db *sql.DB) error {
 // OpenMemory opens an ephemeral in-memory store.
 func OpenMemory() (*Store, error) { return OpenWithBudget(":memory:", DefaultMaxStorageBytes) }
 
-// Close closes the underlying database.
-func (s *Store) Close() error { return s.db.Close() }
-
 // Put stores a recovery and returns its handle. It is idempotent: storing the
 // same original twice (the handle is derived from the bytes) overwrites the row
 // with identical content and returns the same handle.
-func (s *Store) Put(rec Recovery) (string, error) {
+func (s *Store) put(rec Recovery) (string, error) {
 	handle := Handle(rec.Original)
 	unchanged, err := s.recoveryUnchanged(handle, rec)
 	if err != nil {
@@ -447,9 +511,9 @@ func isFull(err error) bool {
 }
 
 // Get returns the exact original bytes for a handle, or ErrNotFound.
-func (s *Store) Get(handle string) ([]byte, error) {
+func (s *Store) get(handle string) ([]byte, error) {
 	if strings.HasPrefix(handle, "ccr_obj_") {
-		obj, err := s.GetObject(handle)
+		obj, err := s.getObject(handle)
 		if err != nil {
 			return nil, err
 		}
@@ -468,9 +532,9 @@ func (s *Store) Get(handle string) ([]byte, error) {
 
 // GetMetadata returns optional compressor metadata stored with a handle. A known
 // handle with no metadata returns nil, nil; an unknown handle returns ErrNotFound.
-func (s *Store) GetMetadata(handle string) ([]byte, error) {
+func (s *Store) getMetadata(handle string) ([]byte, error) {
 	if strings.HasPrefix(handle, "ccr_obj_") {
-		if _, err := s.GetObject(handle); err != nil {
+		if _, err := s.getObject(handle); err != nil {
 			return nil, err
 		}
 		return nil, nil
@@ -489,7 +553,7 @@ func (s *Store) GetMetadata(handle string) ([]byte, error) {
 // PutObject stores one immutable typed working-memory object. Repeated puts of
 // the same content-derived ID are idempotent; currentness changes use
 // SetObjectCurrentness so invalidation stays explicit.
-func (s *Store) PutObject(input Object) (string, error) {
+func (s *Store) putObject(input Object) (string, error) {
 	obj, err := prepareObject(input)
 	if err != nil {
 		return "", err
@@ -534,7 +598,7 @@ func (s *Store) PutObject(input Object) (string, error) {
 		return "", fmt.Errorf("ccr typed object put rows: %w", err)
 	}
 	if inserted == 0 {
-		existing, err := s.GetObject(obj.ID)
+		existing, err := s.getObject(obj.ID)
 		if err != nil {
 			return "", fmt.Errorf("ccr typed object collision lookup: %w", err)
 		}
@@ -570,7 +634,7 @@ const objectColumns = `object_id, object_type, content_hash, source, created_at,
  repository_state, session_id, transform_version, currentness, lifecycle,
  dependencies_json, original_byte_length, stored_byte_length, data`
 
-func (s *Store) GetObject(id string) (Object, error) {
+func (s *Store) getObject(id string) (Object, error) {
 	obj, err := scanObject(s.db.QueryRow(`SELECT `+objectColumns+` FROM typed_objects WHERE object_id = ?`, id))
 	if errors.Is(err, sql.ErrNoRows) {
 		return Object{}, ErrNotFound
@@ -581,7 +645,7 @@ func (s *Store) GetObject(id string) (Object, error) {
 	return obj, nil
 }
 
-func (s *Store) SetObjectCurrentness(id string, currentness Currentness) error {
+func (s *Store) setObjectCurrentness(id string, currentness Currentness) error {
 	if err := validateCurrentness(currentness); err != nil {
 		return err
 	}
@@ -599,7 +663,7 @@ func (s *Store) SetObjectCurrentness(id string, currentness Currentness) error {
 	return nil
 }
 
-func (s *Store) SetObjectLifecycle(id string, lifecycle Lifecycle) error {
+func (s *Store) setObjectLifecycle(id string, lifecycle Lifecycle) error {
 	if err := validateLifecycle(lifecycle); err != nil {
 		return err
 	}
@@ -617,7 +681,7 @@ func (s *Store) SetObjectLifecycle(id string, lifecycle Lifecycle) error {
 	return nil
 }
 
-func (s *Store) ListSessionObjects(sessionID string, limit int) ([]Object, error) {
+func (s *Store) listSessionObjects(sessionID string, limit int) ([]Object, error) {
 	if limit <= 0 {
 		limit = 100
 	}
@@ -645,7 +709,7 @@ func (s *Store) ListSessionObjects(sessionID string, limit int) ([]Object, error
 
 // FindTaskDecision returns one Decision Ledger object by its stable decision
 // ID. Callers still validate the versioned decision schema before rendering it.
-func (s *Store) FindTaskDecision(decisionID string) (Object, error) {
+func (s *Store) findTaskDecision(decisionID string) (Object, error) {
 	obj, err := scanObject(s.db.QueryRow(
 		`SELECT `+objectColumns+` FROM typed_objects
 		 WHERE object_type = ? AND json_extract(CAST(data AS TEXT), '$.decision_id') = ?
@@ -662,7 +726,7 @@ func (s *Store) FindTaskDecision(decisionID string) (Object, error) {
 }
 
 // Summary aggregates stored recoveries into totals + per-content-type buckets.
-func (s *Store) Summary() (Stats, error) {
+func (s *Store) summary() (Stats, error) {
 	out := Stats{ByContentType: map[string]Bucket{}, Basis: "inferred"}
 	rows, err := s.db.Query(
 		`SELECT content_type, COUNT(*), COALESCE(SUM(tokens_before),0), COALESCE(SUM(tokens_after),0)
