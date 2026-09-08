@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -38,6 +39,29 @@ func TestLoad_MissingFileYieldsRecordDefaults(t *testing.T) {
 	}
 	if cfg.Listen != DefaultListen {
 		t.Errorf("listen = %q, want %q", cfg.Listen, DefaultListen)
+	}
+}
+
+func TestCompatForwardHeaderConfiguration(t *testing.T) {
+	for _, header := range []string{"X-API-Tenant", "CF-AIG-Authorization", "Host", "Connection", "Content-Length", "Authorization", "X-Api-Key", "Proxy-Authorization", "X-Cave-Key", "X-Caveman-Instance", "Cookie", "bad name", ""} {
+		t.Run(header, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "caveman.yaml")
+			body := "compat:\n  relay:\n    base_url: https://relay.example\n    forward_headers: [\"" + header + "\"]\n"
+			if err := os.WriteFile(path, []byte(body), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			cfg, err := Load(path)
+			if header == "X-API-Tenant" || header == "CF-AIG-Authorization" {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if len(cfg.Compat["relay"].ForwardHeaders) != 1 || cfg.Compat["relay"].ForwardHeaders[0] != header {
+					t.Fatal("header contract lost")
+				}
+			} else if err == nil {
+				t.Fatal("unsafe forward header accepted")
+			}
+		})
 	}
 }
 
@@ -381,7 +405,7 @@ func TestCompatUpstreams_UserEntryWins(t *testing.T) {
 		"openrouter":  {BaseURL: "https://openrouter.ai/api", APIKeyEnv: "OPENROUTER_API_KEY"},
 	}}
 	merged := cfg.CompatUpstreams()
-	if got := merged["opencode-go"]; got != user {
+	if got := merged["opencode-go"]; !reflect.DeepEqual(got, user) {
 		t.Errorf("opencode-go upstream = %+v, want the user entry %+v", got, user)
 	}
 	if _, ok := merged["openrouter"]; !ok {
@@ -605,6 +629,11 @@ func TestLoad_CABundle(t *testing.T) {
 		if err != nil || len(cfg.SkippedCABundles) != 1 || cfg.RootCAs() == nil {
 			t.Fatalf("NODE_EXTRA_CA_CERTS=%s: skipped=%v roots=%v err=%v", bad, cfg.SkippedCABundles, cfg.RootCAs(), err)
 		}
+		// Structured, so the startup log names the variable and the reason as
+		// separate fields instead of one opaque string.
+		if skipped := cfg.SkippedCABundles[0]; skipped.Env != "NODE_EXTRA_CA_CERTS" || skipped.Error == "" {
+			t.Fatalf("skipped bundle = %+v, want the env var name and a reason", skipped)
+		}
 	}
 	t.Setenv("NODE_EXTRA_CA_CERTS", "")
 	t.Setenv("REQUESTS_CA_BUNDLE", good)
@@ -625,4 +654,17 @@ func selfSignedPEM(t *testing.T) []byte {
 		t.Fatal(err)
 	}
 	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
+}
+
+// The accessor is a cached-field read for a loaded Config and must never panic
+// on a Config assembled in code: a request path is a bad place to discover that
+// a value Load would have rejected was set by hand. A value Load would reject
+// dials direct — never the environment default, which would hide the mistake
+// behind a proxy the caller never named.
+func TestUpstreamProxyFunc_HandBuiltConfigNeverPanics(t *testing.T) {
+	for raw, wantSelector := range map[string]bool{"": true, "env": true, "off": false, "http://proxy.corp.example:3128": true, "not a url": false} {
+		if got := (Config{UpstreamProxy: raw}).UpstreamProxyFunc(); (got != nil) != wantSelector {
+			t.Fatalf("UpstreamProxyFunc(%q) selector = %v, want %v", raw, got != nil, wantSelector)
+		}
+	}
 }

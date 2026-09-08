@@ -10,6 +10,7 @@ import (
 
 	"github.com/JuliusBrussee/caveman/proxy/providers"
 	"github.com/JuliusBrussee/caveman/proxy/providers/openai"
+	"golang.org/x/net/http/httpguts"
 )
 
 var validName = regexp.MustCompile(`^[a-z0-9][a-z0-9._-]{0,63}$`)
@@ -155,7 +156,8 @@ func (a namedAdapter) ExtractStabilizable(body []byte, meta providers.RequestMet
 
 type namedAdapter struct {
 	providers.Base
-	prefix string
+	prefix         string
+	forwardHeaders []string
 }
 
 func (a namedAdapter) MatchRoute(method, path string) bool {
@@ -191,7 +193,18 @@ func (a namedAdapter) SanitizeAndMapHeaders(ctx context.Context, req *http.Reque
 	if req == nil || req.URL == nil {
 		return out, nil
 	}
+	defer providers.RemoveConnectionHeaders(out, req.Header)
 	a.forwardOpenCodeHeaders(out, req.Header)
+	for _, name := range providerAttributionHeaders[a.prefix] {
+		if values := req.Header.Values(name); len(values) > 0 {
+			out[http.CanonicalHeaderKey(name)] = append([]string(nil), values...)
+		}
+	}
+	for _, name := range a.forwardHeaders {
+		if values := req.Header.Values(name); len(values) > 0 {
+			out[http.CanonicalHeaderKey(name)] = append([]string(nil), values...)
+		}
+	}
 	if !a.anthropicMessagesPath(req.URL.Path) {
 		return out, nil
 	}
@@ -221,12 +234,20 @@ var openCodeSessionHeaders = []string{
 	"x-opencode-request",
 }
 
+// Pi 0.84.2 emits these attribution headers when installation telemetry is
+// enabled. Keep their values on the matching provider mount; custom aliases
+// use the operator's explicit forward_headers contract instead.
+var providerAttributionHeaders = map[string][]string{
+	"/compat/openrouter": {"HTTP-Referer", "X-OpenRouter-Title", "X-OpenRouter-Categories"},
+	"/compat/nvidia":     {"X-Billing-Invoke-Origin"},
+}
+
 // forwardOpenCodeHeaders copies the OpenCode session headers from the inbound
-// request to the upstream headers. The copy is gated on the opencode-go mount.
+// request to the upstream headers. The copy is gated on OpenCode's two mounts.
 // Another named mount has no use for these headers. It must not learn the
 // session identity of the caller.
 func (a namedAdapter) forwardOpenCodeHeaders(out, inbound http.Header) {
-	if a.prefix != openCodeGoPrefix {
+	if a.prefix != openCodeGoPrefix && a.prefix != "/compat/opencode" {
 		return
 	}
 	for _, name := range openCodeSessionHeaders {
@@ -260,13 +281,16 @@ func inspectOpenAICompatible(ctx context.Context, base providers.Base, body prov
 // NewNamed builds a dedicated OpenAI-compatible upstream mounted at
 // /compat/<name>/. The provider enum intentionally stays openai_compatible so
 // usage/cost telemetry keeps using the shared OpenAI-shape parser.
-func NewNamed(name, baseURL string) (providers.Adapter, error) {
+func NewNamed(name, baseURL string, forwardHeaders ...string) (providers.Adapter, error) {
 	if err := ValidateName(name); err != nil {
 		return nil, err
 	}
 	baseURL = strings.TrimSpace(baseURL)
 	if err := ValidateBaseURL(baseURL); err != nil {
 		return nil, fmt.Errorf("compat upstream %q base_url: %w", name, err)
+	}
+	if err := ValidateForwardHeaders(forwardHeaders); err != nil {
+		return nil, fmt.Errorf("compat upstream %q forward_headers: %w", name, err)
 	}
 	prefix := "/compat/" + name
 	return namedAdapter{
@@ -275,8 +299,26 @@ func NewNamed(name, baseURL string) (providers.Adapter, error) {
 			BaseURL:  baseURL,
 			Routes:   []string{prefix + "/"},
 		},
-		prefix: prefix,
+		prefix:         prefix,
+		forwardHeaders: append([]string(nil), forwardHeaders...),
 	}, nil
+}
+
+// ValidateForwardHeaders permits explicit provider-specific headers without
+// letting a mount override routing, message framing, or Caveman credentials.
+// Standard provider authentication is handled by the credential mapper.
+func ValidateForwardHeaders(names []string) error {
+	for _, name := range names {
+		lower := strings.ToLower(name)
+		if !httpguts.ValidHeaderFieldName(name) || strings.HasPrefix(lower, "x-cave-") || strings.HasPrefix(lower, "x-caveman-") {
+			return fmt.Errorf("header %q cannot be forwarded", name)
+		}
+		switch lower {
+		case "host", "connection", "keep-alive", "proxy-connection", "proxy-authorization", "proxy-authenticate", "te", "trailer", "transfer-encoding", "upgrade", "content-length", "authorization", "x-api-key", "api-key", "x-goog-api-key", "cookie", "set-cookie":
+			return fmt.Errorf("header %q cannot be forwarded", name)
+		}
+	}
+	return nil
 }
 
 func ValidateName(name string) error {

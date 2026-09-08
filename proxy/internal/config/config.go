@@ -91,9 +91,19 @@ type Config struct {
 	// and the SSL_CERT_FILE-points-at-a-directory mixup is common — and the
 	// binary logs them at startup. An unusable bundle contributes nothing, never
 	// a partial set of roots.
-	SkippedCABundles []string `yaml:"-"`
+	SkippedCABundles []SkippedCABundle `yaml:"-"`
 
-	rootCAs *x509.CertPool
+	rootCAs             *x509.CertPool
+	upstreamProxy       func(*http.Request) (*url.URL, error)
+	upstreamProxyParsed bool
+}
+
+// SkippedCABundle names one inherited CA env var that Load could not use, with
+// the reason. It stays structured so the startup log records the variable and
+// the failure as separate fields instead of one opaque string.
+type SkippedCABundle struct {
+	Env   string
+	Error string
 }
 
 // ProviderConfig is the per-provider configuration in caveman.yaml.
@@ -105,8 +115,9 @@ type ProviderConfig struct {
 
 // CompatConfig is one named OpenAI-compatible upstream in caveman.yaml.
 type CompatConfig struct {
-	BaseURL   string `yaml:"base_url"`
-	APIKeyEnv string `yaml:"api_key_env"`
+	BaseURL        string   `yaml:"base_url"`
+	APIKeyEnv      string   `yaml:"api_key_env"`
+	ForwardHeaders []string `yaml:"forward_headers"`
 }
 
 // knownModes is the set of accepted runtime modes; anything else fails closed to
@@ -141,9 +152,11 @@ func Load(path string) (Config, error) {
 	if err := cfg.validateCompat(); err != nil {
 		return Config{}, err
 	}
-	if _, err := parseUpstreamProxy(cfg.UpstreamProxy); err != nil {
+	proxyFunc, err := parseUpstreamProxy(cfg.UpstreamProxy)
+	if err != nil {
 		return Config{}, err
 	}
+	cfg.upstreamProxy, cfg.upstreamProxyParsed = proxyFunc, true
 	if err := cfg.loadRootCAs(); err != nil {
 		return Config{}, err
 	}
@@ -173,7 +186,7 @@ func (c *Config) loadRootCAs() error {
 		}
 		loaded, err := cabundle.Certificates(path)
 		if err != nil {
-			c.SkippedCABundles = append(c.SkippedCABundles, name+": "+err.Error())
+			c.SkippedCABundles = append(c.SkippedCABundles, SkippedCABundle{Env: name, Error: err.Error()})
 			continue
 		}
 		certs = append(certs, loaded...)
@@ -193,13 +206,20 @@ func (c *Config) loadRootCAs() error {
 func (c Config) RootCAs() *x509.CertPool { return c.rootCAs }
 
 // UpstreamProxyFunc returns the Transport.Proxy selector for UpstreamProxy, or
-// nil for a direct client. Load has already rejected unparseable values; a
-// Config built by hand with a bad value panics rather than silently dialing
-// direct, which would be #1001's symptom with no diagnostic.
+// nil for a direct client. Load parses UpstreamProxy once and rejects bad values
+// there, so for a loaded Config this is a cached-field accessor like RootCAs.
+// A Config built by hand (tests) never went through that gate, so it parses
+// here. An unparseable value dials direct rather than taking a request path
+// down with a panic: falling back to the environment default would both hide
+// the bad value and quietly move the SSRF boundary to a proxy the caller never
+// named.
 func (c Config) UpstreamProxyFunc() func(*http.Request) (*url.URL, error) {
+	if c.upstreamProxyParsed {
+		return c.upstreamProxy
+	}
 	fn, err := parseUpstreamProxy(c.UpstreamProxy)
 	if err != nil {
-		panic(err)
+		return nil
 	}
 	return fn
 }
@@ -377,6 +397,9 @@ func (c Config) validateCompat() error {
 		if err := openaicompat.ValidateBaseURL(upstream.BaseURL); err != nil {
 			return fmt.Errorf("compat upstream %q: base_url: %w", name, err)
 		}
+		if err := openaicompat.ValidateForwardHeaders(upstream.ForwardHeaders); err != nil {
+			return fmt.Errorf("compat upstream %q: forward_headers: %w", name, err)
+		}
 	}
 	return nil
 }
@@ -405,23 +428,7 @@ func (c Config) Credential(provider string) providers.Credential {
 				Scheme:   "bearer",
 			}
 		}
-		accessKey := strings.TrimSpace(env.String("AWS_ACCESS_KEY_ID", ""))
-		secretKey := strings.TrimSpace(env.String("AWS_SECRET_ACCESS_KEY", ""))
-		// A partial IAM pair is never useful and must not fall through as an
-		// apparently valid credential. Return empty so Bedrock fails closed before
-		// any unsigned upstream request can be sent.
-		if accessKey == "" || secretKey == "" {
-			return providers.Credential{Mode: "ephemeral_header"}
-		}
-		key := accessKey + ":" + secretKey
-		if sessionToken := strings.TrimSpace(env.String("AWS_SESSION_TOKEN", "")); sessionToken != "" {
-			key += ":" + sessionToken
-		}
-		return providers.Credential{
-			Mode:     "ephemeral_header",
-			Key:      key,
-			AuthKind: "aws_access_keys",
-		}
+		return c.BedrockSigningCredential()
 	}
 	if key, ok := providerEnvKey[provider]; ok {
 		return providers.Credential{
@@ -431,6 +438,26 @@ func (c Config) Credential(provider string) providers.Credential {
 		}
 	}
 	return providers.Credential{Mode: "ephemeral_header"}
+}
+
+// BedrockSigningCredential resolves only the configured IAM signing principal.
+// An incoming SigV4 request has already selected IAM; a Bedrock bearer key in
+// the same process must not replace that selection when the proxy re-signs it.
+func (c Config) BedrockSigningCredential() providers.Credential {
+	accessKey := strings.TrimSpace(env.String("AWS_ACCESS_KEY_ID", ""))
+	secretKey := strings.TrimSpace(env.String("AWS_SECRET_ACCESS_KEY", ""))
+	credential := providers.Credential{Mode: "ephemeral_header"}
+	// A partial pair cannot sign a request. The adapter produces an actionable,
+	// secret-free error when the request came from an AWS SigV4 client.
+	if accessKey == "" || secretKey == "" {
+		return credential
+	}
+	credential.Key = accessKey + ":" + secretKey
+	credential.AuthKind = "aws_access_keys"
+	if sessionToken := strings.TrimSpace(env.String("AWS_SESSION_TOKEN", "")); sessionToken != "" {
+		credential.Key += ":" + sessionToken
+	}
+	return credential
 }
 
 // builtinCompat holds the named OpenAI-compatible upstreams that work with no
