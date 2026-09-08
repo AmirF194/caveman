@@ -117,7 +117,11 @@
     // Stop at the editor's form, or the nearest container with a known send
     // control. Never search the document/body for a loosely named action.
     const form = ed.closest("form");
-    if (form) return form;
+    // Only when the form actually holds the send control. A composer whose
+    // button lives outside its form (portal, sibling toolbar) would otherwise
+    // stop the search at a container getSend can never resolve in, and the
+    // extension would be silently inert on that site.
+    if (form && cfg.send.some((selector) => form.querySelector(selector))) return form;
     let box = ed.parentElement;
     for (let i = 0; i < 10 && box && box !== document.body && box !== document.documentElement; i++, box = box.parentElement) {
       if (cfg.send.some((selector) => box.querySelector(selector))) return box;
