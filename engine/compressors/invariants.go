@@ -3,6 +3,7 @@ package compressors
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"regexp"
 	"sort"
 	"strconv"
@@ -595,7 +596,7 @@ func lineFields(line []byte) []field {
 		decoder := json.NewDecoder(bytes.NewReader(trimmed))
 		decoder.UseNumber()
 		var event any
-		if err := decoder.Decode(&event); err == nil && !decoder.More() {
+		if err := decoder.Decode(&event); err == nil && decoder.Decode(new(any)) == io.EOF {
 			if fields := objectFields(event); len(fields) > 0 {
 				return fields
 			}
