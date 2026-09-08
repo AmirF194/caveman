@@ -667,7 +667,7 @@ test("enable/disable hermes installs native lifecycle pack and preserves unrelat
   const installed = readFileSync(configPath, "utf8");
   assert.match(installed, /caveman:native-hermes-routing/);
   assert.match(installed, /provider: "custom"/);
-  assert.match(installed, /base_url: "http:\/\/127\.0\.0\.1:8787\/w\/hermes"/);
+  assert.match(installed, /base_url: "http:\/\/127\.0\.0\.1:8787\/w\/hermes\/v1"/);
   assert.match(installed, /caveman_native/);
   assert.match(installed, /caveman-native/);
   const pluginDir = join(hermesHome, "plugins", "caveman_native");
@@ -681,7 +681,11 @@ test("enable/disable hermes installs native lifecycle pack and preserves unrelat
     encoding: "utf8",
   });
   assert.equal(compiled.status, 0, compiled.stderr);
-  assert.ok(existsSync(join(fx.home, ".caveman", "integrations", "hermes.json")));
+  const journal = JSON.parse(readFileSync(join(fx.home, ".caveman", "integrations", "hermes.json"), "utf8"));
+  assert.equal(journal.operations.find((operation) => operation.kind === "hermes-config").owned.route, "http://127.0.0.1:8787/w/hermes/v1");
+  const status = await run(["doctor", "hermes"], env);
+  assert.equal(status.code, 0, status.stderr);
+  assert.equal(JSON.parse(status.stdout).components.routing, true);
 
   writeFileSync(configPath, `${installed}# later user setting\n`);
   const disabled = await run(["disable", "hermes"], env);

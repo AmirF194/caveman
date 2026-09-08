@@ -315,7 +315,7 @@ process.exit(0);
   try {
     const started = Date.now();
     const out = await runCli(cli, ["wrap", "agent"], {
-      env: { ...baseEnv(home, binDir, port, fakeProxy), CAVE_PROXY_RESTART_TIMEOUT: "0.2" },
+      env: { ...baseEnv(home, binDir, port, fakeProxy) },
       cwd: dir,
       timeoutMs: 8000,
     });

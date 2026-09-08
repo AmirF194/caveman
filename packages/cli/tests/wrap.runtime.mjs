@@ -913,3 +913,45 @@ test("Claude remote-control launches direct because Claude Code refuses a proxie
   const env = buildWrapEnv(claude, "http://127.0.0.1:8787", "auto", ["-p", "hello"]);
   assert.equal(env.ANTHROPIC_BASE_URL, "http://127.0.0.1:8787/w/claude");
 });
+
+test("a corporate HTTPS_PROXY does not swallow the agent's loopback hop (#1001)", async () => {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const { buildWrapEnv } = await import(`${pathToFileURL(join(here, "..", "dist", "index.js")).href}?gateway-no-proxy`);
+  const claude = PROFILES.find((profile) => profile.id === "claude");
+  const saved = { https: process.env.HTTPS_PROXY, no: process.env.NO_PROXY, lower: process.env.no_proxy };
+  const restore = () => {
+    for (const [key, value] of [["HTTPS_PROXY", saved.https], ["NO_PROXY", saved.no], ["no_proxy", saved.lower]]) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  };
+  try {
+    delete process.env.NO_PROXY;
+    delete process.env.no_proxy;
+    delete process.env.HTTPS_PROXY;
+    // No proxy configured: nothing to exempt, so nothing is added.
+    assert.equal(buildWrapEnv(claude, "http://127.0.0.1:8787", "auto", ["-p", "hi"]).NO_PROXY, undefined);
+
+    process.env.HTTPS_PROXY = "http://corp-proxy.internal:3128";
+    process.env.http_proxy = "http://corp-proxy.internal:3128";
+    assert.equal(buildWrapEnv(claude, "http://127.0.0.1:8787", "auto", ["-p", "hi"]).NO_PROXY, "127.0.0.1");
+
+    // An operator's existing NO_PROXY is preserved, not replaced.
+    process.env.NO_PROXY = "example.internal";
+    assert.equal(buildWrapEnv(claude, "http://127.0.0.1:8787", "auto", ["-p", "hi"]).NO_PROXY, "example.internal,127.0.0.1");
+
+    // Already exempt: inherited unchanged, no duplicate entry appended.
+    process.env.NO_PROXY = "127.0.0.1";
+    assert.equal(buildWrapEnv(claude, "http://127.0.0.1:8787", "auto", ["-p", "hi"]).NO_PROXY, "127.0.0.1");
+
+    // Lowercase spelling stays lowercase so one name does not shadow the other.
+    delete process.env.NO_PROXY;
+    process.env.no_proxy = "example.internal";
+    const lower = buildWrapEnv(claude, "http://127.0.0.1:8787", "auto", ["-p", "hi"]);
+    assert.equal(lower.no_proxy, "example.internal,127.0.0.1");
+    assert.equal(lower.NO_PROXY, undefined);
+  } finally {
+    delete process.env.http_proxy;
+    restore();
+  }
+});
