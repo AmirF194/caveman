@@ -204,6 +204,7 @@ function handle(raw) {
       try {
         const statsPath = path.join(__dirname, 'caveman-stats.js');
         const argv = [statsPath];
+        argv.push('--host', 'claude');
         if (data.transcript_path) argv.push('--session-file', data.transcript_path);
         // Lets stats drop mode-log rows belonging to other windows instead of
         // joining them onto this session's timeline.
@@ -222,7 +223,7 @@ function handle(raw) {
         // spawn is ~10x macOS before antivirus (#819), so the margin is real.
         block = execFileSync(process.execPath, argv, { encoding: 'utf8', timeout: 2500 }).trim();
       } catch (e) {
-        block = 'caveman-stats: could not run stats script.\nTry manually: node hooks/caveman-stats.js';
+        block = 'caveman-stats: could not run stats script.\nTry manually: node src/hooks/caveman-stats.js';
       }
       process.stdout.write(JSON.stringify({
         hookSpecificOutput: {
