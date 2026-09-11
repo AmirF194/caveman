@@ -142,9 +142,15 @@ function hasCompetingCompressionPlugin() {
       // caveman-activate.js's own settings.json fallback for the same reason).
       return COMPRESSION_PLUGIN_IDS.some((id) => raw.toLowerCase().includes(id));
     }
-    const keys = Object.keys(settings.installed_plugins || {})
-      .concat(Object.keys(settings.permissions || {}));
-    return keys.some((key) => COMPRESSION_PLUGIN_IDS.some((id) => key.toLowerCase().includes(id)));
+    // permissions is keyed allow/deny/ask, each a list of rule strings
+    // (e.g. "Bash(ponytail:*)"), never a plugin name as a top-level key.
+    const permissionRules = ['allow', 'deny', 'ask']
+      .flatMap((k) => settings.permissions?.[k] || []);
+    const haystack = Object.keys(settings.installed_plugins || {})
+      .concat(permissionRules)
+      .join(' ')
+      .toLowerCase();
+    return COMPRESSION_PLUGIN_IDS.some((id) => haystack.includes(id));
   } catch (e) {
     return false;
   }
