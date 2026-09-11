@@ -254,11 +254,27 @@ class ModeTrackerTests(unittest.TestCase):
         self.assertIn("reduced injection", r.stdout)
         self.assertNotIn("Drop articles", r.stdout)
 
-    def test_reduced_reinforcement_detected_via_permissions_key(self):
-        # PR #577's own detection covered both installed_plugins and a
-        # plugin-scoped permissions key (e.g. "grill-me@grill-me").
-        self.write_settings(permissions={"grill-me@grill-me": True})
+    def test_reduced_reinforcement_detected_via_permissions_rule(self):
+        # permissions is keyed allow/deny/ask, each a list of rule strings
+        # (e.g. "Bash(ponytail:*)"), never a plugin name as a top-level key.
+        self.write_settings(permissions={"allow": ["Bash(grill-me:*)"]})
         self.flag.write_text("full", encoding="utf-8")
+        r = self.send("ordinary prompt")
+        self.assertIn("reduced injection", r.stdout)
+
+    def test_valid_json_and_jsonc_fallback_agree_on_a_permissions_rule(self):
+        # A comment makes the same file fall through to the raw-substring
+        # JSONC path; both paths must reach the same verdict on this input.
+        self.write_settings(permissions={"allow": ["Bash(ponytail:*)"]})
+        self.flag.write_text("full", encoding="utf-8")
+        r = self.send("ordinary prompt")
+        self.assertIn("reduced injection", r.stdout)
+
+        (self.claude_dir / "settings.json").write_text(
+            '// trailing comment makes this JSONC\n'
+            + json.dumps({"permissions": {"allow": ["Bash(ponytail:*)"]}}),
+            encoding="utf-8",
+        )
         r = self.send("ordinary prompt")
         self.assertIn("reduced injection", r.stdout)
 
