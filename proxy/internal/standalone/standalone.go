@@ -244,6 +244,7 @@ func bearerKey(raw string) string {
 // the binary wires the engine-backed one when mode is compress or pixel.
 type Options struct {
 	HTTPClient *http.Client
+	Middleware http.Handler
 	// Logger receives gateway warnings (upstream failures, copy errors). Nil
 	// silences them, which is how the serve path ran until #897.
 	Logger     *slog.Logger
@@ -277,6 +278,7 @@ func New(cfg config.Config, sink gateway.TelemetrySink, opts Options) *gateway.S
 		client = StandaloneHTTPClient(cfg, time.Duration(env.Int("CAVE_GATEWAY_UPSTREAM_TIMEOUT_MS", 0))*time.Millisecond)
 	}
 	return gateway.New(gateway.Config{
+		Middleware:           opts.Middleware,
 		Adapters:             buildAdapters(cfg),
 		Auth:                 Auth{rc: gateway.RequestContext{Label: cfg.Label, RuntimeMode: cfg.Mode, Optimizers: cfg.Optimizers, ProviderBillingTiers: cfg.BillingTiers()}, token: cfg.AuthToken},
 		Creds:                Creds{cfg: cfg, bedrock: awscreds.New(awscreds.Options{Region: cfg.BedrockRegion()}), logger: opts.Logger, sourceLogged: new(sync.Once)},

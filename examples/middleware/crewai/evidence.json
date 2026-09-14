@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "integration_id": "F10",
+  "adapter_id": "crewai",
+  "language": "python",
+  "package": {
+    "name": "caveman-middleware",
+    "version": "0.1.0"
+  },
+  "state": "implemented",
+  "family_complete": false,
+  "evidence_class": "installed_framework_local_http_real_engine",
+  "recorded_at": "2026-09-09T17:34:02.851435+00:00",
+  "dependencies": {
+    "crewai": "1.15.20",
+    "crewai-core": "1.15.20",
+    "litellm": "1.100.0",
+    "openai": "2.54.0",
+    "anthropic": "0.73.0",
+    "httpx": "0.28.1",
+    "httpcore": "1.0.9",
+    "pydantic": "2.12.5"
+  },
+  "platform": {
+    "system": "Darwin",
+    "release": "25.3.0",
+    "machine": "arm64",
+    "python": "3.13.5"
+  },
+  "runtime": {
+    "protocol_schema_version": 1,
+    "binary_kind": "locally_built_development_binary",
+    "binary_sha256": "07ea74d85de7f62c7f50405a7b312813bee689ba21d296db4ce85c395dced92f"
+  },
+  "source_revision": {
+    "head": "ed615c72d9710c1e694ece3d7973fb47de4f1023",
+    "working_tree": "uncommitted_implementation; exact tested content identified by source digests"
+  },
+  "run": {
+    "command": "CAVEMAN_MIDDLEWARE_TEST_FAMILY=crewai CAVEMAN_MIDDLEWARE_TEST_PYTHON=<hash-locked-env>/bin/python CAVEMAN_MIDDLEWARE_TEST_BINARY=<fresh-caveman-proxy> node --test packages/middleware/conformance/python-framework.test.mjs",
+    "exit_code": 0,
+    "tests": [
+      "test_native_crew_lossy_recovery_sync_async_stream_off_outage",
+      "test_hooks_are_identity_scoped_concurrent_and_exception_safe",
+      "test_native_parallel_tools_cache_arguments_and_structured_final",
+      "test_native_human_feedback_preserves_original_messages",
+      "test_native_delegated_work_keeps_crew_task_and_scopes",
+      "test_no_tools_preserves_native_structured_response_contract",
+      "test_model_only_no_recovery_and_native_stop_options",
+      "test_native_crew_stream_delivers_deltas_before_completion",
+      "test_public_async_executor_stream_close_cancels_native_inference",
+      "test_default_executor_stream_close_preserves_native_worker_limit",
+      "test_native_provider_error_and_cancellation_never_retry",
+      "test_colliding_tool_forced_choice_and_record_are_recovery_free",
+      "test_native_litellm_composition_has_one_selected_owner",
+      "test_native_original_content_policy_runs_before_optimization",
+      "test_async_optimization_cancellation_never_dispatches_provider",
+      "test_twenty_native_continuations_keep_replacement_after_runtime_restart",
+      "test_documented_local_demo_runs_without_paid_inference"
+    ],
+    "passed": 17,
+    "failed": 0,
+    "unittest_elapsed_seconds": 12.715,
+    "core_journey_variants": 36,
+    "native_continuations_across_restart": 20,
+    "documented_demo_commands": 3,
+    "optimization_deadline_ms": 100,
+    "asyncio_debug": false,
+    "provider_inference": "deterministic_loopback_only"
+  },
+  "operations": [
+    {
+      "operation": "Crew.kickoff",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Native default AgentExecutor, off/outage and model-stream variants, exact tool-loop recovery and original history"
+    },
+    {
+      "operation": "Crew.akickoff",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Native asynchronous Crew API; default AgentExecutor invokes synchronous BaseLLM.call in a worker"
+    },
+    {
+      "operation": "Crew.akickoff with CrewAgentExecutor",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Explicit installed public deprecated executor; native BaseLLM.acall recovery and stream cancellation"
+    },
+    {
+      "operation": "CrewStreamingOutput first-event forwarding",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Native StreamChunk order and type, first text before provider completion, final CrewOutput; no sustained buffering certification"
+    },
+    {
+      "operation": "native tool cache and parallel results",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Crew.cache=True; one original source execution for two native calls, exact arguments and cached originals"
+    },
+    {
+      "operation": "native structured final output",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Task.output_pydantic with source tools; tool-free Task.response_model on/off native HTTP bodies identical"
+    },
+    {
+      "operation": "model-only BaseLLM and stop overrides",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat",
+        "anthropic-messages"
+      ],
+      "qualification": "Recovery-free, native values and stop context; no standalone stream_events certification"
+    },
+    {
+      "operation": "native human feedback and delegated tasks",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat"
+      ],
+      "qualification": "Installed native feedback loop with deterministic input; actual DelegateWorkTool, separate task and scope identities"
+    },
+    {
+      "operation": "CrewAI LiteLLM composition",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat"
+      ],
+      "qualification": "Native sync completion and async acompletion; registered F07 callback yields to exactly one F10 owner; no live Proxy auth certification"
+    },
+    {
+      "operation": "original-content policy and optimization cancellation",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat"
+      ],
+      "qualification": "Native policy blocks original source before compression even on optimizer outage; cancelled optimize never dispatches inference"
+    },
+    {
+      "operation": "twenty native continuations and runtime restart",
+      "state": "conformant",
+      "tested_provider_protocols": [
+        "openai-chat"
+      ],
+      "qualification": "Provider-facing source replacement bytes unchanged through 20 appended tool results and real Engine restart"
+    }
+  ],
+  "visibility": {
+    "provider_serialization": "captured by deterministic local HTTP provider; production model delegate observes native values only",
+    "usage": "client_observed_sdk; LiteLLM tool responses and native Anthropic streamed tool responses lack upstream completed-call events and retain unknown usage",
+    "hidden_native_retries": "unobserved",
+    "provider_cache_hits": "unobserved"
+  },
+  "limitations": {
+    "default_executor_cancellation": "Native and wrapped experimental.AgentExecutor async stream close cancels the consumer but leaves its in-flight synchronous provider worker running. Completion is observed after provider release, not invented at close.",
+    "bounded_stream_backpressure": "No middleware-owned stream queue; native default executor buffering and sustained backpressure budgets remain uncertified.",
+    "serialization": "Active CavemanLLM.to_config_dict deliberately rejects serialization; rebind from original provider configuration and trusted runtime. Automatic Crew copies/checkpoint serialization remain unproved.",
+    "native_warnings": "Pinned upstream emits deprecation warnings, SQLite ResourceWarnings and event-pairing warnings on native LiteLLM tool calls and denied/cancelled paths; these remain visible in the run."
+  },
+  "remaining_separate_gates": [
+    "Full default-executor provider cancellation",
+    "Automatic crew copies and checkpoint serialization",
+    "Standalone BaseLLM.stream_events helpers",
+    "Live provider certification and economic benchmarks",
+    "Clean wheel consumer proof across required platforms",
+    "Native Windows lifecycle",
+    "Shared sustained performance, memory and soak budgets"
+  ],
+  "verified_saved_usd": 0,
+  "source_digests": {
+    "packages/middleware/python/caveman_middleware/crewai.py": "4c68d10d3683b7053cbbd0073115d47bd9d1b6ca5c1565bbd6ef9e757c41fd00",
+    "examples/middleware/crewai/test_native.py": "c7b7b61a1888813be65f7c3f3b5d64949e0f0f29f5ab7d46bc6f4643b05516c7",
+    "examples/middleware/crewai/provider.py": "51df7e7f451708ca57c774a0424e095ef243603f60bf10156dada1150b8f7734",
+    "examples/middleware/crewai/demo.py": "a878efbaa89eddaeb11fa008b16ed59af1d57d66344d343f7990ddabfc297b11",
+    "examples/middleware/crewai/README.md": "4d4869549fd1f3590722493a46e7cbdcab27c2136f006915c287063dbd27386f",
+    "examples/middleware/crewai/requirements.in": "dd543329b17684ce09d75fb32d4dc97ee1bf46d4eb1abcc35533aa17ea1d83d8",
+    "examples/middleware/crewai/requirements.lock": "30b0df37fa54a56c208c9325f3fb9ca513d4f25715e107c17d4a75260d925734",
+    "packages/middleware/python/caveman_middleware/_native.py": "acd0a38312c163ea5157957a1a82246f231bd8d851f5f83d66e448d4c236d7f5",
+    "packages/middleware/python/caveman_middleware/_usage.py": "3350079147629f4987ed22e7582ff525cca8ac05f39cb6df3181b15399d08bfa",
+    "packages/middleware/python/caveman_middleware/litellm.py": "8aafa4e09e4dbba659fcdd1aa072e718ed9959a88ff33ad2ad81cdff1cb2711f",
+    "packages/sdk/python/caveman_cloud/middleware/runtime.py": "302d58d834f10c565f91eab0f49066b1377c00ac8b6f537d3a2ffe4d6fe8dcda",
+    "packages/sdk/python/caveman_cloud/middleware/async_runtime.py": "25a6dd5d4f89910bc2c5694f87e2a85e5297e0dd8080b1497c9ccc7ac4e2ac21",
+    "packages/middleware/conformance/python-framework.test.mjs": "34f41b97b6afda21bd8d364f225fb22a0f484c6ec50b6aa7b60b1c8088478147",
+    "packages/middleware/conformance/runtime-fixture.mjs": "9a49958a502750ab01776b85cdfdc1c5819f4868836cc0972211036b1c65a018"
+  },
+  "upstream_source_digests": {
+    "crewai/crew.py": "7b0d1521ec6cad5e538c2b2dc688ae96516e84ff393308cbd659ea5a52176ce3",
+    "crewai/agent/core.py": "a0d0f8009825d824b260c3081f0513e3df4fc68bf60ed80fb3c4cba33458d60e",
+    "crewai/agents/crew_agent_executor.py": "db772b254504e24c347e9f7833a5a39784489c43be7610ae01d90f28b7b06e48",
+    "crewai/experimental/agent_executor.py": "5c9dfbd657139b5713fa46f76e9495c4ca3fd7abd39ad7a3d07af821f60d070a",
+    "crewai/llms/base_llm.py": "1fe38181b591d1faaf1953bde74155b54c2af0b21166f31bf4ff25c93a059540",
+    "crewai/llm.py": "c526d29ab241e5a40cd0d7f5dcd598137eacd0ea6d3f8c0bed94dd248879731a",
+    "crewai/llms/providers/openai/completion.py": "add5aa47799da43f79ef2ed48235ccc73632871f9c5e02a645d6416c7cfcbb6b",
+    "crewai/llms/providers/anthropic/completion.py": "4bb1938515f5440a78f754ccbdf9f2f39e055aa6ebb62359a143686757ff3023",
+    "crewai/hooks/dispatch.py": "5c952e88b9db5ab3faa723dd603cd8a97c458b4165d8df61de0e416e21b833cd",
+    "crewai/events/event_bus.py": "d9d1f9461399fb39b9cb021c621b2dcd25fb44534d62a64d9f7882075d55300f",
+    "crewai/tools/base_tool.py": "5f2b8f7116a283e65403e84430819bd4d74d73e51187202a705603d6b1354abe",
+    "crewai/core/providers/human_input.py": "df81c23f8777b51df68e775f3ad286751cb47e750b41f7e4b51b4bf20ef0dd6d",
+    "crewai/utilities/streaming.py": "90656f529c9fbaace87637778b2f8e26e3546953bd10f23fd934f9ddd587d1f3"
+  }
+}

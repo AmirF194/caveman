@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "integration_id": "F08",
+  "state": "implemented",
+  "family_complete": false,
+  "evidence_class": "installed_framework_local_http_real_engine",
+  "recorded_at": "2026-09-09T17:55:02.522385+00:00",
+  "adapter": {
+    "id": "agno",
+    "version": "0.1.0",
+    "framework_version": "3.0.9",
+    "serialization_revision": "agno-message-v1"
+  },
+  "versions": {
+    "agno": "3.0.9",
+    "openai": "2.54.0",
+    "anthropic": "0.125.0",
+    "httpx": "0.28.1",
+    "httpcore": "1.0.9",
+    "anyio": "4.15.1",
+    "pydantic": "2.13.5"
+  },
+  "host": {
+    "system": "Darwin",
+    "release": "25.3.0",
+    "machine": "arm64",
+    "python": "3.13.5"
+  },
+  "runtime": {
+    "artifact": "locally_built_development_binary",
+    "sha256": "ef70ff86915fa5443e134f0da53af5c83318b97a3cff09db8826b406a832a7ac",
+    "protocol_version": 1
+  },
+  "source_revision": {
+    "head": "ed615c72d9710c1e694ece3d7973fb47de4f1023",
+    "working_tree": "uncommitted implementation; exact tested content identified by source digests"
+  },
+  "conformance": {
+    "command": "CAVEMAN_MIDDLEWARE_TEST_FAMILY=agno CAVEMAN_MIDDLEWARE_TEST_PYTHON=<hash-locked environment>/bin/python CAVEMAN_MIDDLEWARE_TEST_BINARY=<fresh development binary> node --test packages/middleware/conformance/python-framework.test.mjs",
+    "exit_code": 0,
+    "tests_run": 13,
+    "unittest_seconds": 20.087,
+    "methods": [
+      "NativeAgno.test_native_async_lifecycle_controls_preserve_cleanup_and_usage",
+      "NativeAgno.test_run_recovery_native_history_options_and_signed_thinking",
+      "NativeAgno.test_run_stream_native_events_first_content_before_completion",
+      "NativeAgno.test_off_record_outage_and_structured_output_preserve_originals",
+      "NativeAgno.test_model_only_and_fake_registration_are_recovery_free",
+      "NativeAgno.test_team_identity_and_dynamic_native_tool_factory",
+      "NativeAgno.test_native_cancel_run_during_optimization_dispatches_no_provider_call",
+      "NativeAgno.test_native_model_stream_close_keeps_usage_incomplete",
+      "AsyncNativeAgno.test_arun_structured_and_optimizer_outage_use_native_provider_schemas",
+      "AsyncNativeAgno.test_task_cancel_during_optimization_never_falls_back_to_provider",
+      "AsyncNativeAgno.test_native_async_model_stream_close_keeps_usage_incomplete",
+      "AsyncNativeAgno.test_arun_concurrent_native_sessions_and_recovery",
+      "AsyncNativeAgno.test_arun_stream_native_recovery_and_first_chunk"
+    ],
+    "async_lifecycle_cases_in_suite": 24,
+    "inference": "deterministic_loopback_only"
+  },
+  "lifecycle": {
+    "evidence": "examples/middleware/agno/lifecycle-evidence.json",
+    "state": "pass_with_native_limitation",
+    "repeated_cases": 72,
+    "repetitions": 3,
+    "shutdown_errors": 0,
+    "baseline_comparison_failures": 0,
+    "strict_clean_close_failures": 18,
+    "native_surfaces": [
+      "Model.aresponse_stream",
+      "Agent.arun(stream=True)",
+      "Team.arun(stream=True)"
+    ],
+    "active_task_cancellation": "Native and wrapped streams propagate CancelledError and close response/socket before the application closes its client for both providers.",
+    "early_close_anthropic": "Native and wrapped iterator, SDK response and socket close before the application closes its client.",
+    "early_close_openai": "Native and wrapped iterator closes, but SDK response and socket remain open. Application client.close releases the socket; the response closed flag is still false at that point.",
+    "interrupted_usage": "One cancelled receipt per wrapped attempt, usage unknown; no completed or failed receipt is invented.",
+    "lifecycle_complete": false
+  },
+  "incompatible_baseline": {
+    "evidence": "examples/middleware/agno/lifecycle-incompatible-evidence.json",
+    "dependency_lock": "examples/middleware/agno/compatibility/incompatible-requirements.lock",
+    "versions": {
+      "agno": "3.0.9",
+      "openai": "3.10.0",
+      "anthropic": "1.4.0",
+      "httpx": "0.28.1",
+      "httpcore": "1.0.9",
+      "httpx2": "2.12.0",
+      "httpcore2": "2.12.0",
+      "anyio": "4.15.1",
+      "pydantic": "2.13.5"
+    },
+    "cases": 24,
+    "shutdown_errors": 8,
+    "probe_exit_code": 1,
+    "diagnostic": "RuntimeError: generator didn't stop after athrow() reproduced in native and wrapped controls."
+  },
+  "compatibility_decision": {
+    "pins": {
+      "agno": "3.0.9",
+      "openai": "2.54.0",
+      "anthropic": "0.125.0"
+    },
+    "production_adapter_changed": false,
+    "reason": "Compatible provider pins remove observed generator-shutdown exceptions. Remaining OpenAI early-close behavior is identical upstream; the nested SDK stream is not exposed at the native Model boundary. Native provider and scheduler implementations remain authoritative."
+  },
+  "source_sha256": {
+    "packages/middleware/python/caveman_middleware/agno.py": "05981d457edf8caefe1e1ad85d7f4e55eaa022103c34219cf78a9c6f3837558c",
+    "examples/middleware/agno/README.md": "f395cbdaba15db3665487ecbaa355e8cfa710cfb335ddb9164f9a3cc29965d51",
+    "examples/middleware/agno/compatibility/incompatible-requirements.in": "d04fd0a8c6e6436e57bbd3f4c094520d74ddd2de88e9cf0817a4f0c587869cc4",
+    "examples/middleware/agno/compatibility/incompatible-requirements.lock": "364898c301b1fe29cc3dcaaa64ec38083f86a05e8db9aabfa95073e60a2a6c95",
+    "examples/middleware/agno/lifecycle.py": "b396437b9323a618e750f5f938c0f440b351d2a7f8131e10b3e567f4c49ba4c4",
+    "examples/middleware/agno/probe_lifecycle.py": "fe43b5593e3339beaf02efa6f1905b59bc1b6137c0e0e8c6d8121a7916aa440f",
+    "examples/middleware/agno/requirements.in": "0c77d6a7e8c606ad7214cea1668327c01c676d5b15e7c8d6f4535f358a954758",
+    "examples/middleware/agno/requirements.lock": "804c2cf8a3fdf42269896f159dfff40066dd23dc913fc45d7d53339e062d8f8b",
+    "examples/middleware/agno/test_native.py": "61c19964cb5e03bd34958a12800302f4b7f405c4ba4bbe73c5ec073e1743120d",
+    "packages/middleware/python/caveman_middleware/_native.py": "acd0a38312c163ea5157957a1a82246f231bd8d851f5f83d66e448d4c236d7f5",
+    "packages/middleware/python/caveman_middleware/_usage.py": "3350079147629f4987ed22e7582ff525cca8ac05f39cb6df3181b15399d08bfa",
+    "packages/sdk/python/caveman_cloud/middleware/runtime.py": "a9bd794437b9b8a7e4bd258cfeb4326cee78781cf39b76565684eb4efc8bdbef",
+    "packages/sdk/python/caveman_cloud/middleware/async_runtime.py": "25a6dd5d4f89910bc2c5694f87e2a85e5297e0dd8080b1497c9ccc7ac4e2ac21",
+    "packages/middleware/conformance/python-framework.test.mjs": "34f41b97b6afda21bd8d364f225fb22a0f484c6ec50b6aa7b60b1c8088478147",
+    "packages/middleware/conformance/runtime-fixture.mjs": "9a49958a502750ab01776b85cdfdc1c5819f4868836cc0972211036b1c65a018",
+    "packages/middleware/conformance/evidence_runtime.py": "33f0ff184f17cfedbc6c292b5bab172f20f26281133c2c1924d7e9beda1c10dd",
+    "packages/middleware/conformance/python_fixture.py": "96d7de7ef318b06a5754f2aa619660bd51d96e380ca368c99f75381710ad035b"
+  },
+  "upstream_source_sha256": {
+    "agno/models/base.py": "14d1838244815b88983d21f4c3745f4512d35be88ebd24b95d7fd97d898d1eb4",
+    "agno/models/message.py": "5fcf3c770a00d3968f4cb0e1d1f6cf96baa96c17d1c2990de99529b358b81507",
+    "agno/models/openai/chat.py": "6c380f2a2fdeee9a6f662b357d3424f8d469347aeda38786554e2f9be5a8076b",
+    "agno/models/anthropic/claude.py": "c16652d6b9dc6ec44c6c211a4a1bf807de88f318c56268cb75b9600864dadc07",
+    "agno/tools/function.py": "a22c44752211f65842499e22add9ca01d21c8f8eeae4c6a1997df3802bbd49c2",
+    "agno/agent/_run.py": "a675fd9df1e9fc51d4898b475af2c2c0cb3173835bbe1fdad669d587536e0be0",
+    "agno/team/_run.py": "7ab4c9fac843dfb2941fc96d8806d74d0ac63c161abf564ba0b6a44a5dac635e"
+  },
+  "limits": {
+    "hosted_provider_tested": false,
+    "native_windows_tested": false,
+    "packaged_wheel_tested_here": false,
+    "verified_saved_usd": 0,
+    "full_async_openai_early_close": false,
+    "sustained_buffering_memory_and_soak_budgets": "not certified by these local lifecycle controls",
+    "serialization": "Runtime credentials, connection and recovery executors require explicit rebinding after native configuration serialization."
+  }
+}

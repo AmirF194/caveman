@@ -1,0 +1,1016 @@
+[
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "agent.generate",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai generate native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai agent.generate exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic agent.generate exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai stream native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai off preserves native generation and streaming call counts",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai outage preserves native generation and streaming call counts",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai agent.stream exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "agent.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai structured output, forced tools and schema-only collision preserve native requests",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai agent.structured_output recovery-free journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic agent.structured_output recovery-free journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "processLLMRequest.every_step",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} final prepareStep changes cannot bypass native executor attestation",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra bundle retains concurrent per-call processors and prepareStep overrides without shared state",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai processLLMRequest.every_step exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic processLLMRequest.every_step exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "MessageList_memory_and_UI_history",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai generate native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai stream native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} imported error text stays protected on subsequent memory turns",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai MessageList_memory_and_UI_history exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "workflow_suspend_resume",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} native workflow suspend/resume reuses replacements after runtime restart and keeps stored originals",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai workflow_suspend_resume exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic workflow_suspend_resume exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "native_tool_execution",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra openai structured output, forced tools and schema-only collision preserve native requests",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} replacing the recovery tool map declines lossy text",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} protects JSON objects, tool errors, content blocks and signed reasoning",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra guardrail sees original tool content during optimizer availability and outage"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "nested_AI_SDK_ownership",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai nested_AI_SDK_ownership exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic nested_AI_SDK_ownership exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} ${surface} native close detaches while AbortSignal closes active provider transport",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai cancel_and_close preserves native lifecycle and releases observer resources",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic cancel_and_close preserves native lifecycle and releases observer resources"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "agent.generate",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic generate native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai agent.generate exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic agent.generate exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic stream native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic off preserves native generation and streaming call counts",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic outage preserves native generation and streaming call counts",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai agent.stream exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "agent.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic structured output, forced tools and schema-only collision preserve native requests",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai agent.structured_output recovery-free journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic agent.structured_output recovery-free journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "processLLMRequest.every_step",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} final prepareStep changes cannot bypass native executor attestation",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra bundle retains concurrent per-call processors and prepareStep overrides without shared state",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai processLLMRequest.every_step exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic processLLMRequest.every_step exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "MessageList_memory_and_UI_history",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic generate native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic stream native loop recovers original bytes and preserves memory/UI history",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} imported error text stays protected on subsequent memory turns",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai MessageList_memory_and_UI_history exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "workflow_suspend_resume",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} native workflow suspend/resume reuses replacements after runtime restart and keeps stored originals",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai workflow_suspend_resume exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic workflow_suspend_resume exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "native_tool_execution",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra anthropic structured output, forced tools and schema-only collision preserve native requests",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} replacing the recovery tool map declines lossy text",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} protects JSON objects, tool errors, content blocks and signed reasoning",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra guardrail sees original tool content during optimizer availability and outage"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "nested_AI_SDK_ownership",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai nested_AI_SDK_ownership exact journey",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic nested_AI_SDK_ownership exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F16",
+    "language": "typescript",
+    "framework": "@mastra/core",
+    "version": "1.65.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mastra.ts",
+        "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/conformance.test.mjs",
+        "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mastra/conformance.test.mjs::Mastra ${family} ${surface} native close detaches while AbortSignal closes active provider transport",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 openai cancel_and_close preserves native lifecycle and releases observer resources",
+      "examples/middleware/mastra/conformance.test.mjs::Mastra F16 anthropic cancel_and_close preserves native lifecycle and releases observer resources"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  }
+]

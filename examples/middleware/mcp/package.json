@@ -1,0 +1,12 @@
+{
+  "name": "caveman-middleware-mcp-conformance",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": { "test": "node --test conformance.test.mjs" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "openai": "7.12.1",
+    "@anthropic-ai/sdk": "0.124.0"
+  }
+}

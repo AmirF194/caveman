@@ -1,0 +1,1112 @@
+[
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "ChatCompletionClient.create",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_reports_protect_reordered_duplicate_and_late_override_results",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "ChatCompletionClient.create_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_stream_final_result_missing_usage_and_early_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_before_dispatch_during_stream_and_client_close"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "ChatCompletionClient.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "AssistantAgent.run",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_reports_protect_reordered_duplicate_and_late_override_results",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "AssistantAgent.run_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_stream_final_result_missing_usage_and_early_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_before_dispatch_during_stream_and_client_close"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "workbench_recovery",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_parallel_tool_batch_progress_events_and_multiple_workbenches"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "parallel_tools_and_multiple_workbenches",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_parallel_tool_batch_progress_events_and_multiple_workbenches"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "multiagent_contexts",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_multiagent_scopes_component_config_restart_and_twenty_turn_prefix"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "serialization_and_configuration",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_stream_final_result_missing_usage_and_early_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_before_dispatch_during_stream_and_client_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_during_real_runtime_optimization_never_dispatches"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "ChatCompletionClient.create",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_reports_protect_reordered_duplicate_and_late_override_results",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "ChatCompletionClient.create_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_stream_final_result_missing_usage_and_early_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_before_dispatch_during_stream_and_client_close"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "ChatCompletionClient.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "AssistantAgent.run",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_reports_protect_reordered_duplicate_and_late_override_results",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "AssistantAgent.run_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_stream_final_result_missing_usage_and_early_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_before_dispatch_during_stream_and_client_close"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "workbench_recovery",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_openai_anthropic_native_workbench_recovery_stream_off_and_outage",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_parallel_tool_batch_progress_events_and_multiple_workbenches"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "parallel_tools_and_multiple_workbenches",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_model_only_fake_schema_forced_tools_typed_output_original_objects_and_errors",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_parallel_tool_batch_progress_events_and_multiple_workbenches"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "multiagent_contexts",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_multiagent_scopes_component_config_restart_and_twenty_turn_prefix"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "serialization_and_configuration",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_token_helpers_and_component_workbench_configuration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F11",
+    "language": "python",
+    "framework": "autogen-agentchat",
+    "version": "0.7.5",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/autogen.py",
+        "sha256": "4196ef75d0568d6fb7df7caf34227a029834cc9fa50d469ef38b819b11fcc2f6"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/requirements.lock",
+        "sha256": "1320b49684ae16a8f7cc01a017adc0237723012dd35b8ac1d69f7b2024935e5f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/autogen/test_native.py",
+        "sha256": "1bed0777468b66aea862ade59062d32b21863542268dfc5d2b26171aed5dff9f"
+      }
+    ],
+    "tests": [
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_stream_final_result_missing_usage_and_early_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_before_dispatch_during_stream_and_client_close",
+      "examples/middleware/autogen/test_native.py::NativeAutoGen.test_native_cancellation_during_real_runtime_optimization_never_dispatches"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  }
+]

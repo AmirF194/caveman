@@ -1,0 +1,68 @@
+{
+  "evidence_class": "fixture_freeze_not_certification",
+  "reporting_revision": "reporting-v1",
+  "files": [
+    {
+      "path": "examples/middleware/langchain/README.md",
+      "sha256": "b4bda4b5f965e06bb7c5cc0a804dc87a1565b187a7bb52f2a0b6735efab037a6"
+    },
+    {
+      "path": "examples/middleware/langchain/conformance.test.mjs",
+      "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+    },
+    {
+      "path": "examples/middleware/langchain/source-expansion.test.mjs",
+      "sha256": "46d240d026999801af6254bfc3639a396cd011b14fd0d1a31bacf1c33d6e91d7"
+    },
+    {
+      "path": "examples/middleware/langchain/certification-native.mjs",
+      "sha256": "8db383d12864b11be23ce6cdbd6479bc3535beb729cde510e9a7e3b482570f36"
+    },
+    {
+      "path": "examples/middleware/langchain/certification-evidence.mjs",
+      "sha256": "1e7cf70b3cca2823d10252002ac23dd9fa696b45f91128f23084655a80705ee8"
+    },
+    {
+      "path": "examples/middleware/langchain/certification-cells.json",
+      "sha256": "e400020c6119653a94dc9414048a80abde0d44adedc10077eb21447eecaf749d"
+    },
+    {
+      "path": "examples/middleware/langchain/certify.mjs",
+      "sha256": "927ad3ce1e11675a6b539f4d254d70e12a2f57b8dc51cf275b0b9da2b88b45ab"
+    },
+    {
+      "path": "examples/middleware/langchain/test_native.py",
+      "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+    },
+    {
+      "path": "examples/middleware/langchain/test_source_expansion.py",
+      "sha256": "92fe08668eb992a693f7908d063a6df5cabca848a54a7c2aa92af9e2c8ea5353"
+    },
+    {
+      "path": "examples/middleware/langchain/_certification_native.py",
+      "sha256": "8cbb310784cfc1d18dff1d064cf908cd7a75e4cfb6b81a2216a3b58b2a1e3225"
+    },
+    {
+      "path": "examples/middleware/langchain/_certification_fixture.py",
+      "sha256": "43646d82fe4c1a40d05eda6e9461279cea6a8f1fba6cebd24605f6baed828a05"
+    },
+    {
+      "path": "examples/middleware/langchain/_test_result.py",
+      "sha256": "39822860df8ed2a11b269ed0204210d1542dcdcef129f386ded226e9226828e0"
+    }
+  ],
+  "production": [
+    {
+      "path": "packages/middleware/python/caveman_middleware/langchain.py",
+      "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+    },
+    {
+      "path": "packages/middleware/typescript/src/langchain.ts",
+      "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+    },
+    {
+      "path": "packages/middleware/typescript/src/langchain-model.ts",
+      "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+    }
+  ]
+}

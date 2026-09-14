@@ -1,0 +1,52 @@
+{
+  "evidence_class": "fixture_freeze_not_certification",
+  "reporting_revision": "reporting-v2",
+  "files": [
+    {
+      "path": "examples/middleware/crewai/README.md",
+      "sha256": "4c076b8d5c9a2164eb46f98eb4f43f1a8c27a5b85e534fa35769eb8df07575a2"
+    },
+    {
+      "path": "examples/middleware/crewai/test_native.py",
+      "sha256": "74b6a9514e3cbad23de853bc916bc35963ee75af162424a06763ce8c3aa0d573"
+    },
+    {
+      "path": "examples/middleware/crewai/provider.py",
+      "sha256": "6d9d5d758b5d3719c87da0fe4e7f03c386d44961f217e20e6d1a76bb25add6d5"
+    },
+    {
+      "path": "examples/middleware/crewai/demo.py",
+      "sha256": "a878efbaa89eddaeb11fa008b16ed59af1d57d66344d343f7990ddabfc297b11"
+    },
+    {
+      "path": "examples/middleware/crewai/_certification_native.py",
+      "sha256": "bd87c81c3bff0b8d1fa0f733c4322c9aee250d09285f375255e05ccae90d3c23"
+    },
+    {
+      "path": "examples/middleware/crewai/_test_result.py",
+      "sha256": "1d50c2e39523ab13ad354cbd76af29ad9135b13538a3b38f332e4cfd406b2e5f"
+    },
+    {
+      "path": "examples/middleware/crewai/certification-evidence.mjs",
+      "sha256": "331b32546cf07a67612842cf350d36567af8c7b933d224c59ec81bf4c08af772"
+    },
+    {
+      "path": "examples/middleware/crewai/certification-cells.json",
+      "sha256": "b3890ddcc9dc9d9de5a770df933422ccd2090a24ffadb19298c415eb4c229e9a"
+    },
+    {
+      "path": "examples/middleware/crewai/certify.mjs",
+      "sha256": "03555eeea6422669a3270f8a752c2ab1ba2c1215e0ef11d1e26aefc8680229e6"
+    }
+  ],
+  "production": [
+    {
+      "path": "packages/middleware/python/caveman_middleware/crewai.py",
+      "sha256": "bc7b5614e5c9dba07b590c3c45d9aa1786ac8a7fcb1bb1b1a85d53e94b674fb2"
+    },
+    {
+      "path": "packages/middleware/python/caveman_middleware/litellm.py",
+      "sha256": "22a91fcb8a1bcf8636ed220eb5815414927ba121864e54c311f8f0de96319354"
+    }
+  ]
+}

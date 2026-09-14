@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "artifacts": [
+    {
+      "path": "examples/middleware/agno/evidence.json",
+      "sha256": "305f42b717dc1db63783fbbbee3eb0706831862950762280560d60aaa4379f37",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/agno/lifecycle-evidence.json",
+      "sha256": "5e2eba79091aa634572af11e26470924a6e57c70b03eeb90c7efab1f974aebe6",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/agno/lifecycle-incompatible-evidence.json",
+      "sha256": "78947daaadcd07cd024fe9f53a3081a797740a8b4e266cd619bde7f33647b875",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/autogen/compatibility.json",
+      "sha256": "a57f2b44a7881a7b987af3e450b8cef22601ec04a479d9a4d6af030b6b1facda",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/autogen/evidence.json",
+      "sha256": "4ed5fd604abede345a4640e633989ccffd907afec6795cf49ac9b46ca4cb6e38",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/crewai/evidence.json",
+      "sha256": "7bcf77711d2f624ecb64b6afd80be0b9578fce31355ff2ce6d28298ae33a0b01",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/google/lifecycle-evidence.json",
+      "sha256": "78ce7ce267e9c346830db9ee694443b5c6b556fec7d510a118ff260fe84e4b84",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/langchain/evidence.json",
+      "sha256": "c75e787d08fd2028ae38d354ad384ce7c269d7d7755e9b28a664a3e1ff4d951a",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/llama-index/compatibility.json",
+      "sha256": "8a3a6ddbd96dfc19f4c9fc4eb99d0a4c994d074ee3c99f833ff7a2762d1df2f8",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/llama-index/evidence.json",
+      "sha256": "d60359cd03cb285149fb241697823fa93cfe922fe3fe4160f63175138198cba6",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/llama-index/lifecycle-evidence.json",
+      "sha256": "c946f687ae16c9ff87d95af1eeed757b13ddd9c1a7ece36e6241d58a710632f3",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/llama-index/native-helper-evidence.json",
+      "sha256": "08c4be05b7d4f431d81e247fd53ca17b77541dac004d9a0c65c313c3be66d8b4",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/provider-sdks/anthropic-native-evidence.json",
+      "sha256": "678a99f8f8e0e5c7efab6e114de6c86d24fc5c1acda2410e8b9995226674687f",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/provider-sdks/openai-native-evidence.json",
+      "sha256": "3cb024828d0b501849ae2d1488c4c3ae65af4376a1ac2ae2a686a94cfb60e642",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/pydantic-ai/compatibility.json",
+      "sha256": "b9ff14e49274cbdf2663280693def12e69d75829a15d1e332be961e73f65f2d1",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/pydantic-ai/continuation-evidence.json",
+      "sha256": "9ed840ac388ba8e784e0f08e4781aecbbf9a0dd3c0869533047a06f864987099",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/pydantic-ai/evidence.json",
+      "sha256": "b32903bc7df476a168fb01a4542b6c250dafeb2fe8da349d9626ff8841713055",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/pydantic-ai/lifecycle-evidence.json",
+      "sha256": "af1fa1b64f6530d6a253750a4d816195a6f443e2b6347edcacda2d5e9e383ea6",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/pydantic-ai/lifecycle-httpx27-evidence.json",
+      "sha256": "3b3ffdf7510939d4b6883e8006836fce7b9574c513715d05f27e3e4bb4d6ef66",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/python-provider-sdks/lifecycle-evidence.json",
+      "sha256": "e6d9d30c3500a13546b4af37454f0d7aca10c2dde6271438e26bab6c1941d8fe",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "examples/middleware/python-provider-sdks/native-evidence.json",
+      "sha256": "3e939f9aeb96c8d2159a60dd4ed97eb630a77ea1196ceefcadad35c2e2f3258a",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/hosted-installed-provenance.json",
+      "sha256": "908d18157c34d87399d1c421035874e5be679b1f4dc34ec08c2ad803bad2b395",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/hosted-local-validation.json",
+      "sha256": "3cabf903989370d5361dbee386b82e0f9a304e4c6cf69c11d5c9b0f4818c5a0b",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/hosted-native-controls.json",
+      "sha256": "f196a3768348bed58a5faeaf4a9caa191834394030a1cee357141163d5e0ad14",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/performance-final-shared-host.json",
+      "sha256": "1fd69a75de166b91dcc4cdba3916332768865f7b5b5654adba17d5f5c5fe060f",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/performance-reporting-v1.json",
+      "sha256": "6e2da51758f47a341a6b587ca0bba427817a684add61e358d26fef24abc1002e",
+      "classification": "local_runtime_performance_native_candidate"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/performance.json",
+      "sha256": "9123c7ee67ba230e14fc95666bb956e01e3fa3b6e52348e55b59dbacb2f277fe",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/soak-1800-cleanup-deadline.json",
+      "sha256": "06df64216f4e8165d3bbda2031fd8bd9c996a3d41d9c741e6388dcad75b0c444",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/soak-1800-final.json",
+      "sha256": "7a132f70a8c0615065053cef6e44d3a67b8a6f4e0f46518571790b069a642121",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/soak-1800-graphs.json",
+      "sha256": "24ee2ae65ce552912b0e8b167d899df7268c67dfa403fb9a6ff409f278d5ad44",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/stream-memory-frozen-final.json",
+      "sha256": "19f9aea4aa1343406967492c47423cda848c190b83c17604def39c011bd1e292",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/evidence/stream-memory.json",
+      "sha256": "6ece34fb76fa63ff2c514d8f46d7746162dca01ecfc2930ec5c30715020852cd",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    },
+    {
+      "path": "packages/middleware/conformance/support/acceptance-evidence/report.json",
+      "sha256": "0594c53032859cb413ada918e5f4d96eb83ad7efe4872d5b85f89e800ff051cd",
+      "classification": "retained_local_candidate_not_accepted_certification"
+    }
+  ],
+  "gates": [
+    {
+      "id": "native_journeys",
+      "state": "incomplete",
+      "priority": 1,
+      "description": "Native candidates exist across all 16 families. Each conformant manifest row must come from its exact scoped source/build inputs and a fresh independent replay. Remaining required Strands behavior and complete family acceptance remain open."
+    },
+    {
+      "id": "shared_correctness",
+      "state": "incomplete",
+      "priority": 1,
+      "description": "The native Go acceptance producer distinguishes fully covered criteria from partial components. Complete cross-framework fidelity, recovery, process/worker stability, isolation, failure and accounting proof is still required; source locators never promote a criterion."
+    },
+    {
+      "id": "composition",
+      "state": "incomplete",
+      "priority": 1,
+      "description": "The four named native compositions have executing fixtures. Complete owner, auth/guardrail, attempt and receipt criteria require explicit scoped acceptance evidence beyond an operation journey."
+    },
+    {
+      "id": "performance",
+      "state": "incomplete",
+      "priority": 1,
+      "description": "The latest retained native candidate used 1000 measured calls per phase at concurrency 16. Adapter-only p95 is 1.0071660000003249 ms; cold optimize p95 is 42.791625000000295 ms; warm p95 is 34.46837500000129 ms. Cold/warm bypass fractions are 0/0. Dedicated host: no. Historical failures remain retained. Complete dedicated-host, pre-dispatch deadline and overload criteria are not certified by these candidate measurements."
+    },
+    {
+      "id": "stream_and_soak",
+      "state": "incomplete",
+      "priority": 2,
+      "description": "Retained native stream and 30-minute soak runs include resource counters, storage samples and graphs. They remain scoped candidates until their complete source/build inputs and exact lifecycle, buffering and retention criteria are accepted."
+    },
+    {
+      "id": "packaging",
+      "state": "incomplete",
+      "priority": 2,
+      "description": "The harness contains 23 isolated consumers per platform and requires actual native build provenance before packaging. Complete current-source macOS and Linux reports, docs execution and every packaging criterion still need final qualification. Native Windows remains uncertified."
+    },
+    {
+      "id": "live_provider_record",
+      "state": "missing",
+      "priority": 3,
+      "description": "No accepted live-provider coverage record exists. Auth, endpoint, model/version/date, streaming/recovery, and usage completeness need their own bounded, explicitly authorized runs. Local fixtures are not cloud-auth evidence."
+    },
+    {
+      "id": "task_comparison",
+      "state": "incomplete",
+      "priority": 3,
+      "description": "The harness contains 24 frozen tasks, native common-intersection arms, rotation/cache strata, independent oracles and budget controls. Actual paid task outcomes and redacted provider receipts are absent. No provider-cost superiority or quality-equivalence claim is supported."
+    }
+  ]
+}

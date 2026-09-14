@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "family": "F14",
+  "framework": "pydantic-ai",
+  "status": "experimental_native_contracts_verified_with_upstream_limits",
+  "pins": {
+    "pydantic-ai": "2.42.0",
+    "pydantic-ai-slim": "2.42.0",
+    "openai": "3.11.0",
+    "anthropic": "1.4.0",
+    "httpx2": "2.12.0",
+    "httpcore2": "2.12.0"
+  },
+  "dependency_constraints": {
+    "source": "pydantic-ai-slim 2.42.0 wheel METADATA",
+    "openai": ">=3.8.0",
+    "anthropic": ">=1.3.0",
+    "httpx2": ">=2.7"
+  },
+  "pin_recommendation": "Keep the current exact pins. HTTP 2.7.0 is compatible but reproduces the same native shutdown errors; older OpenAI 2.x and Anthropic 0.x do not meet framework requirements.",
+  "supported": [
+    "Existing native OpenAIChatModel and AnthropicModel through the Caveman capability or model-only delegate",
+    "Agent run_sync, run, run_stream_sync and run_stream with original native history, dependencies, capabilities, and provider options",
+    "Ordinary source tool execution, exact Unicode/CRLF recovery and final native answer in both protocols",
+    "Anthropic thinking-only pause_turn then recovery through run and run_stream, with unique fresh response IDs, signed thinking and additive per-provider usage",
+    "NativeOutput typed results with the native schema and recovery-free transformations",
+    "Native stream objects, first content before EOF, cancellation during optimization, native cancellation token, and incomplete usage receipts",
+    "Native and wrapped socket EOF before client close or fixture release for context exit, stream.cancel and active task cancellation",
+    "Serialized history resume, independent scopes, nested optimization ownership, native retry prompts, and original-content guardrails",
+    "Lossiness blocked for fake or filtered recovery, collisions, forced tool choices, extra provider overrides, and structured output"
+  ],
+  "upstream_limits": [
+    {
+      "case": "Visible text in Anthropic pause_turn followed by a tool request under Agent.run_stream",
+      "native_and_wrapped_behavior": "The tool executes and its result remains in history, but the run returns the earlier visible text after 3 provider requests; no final provider request uses the tool result.",
+      "nonstreaming_behavior": "Native and wrapped Agent.run complete after 4 provider requests.",
+      "evidence": "continuation-evidence.json"
+    },
+    {
+      "case": "Async-generator shutdown after context exit or stream.cancel",
+      "native_and_wrapped_behavior": "Intermittent RuntimeError: generator did not stop after athrow, with httpcore2 safe_async_iterate / HTTP11 / connection-pool frames, on both 2.12.0 and compatible 2.7.0.",
+      "socket_behavior": "All 36 cases on each stack reached peer EOF within the 200 ms observation window before fixture release or client close.",
+      "evidence": [
+        "lifecycle-evidence.json",
+        "lifecycle-httpx27-evidence.json"
+      ]
+    }
+  ],
+  "uncertified": [
+    "Hosted provider inference",
+    "Native Windows",
+    "Published-wheel installation",
+    "Provider invoice or cost savings",
+    "Providers and model classes outside the explicit adapter gate"
+  ],
+  "evidence": [
+    "evidence.json",
+    "continuation-evidence.json",
+    "lifecycle-evidence.json",
+    "lifecycle-httpx27-evidence.json"
+  ]
+}

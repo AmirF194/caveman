@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "caveman-middleware"
+version = "0.1.0"
+description = "Native framework adapters for the Caveman compression runtime."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.13"
+dependencies = ["caveman-sdk==1.0.0"]
+
+[project.optional-dependencies]
+openai = ["openai==3.10.0"]
+anthropic = ["anthropic==1.4.0"]
+google = ["google-genai==2.22.0"]
+langchain = ["langchain==1.4.0", "langchain-core==1.6.2", "langgraph==1.2.11"]
+litellm = ["litellm==1.100.0"]
+strands = ["strands-agents==1.55.0"]
+agno = ["agno==3.0.9", "openai==2.54.0", "anthropic==0.125.0"]
+asgi = ["fastapi==0.141.1", "starlette==1.6.0"]
+mcp = ["mcp==2.2.0"]
+crewai = ["crewai[anthropic,litellm]==1.15.20", "litellm==1.100.0"]
+pydantic-ai = ["pydantic-ai==2.42.0"]
+autogen = ["autogen-agentchat==0.7.5", "autogen-core==0.7.5", "autogen-ext[openai,anthropic]==0.7.5", "openai==2.54.0", "anthropic==0.125.0"]
+llama-index = ["llama-index-core==0.14.24", "llama-index-llms-openai==0.8.1", "llama-index-llms-anthropic==0.12.0", "anthropic==0.125.0", "openai==2.54.0"]
+
+[tool.setuptools]
+packages = ["caveman_middleware"]
+
+[tool.setuptools.package-data]
+caveman_middleware = ["py.typed"]

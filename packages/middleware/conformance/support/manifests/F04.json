@@ -1,0 +1,1120 @@
+[
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "generateText",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText.structured exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText.structured exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "streamText",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic streamText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText.structured exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic streamText.structured exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "generateText.structured",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText.structured exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText.structured exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "streamText.structured",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic streamText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText.structured exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText.structured exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "public_tool_loop",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::native AI SDK tool loop compresses, recovers exact bytes, streams before EOF, and reuses after restart",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai public_tool_loop exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic public_tool_loop exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai public_tool_loop.stream exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "public_tool_loop.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::native AI SDK tool loop compresses, recovers exact bytes, streams before EOF, and reuses after restart",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic streamText exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText.structured exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "wrapLanguageModel.model_only",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai wrapLanguageModel.model_only exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic wrapLanguageModel.model_only exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "nested_provider_client_ownership",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/composition.test.mjs",
+        "sha256": "2dcccb9f7c1438b54f04892b1acf0051e69f423175728186fe6142a268bca10a"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/composition.test.mjs::native AI SDK openai composes with public provider transport and executes exact recovery",
+      "examples/middleware/ai-sdk/composition.test.mjs::native AI SDK openai transport composition preserves streaming cancellation and provider failure"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "@ai-sdk/openai": "4.0.62"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/conformance.test.mjs",
+        "sha256": "871d16556fbde1bbe0457b021e88153f2c7705e3f05d56f0ca5f6c90b16cc55c"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai cancel_and_close exact journey",
+      "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic cancel_and_close exact journey"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "generateText",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "streamText",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "generateText.structured",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "streamText.structured",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "public_tool_loop",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "public_tool_loop.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "wrapLanguageModel.model_only",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "nested_provider_client_ownership",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/composition.test.mjs",
+        "sha256": "2dcccb9f7c1438b54f04892b1acf0051e69f423175728186fe6142a268bca10a"
+      }
+    ],
+    "tests": [
+      "examples/middleware/ai-sdk/composition.test.mjs::native AI SDK anthropic composes with public provider transport and executes exact recovery",
+      "examples/middleware/ai-sdk/composition.test.mjs::native AI SDK anthropic transport composition preserves streaming cancellation and provider failure"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F04",
+    "language": "typescript",
+    "framework": "ai",
+    "version": "7.0.94",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@ai-sdk/anthropic": "4.0.50"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/ai-sdk.ts",
+        "sha256": "2c25ca07b48ed0491d3589be79b3c67fd5e3a41555bf7bab485de968d8623feb"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/transport.ts",
+        "sha256": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/ai-sdk/package-lock.json",
+        "sha256": "95bce0c95d28317aec2387957c6ac2f29a6841439fb2c6fc1c671be269010341"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mastra/package-lock.json",
+        "sha256": "3b597ac0cb65e9aee145be452e567a7971d85359eeb7d6ad9f60598ebf5a5a96"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  }
+]

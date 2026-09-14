@@ -1,0 +1,28 @@
+{
+  "evidence_class": "fixture_freeze_not_certification",
+  "reporting_revision": "reporting-v2",
+  "files": [
+    {
+      "path": "examples/middleware/mastra/README.md",
+      "sha256": "379b34c409b5e476d7e642dd0004fb591a1f5864c0da6de3fda6aa24fabb12b0"
+    },
+    {
+      "path": "examples/middleware/mastra/conformance.test.mjs",
+      "sha256": "70ed32d7631a063344891fedec14669dd5522464561f5e3b0dccd2566093e1f0"
+    },
+    {
+      "path": "examples/middleware/mastra/certification-evidence.mjs",
+      "sha256": "981c64f1ef5c76be619cacec2f010f8ecf4d9988da26183545babc19e6684c59"
+    },
+    {
+      "path": "examples/middleware/mastra/certify.mjs",
+      "sha256": "89c7b02af38b2bf98c57f65b76bb00b8690656aa29b5862537084a510c8c9ace"
+    }
+  ],
+  "production": [
+    {
+      "path": "packages/middleware/typescript/src/mastra.ts",
+      "sha256": "34a925680f1071bac41cafa90bbba143bad090d9b6fb88054073a6f98381e714"
+    }
+  ]
+}

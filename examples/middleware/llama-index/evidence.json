@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "integration_id": "F15",
+  "evidence_class": "installed_framework_local_http",
+  "recorded_at": "2026-09-09T17:35:42.391424+00:00",
+  "adapter": {
+    "id": "llama-index",
+    "version": "0.1.0",
+    "framework_version": "0.14.24",
+    "serialization_revision": "llama-index-message-v1"
+  },
+  "versions": {
+    "llama-index-core": "0.14.24",
+    "llama-index-llms-openai": "0.8.1",
+    "llama-index-llms-anthropic": "0.12.0",
+    "llama-index-workflows": "2.23.3",
+    "openai": "2.54.0",
+    "anthropic": "0.125.0",
+    "httpx": "0.28.1",
+    "pydantic": "2.13.5"
+  },
+  "host": {
+    "system": "Darwin",
+    "release": "25.3.0",
+    "machine": "arm64",
+    "python": "3.13.5"
+  },
+  "source_git_revision": "ed615c72d9710c1e694ece3d7973fb47de4f1023",
+  "worktree_dirty": true,
+  "runtime": {
+    "artifact": "development caveman-middleware-proxy-next",
+    "sha256": "07ea74d85de7f62c7f50405a7b312813bee689ba21d296db4ce85c395dced92f",
+    "protocol_version": 1
+  },
+  "conformance": {
+    "command": "CAVEMAN_MIDDLEWARE_TEST_FAMILY=llama-index CAVEMAN_MIDDLEWARE_TEST_PYTHON=<hash-locked environment>/bin/python CAVEMAN_MIDDLEWARE_TEST_BINARY=<fresh development binary> node --test packages/middleware/conformance/python-framework.test.mjs",
+    "exit_code": 0,
+    "tests_run": 19,
+    "unittest_seconds": 34.622,
+    "methods": [
+      "NativeLlamaIndex.test_native_agent_recovery_disabled_and_outage",
+      "NativeLlamaIndex.test_parallel_native_tools_keep_distinct_recovery_identity",
+      "NativeLlamaIndex.test_shared_native_model_concurrent_scopes_are_isolated",
+      "NativeLlamaIndex.test_provider_body_override_disables_recovery_before_continuation",
+      "NativeLlamaIndex.test_native_result_guardrail_sees_original_even_during_outage",
+      "NativeLlamaIndex.test_model_only_native_methods_and_no_schema_only_recovery",
+      "NativeLlamaIndex.test_sync_async_structured_output_is_native",
+      "NativeLlamaIndex.test_twenty_native_turns_and_serialized_restart_keep_replacement_bytes",
+      "NativeLlamaIndex.test_native_citation_query_engine_keeps_source_mapping",
+      "NativeLlamaIndex.test_native_completion_helpers_keep_objects_and_options",
+      "NativeLlamaIndex.test_native_anthropic_signed_thinking_is_unchanged",
+      "NativeLlamaIndex.test_rag_queries_retain_cached_nodes_scores_metadata_and_citations",
+      "NativeLlamaIndex.test_offset_citations_and_unknown_node_subclasses_are_protected",
+      "NativeLlamaIndex.test_native_name_collision_and_tool_errors_never_enable_lossiness",
+      "NativeLlamaIndex.test_gated_native_agent_stream_preserves_first_event_and_tool_deltas",
+      "NativeLlamaIndex.test_cancellation_during_optimizer_prevents_provider_dispatch",
+      "NativeLlamaIndex.test_stream_close_and_cancel_are_incomplete_without_extra_requests",
+      "NativeLlamaIndex.test_provider_errors_are_native_and_never_retry_original",
+      "NativeLlamaIndex.test_exact_versions_and_documented_example"
+    ],
+    "local_test_log_sha256": "13fc1866e48aaaff419cd44931ab85b1a532c3fd82db1454ed0457b4e487c25c"
+  },
+  "source_sha256": {
+    "examples/middleware/llama-index/README.md": "5fb2ca9ceb85c5c84a06695b8d2025c69cf6dbc3aa0c1746b47dcc39ae9ea8b6",
+    "examples/middleware/llama-index/_fixture.py": "12db4d1fa699a52e7cd1658fc28e6b392c18dec35a424db144cb98f81a90fad3",
+    "examples/middleware/llama-index/example.py": "25eb8b2d125d9e820edfd60887d72dd6834cfa83fe1e8ea9ccb6d17d7643f108",
+    "examples/middleware/llama-index/probe_lifecycle.py": "a4584eff41495c6cad3472373f112b3e5972ad403270c8093b7353fa977ed913",
+    "examples/middleware/llama-index/probe_native_helpers.py": "97d1af330c55fbfaa89c0ae0eef8aeee2a026f8b04ced09f7c40866f806378e6",
+    "examples/middleware/llama-index/requirements.in": "5294ab4519fabae090f59e457fa39955404d8cff43519ce277808108130e3738",
+    "examples/middleware/llama-index/requirements.lock": "ef0d9b77277308b8ffadf8c37bd9435e07104d1be7a9e33be2f78fa931996b8e",
+    "examples/middleware/llama-index/test_native.py": "26469f82f94917889f3d3773d89b15c26070e964c0c9f4d3df86b9946f674497",
+    "packages/middleware/python/caveman_middleware/llama_index.py": "cdcae1e59cf5b9cbc031077105b251a9284ce2e05fa97fe40a2223a735552972"
+  },
+  "upstream_source_sha256": {
+    "llama_index.core.llms.function_calling": "51c1801b74f2da23cfbf2b4049811f3b55a6e72617aaf8b94674a3f275da86a1",
+    "llama_index.core.agent.workflow.function_agent": "21cbcba4817b2bd128218d113647e2b3e5508e07a1074d3b6153c0f1df9b67fa",
+    "llama_index.core.postprocessor.types": "601ce5068496ada110cf4626d69f86f44937fcb087bf23dc8aadd95c1e8780fc",
+    "llama_index.core.program.utils": "f71578d3f3e2a7b440260fa71cb6d5038a3131a39547571c3f409cea192877a5",
+    "llama_index.llms.openai.base": "17d140e8ea835a7f1a64eafd79418c56f716a6aadf88e27fc0faf845fd7b7bc0",
+    "llama_index.llms.anthropic.base": "2055578976652a37f25f0e8a8a851f0a2dfeda855cbbd77913d4780af0c1fbf9"
+  },
+  "limits": {
+    "full_family_conformance": false,
+    "hosted_provider_tested": false,
+    "hosted_inference_calls": 0,
+    "native_windows_tested": false,
+    "packaged_wheel_tested_here": false,
+    "performance_budget_tested_here": false,
+    "verified_saved_usd": 0,
+    "rag_recovery": "Only runtime-advertised recovery-free transforms. No source-expansion executor is claimed for ordinary query synthesis.",
+    "anthropic_typed_stream": "Native and wrapped sync/async typed stream return Answer(answer=None); see native-helper-evidence.json. State remains implemented, not conformant.",
+    "anthropic_completion_serialization": "Native and wrapped AnthropicCompletionResponse.model_dump() raise TypeError MockValSer/SchemaSerializer under Pydantic2.13.5; public fields and native type pass through.",
+    "early_close": "Native and wrapped sync close/async aclose do not produce socket EOF within 200ms while provider is paused. Active async cancellation closes sockets. Full early-close transport cleanup remains uncertified; see lifecycle-evidence.json."
+  },
+  "evidence_paths": [
+    "examples/middleware/llama-index/compatibility.json",
+    "examples/middleware/llama-index/native-helper-evidence.json",
+    "examples/middleware/llama-index/lifecycle-evidence.json"
+  ],
+  "companion_evidence_sha256": {
+    "examples/middleware/llama-index/compatibility.json": "8a3a6ddbd96dfc19f4c9fc4eb99d0a4c994d074ee3c99f833ff7a2762d1df2f8",
+    "examples/middleware/llama-index/native-helper-evidence.json": "6c6ef0fdc24ebf67f054dfbac2a3494af2c75b6973bb9bc915f7d64aa108a4ee",
+    "examples/middleware/llama-index/lifecycle-evidence.json": "94f02668d4883e9662ad3e8f79891607891db8510099670a3aed7a67fd1105bf"
+  }
+}

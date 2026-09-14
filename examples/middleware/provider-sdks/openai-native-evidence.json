@@ -1,0 +1,390 @@
+{
+  "evidence_class": "installed_provider_sdk_with_deterministic_http",
+  "versions": {
+    "openai": "7.12.1"
+  },
+  "node": "v22.22.2",
+  "runtime_sha256": "aeb730be736be5af754e17f9f5be21f966ae33b4f59d67f079fd6d600a274421",
+  "source_sha256": "747d1e4d389e8880670b01d5a51d2c205619cdeb87447435a584b9feaf1b866a",
+  "files": {
+    "examples/middleware/provider-sdks/openai.test.mjs": "fa85732b6f3b0f02f92d7015b5eea3215f68a0f37127c4a75eb8e319c13b3ede",
+    "examples/middleware/provider-sdks/native-fixture.mjs": "adcde0c79e0428fd062ed15b3b5e5ae56ead4d11764de5389b30ba70ced99189",
+    "examples/middleware/provider-sdks/package-lock.json": "da8f82a4bbc9a87b663f7cf9dad3f615cb9c5924b1607486a9f51230b2c73bfd",
+    "packages/middleware/typescript/src/openai.ts": "70f4f6e4ca8fe9170ceabe0a1c11370ce9ecc72470ffec7551bc745de42aced1",
+    "packages/middleware/typescript/src/transport.ts": "e078da2abe2e521606bdcaa2b91de8b747aec25cf274557650bc20f02d8881bc",
+    "packages/middleware/typescript/src/provider-leaves.ts": "79c49e9a6dc710b264603f0755f04783307cc3569486c7d49bf46b4f08169939"
+  },
+  "observations": [
+    {
+      "protocol": "openai-chat",
+      "operation": "native_helpers",
+      "provider_requests": 7,
+      "optimization_calls": 6,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "native_event_order": [
+        "chat.completion.chunk",
+        "chat.completion.chunk",
+        "chat.completion.chunk",
+        "chat.completion.chunk"
+      ],
+      "native_event_order_equal": true,
+      "original_history": true
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "native_helpers",
+      "provider_requests": 7,
+      "optimization_calls": 6,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "native_event_order": [
+        "response.created",
+        "response.output_item.added",
+        "response.content_part.added",
+        "response.output_text.delta",
+        "response.output_text.delta",
+        "response.output_text.done",
+        "response.content_part.done",
+        "response.output_item.done",
+        "response.completed"
+      ],
+      "native_event_order_equal": true,
+      "original_history": true
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "application_tool_loop",
+      "provider_requests": 3,
+      "optimization_calls": 3,
+      "bound_calls": 3,
+      "replacement_calls": 2,
+      "mode": "compress",
+      "final": "retained-detail-70",
+      "recovered_exact": true,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "application_tool_loop.stream",
+      "provider_requests": 3,
+      "optimization_calls": 3,
+      "bound_calls": 3,
+      "replacement_calls": 2,
+      "mode": "compress",
+      "final": "retained-detail-70",
+      "recovered_exact": true,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "application_tool_loop",
+      "provider_requests": 2,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "mode": "off",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "application_tool_loop.stream",
+      "provider_requests": 2,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "mode": "off",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "application_tool_loop",
+      "provider_requests": 2,
+      "optimization_calls": 2,
+      "bound_calls": 2,
+      "replacement_calls": 0,
+      "mode": "outage",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "application_tool_loop.stream",
+      "provider_requests": 2,
+      "optimization_calls": 2,
+      "bound_calls": 2,
+      "replacement_calls": 0,
+      "mode": "outage",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "application_tool_loop",
+      "provider_requests": 3,
+      "optimization_calls": 3,
+      "bound_calls": 3,
+      "replacement_calls": 2,
+      "mode": "compress",
+      "final": "retained-detail-70",
+      "recovered_exact": true,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "application_tool_loop.stream",
+      "provider_requests": 3,
+      "optimization_calls": 3,
+      "bound_calls": 3,
+      "replacement_calls": 2,
+      "mode": "compress",
+      "final": "retained-detail-70",
+      "recovered_exact": true,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "application_tool_loop",
+      "provider_requests": 2,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "mode": "off",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "application_tool_loop.stream",
+      "provider_requests": 2,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "mode": "off",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "application_tool_loop",
+      "provider_requests": 2,
+      "optimization_calls": 2,
+      "bound_calls": 2,
+      "replacement_calls": 0,
+      "mode": "outage",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "application_tool_loop.stream",
+      "provider_requests": 2,
+      "optimization_calls": 2,
+      "bound_calls": 2,
+      "replacement_calls": 0,
+      "mode": "outage",
+      "final": "retained-detail-70",
+      "recovered_exact": false,
+      "source_executions": 1
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "runTools",
+      "provider_requests": 3,
+      "optimization_calls": 3,
+      "bound_calls": 3,
+      "replacement_calls": 2,
+      "mode": "compress",
+      "final": "retained-detail-70",
+      "native_callbacks": 3
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "runTools.stream",
+      "provider_requests": 3,
+      "optimization_calls": 3,
+      "bound_calls": 3,
+      "replacement_calls": 2,
+      "mode": "compress",
+      "final": "retained-detail-70",
+      "native_callbacks": 3
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "runTools",
+      "provider_requests": 2,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "mode": "off",
+      "final": "retained-detail-70",
+      "native_callbacks": 2
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "runTools.stream",
+      "provider_requests": 2,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "mode": "off",
+      "final": "retained-detail-70",
+      "native_callbacks": 2
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "runTools",
+      "provider_requests": 2,
+      "optimization_calls": 2,
+      "bound_calls": 2,
+      "replacement_calls": 0,
+      "mode": "outage",
+      "final": "retained-detail-70",
+      "native_callbacks": 2
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "runTools.stream",
+      "provider_requests": 2,
+      "optimization_calls": 2,
+      "bound_calls": 2,
+      "replacement_calls": 0,
+      "mode": "outage",
+      "final": "retained-detail-70",
+      "native_callbacks": 2
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "opaque_signed_unrelated_and_errors",
+      "provider_requests": 14,
+      "optimization_calls": 1,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "native_bytes_equal": true,
+      "native_error": "BadRequestError"
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "opaque_signed_unrelated_and_errors",
+      "provider_requests": 18,
+      "optimization_calls": 1,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "native_bytes_equal": true,
+      "native_error": "BadRequestError"
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "cancel_before_eof",
+      "provider_requests": 1,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "wrapped": false,
+      "peer_closed_before_release": true
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "cancel_before_eof",
+      "provider_requests": 1,
+      "optimization_calls": 1,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "wrapped": true,
+      "peer_closed_before_release": true
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "cancel_before_eof",
+      "provider_requests": 1,
+      "optimization_calls": 0,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "wrapped": false,
+      "peer_closed_before_release": true
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "cancel_before_eof",
+      "provider_requests": 1,
+      "optimization_calls": 1,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "wrapped": true,
+      "peer_closed_before_release": true
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "protected_native_shapes",
+      "provider_requests": 19,
+      "optimization_calls": 10,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "protected_cases": 9,
+      "native_wire_equal": true,
+      "positive_text_candidate": true
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "protected_native_shapes",
+      "provider_requests": 19,
+      "optimization_calls": 10,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "protected_cases": 9,
+      "native_wire_equal": true,
+      "positive_text_candidate": true
+    },
+    {
+      "protocol": "openai-chat",
+      "operation": "executor_registration",
+      "provider_requests": 9,
+      "optimization_calls": 9,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "protected_cases": [
+        "model_only_schema",
+        "missing_recovery",
+        "changed_name",
+        "changed_schema",
+        "changed_description",
+        "duplicate_recovery",
+        "duplicate_source",
+        "forced_tool",
+        "structured_output"
+      ],
+      "immutable_dispatch": true,
+      "invalid_registries_rejected": 3
+    },
+    {
+      "protocol": "openai-responses",
+      "operation": "executor_registration",
+      "provider_requests": 9,
+      "optimization_calls": 9,
+      "bound_calls": 0,
+      "replacement_calls": 0,
+      "protected_cases": [
+        "model_only_schema",
+        "missing_recovery",
+        "changed_name",
+        "changed_schema",
+        "changed_description",
+        "duplicate_recovery",
+        "duplicate_source",
+        "forced_tool",
+        "structured_output"
+      ],
+      "immutable_dispatch": true,
+      "invalid_registries_rejected": 3
+    }
+  ]
+}

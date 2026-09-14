@@ -1,0 +1,14 @@
+{
+  "name": "caveman-middleware-mastra-conformance",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": { "test": "node --test *.test.mjs" },
+  "dependencies": {
+    "@mastra/core": "1.65.0",
+    "@ai-sdk/openai": "4.0.62",
+    "@ai-sdk/anthropic": "4.0.50",
+    "ai": "7.0.94",
+    "zod": "4.3.6"
+  }
+}

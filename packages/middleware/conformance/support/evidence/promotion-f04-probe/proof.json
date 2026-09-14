@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "producer": "caveman-middleware-scoped-native-proof-v1",
+  "evidence_class": "scoped_native_support_proof",
+  "input": {
+    "path": "examples/middleware/ai-sdk/certification/inputs.json",
+    "sha256": "997ce3101f92455750f3f2fddcedacf23af817c230f840e84cc1c9f49228ed0f"
+  },
+  "candidates": [
+    {
+      "path": "examples/middleware/ai-sdk/certification/2ef27dd7fcdd408a.json",
+      "sha256": "e6ec08af4fa261c98fea05706236c5852662abe4af5684569c7d410b375b3284"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/3931b6c7c0afa394.json",
+      "sha256": "238a599b94faa7cd9936bf7b55de072a46646c3ec7c24bdd241670e11dd207d1"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/f27e5a5202f36083.json",
+      "sha256": "f46dd002211e0f9de78f9bc4d953af1b12f01941f245113013a8d6bc12efbb15"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/5d13801f7b2c0a0b.json",
+      "sha256": "81f6b2e0ca35a335a7a250a9c1b9f2d511d1ced2af05a398087bcf46d10701f3"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/59ee68f7eac5698f.json",
+      "sha256": "c3e06f5137863ce67e62cd8e89500b6b611d499dc8b3db0f1045546c19012191"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/a1253cbbced41f78.json",
+      "sha256": "6c57cc802315b3ebd3e6d9971dbbc4918f7355d8420b733c827950151f2e4f6a"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/2cf0285a5d8b5de9.json",
+      "sha256": "21fdffb3ec60bf78e70b01047df1eb46aa3161e85aaed24f6bc1a48fc87c2e88"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/96c058c299f0eb51.json",
+      "sha256": "3413e2bec17d28cbf5e1a444b89191a82d910410b8145b207f2181846c48123d"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/802ae4f7f5f266d3.json",
+      "sha256": "6c6b0cdffc0ef23badcf330fcd31a28332ad181029c4c2c417da9708093da844"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/5b4e824ac5ae95b2.json",
+      "sha256": "39aa0fdcbcd453303b5b79007039f919d6163ea25234963c4eabc680b4c5aac6"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/3e81cf08908cf9bb.json",
+      "sha256": "467bfc8c4653704b8c8f94aab7ea67470195d5227016e0ba5ad4e12ae9a7c0ac"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/494d38ec11acce20.json",
+      "sha256": "37c0b76cef274e52068e0c7481511a61f6d231609e79ea324fbb473e887e93e4"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/ea388777987a4d55.json",
+      "sha256": "97daf43d642bac308ce55e8d7be9c68d0e875d15dc4620ff9c4f346ad67443a5"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/c6ad2f2fc401eae5.json",
+      "sha256": "0261b253d8cd2fb9e59a8cc460c84c232d2a1798a6980909ff4da65b7fa82248"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/99ef0cb410796732.json",
+      "sha256": "7c85ea2ddd8535c9e9ffd4a0ef4d264ed069e4f6a625d583205b09736e044ab0"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/0852f48d296b2d23.json",
+      "sha256": "a54ebf2a048c0002f906debc86c5aab9ec8a6e9def9e4a995dde8c0eb87259ba"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/88eefbaaad65f3ab.json",
+      "sha256": "3653575e3522615219047d58283ea40cb2d5bdc6a2ba8339bc691e86fc3b1ce7"
+    },
+    {
+      "path": "examples/middleware/ai-sdk/certification/a6177ad91f4e6c28.json",
+      "sha256": "83bccb328f1f46c3cd17512e1756881373a529bcddd76ae2d057ee116b6b5902"
+    }
+  ],
+  "replay": {
+    "path": "packages/middleware/conformance/support/evidence/promotion-f04-probe/replay.json",
+    "sha256": "3fd3615eb837f961e91c355ff561561a2d0ba70c620d22391186385418494db6"
+  },
+  "input_snapshot_sha256": "997ce3101f92455750f3f2fddcedacf23af817c230f840e84cc1c9f49228ed0f",
+  "source_lock_sha256": "30e84cefabab756ada124a0fb5887fcae3518a5b196895893df9d16a901c4ee9",
+  "test_catalog_sha256": "d5e6b14111ae7dbe4cb5a3aa410158a9363f1810173a58580ded021027f0c320",
+  "runtime_build_provenance": {
+    "path": "/private/tmp/caveman-proof-runtime-build-v1/build.json",
+    "sha256": "c93fcbdfe1ae6e102a17674824c6697c6769242f947bc642cffafa8ea5879a66"
+  },
+  "cells": [
+    "F04|typescript|openai|openai-chat-completions|generateText|async|complete|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|streamText|async|stream|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|generateText.structured|async|complete|structured|model_only",
+    "F04|typescript|openai|openai-chat-completions|streamText.structured|async|stream|structured|model_only",
+    "F04|typescript|openai|openai-chat-completions|public_tool_loop|async|complete|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|public_tool_loop.stream|async|stream|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|wrapLanguageModel.model_only|async|complete|unstructured|model_only",
+    "F04|typescript|openai|openai-chat-completions|nested_provider_client_ownership|async|complete|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|cancel_and_close|async|stream|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|generateText|async|complete|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|streamText|async|stream|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|generateText.structured|async|complete|structured|model_only",
+    "F04|typescript|anthropic|anthropic-messages|streamText.structured|async|stream|structured|model_only",
+    "F04|typescript|anthropic|anthropic-messages|public_tool_loop|async|complete|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|public_tool_loop.stream|async|stream|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|wrapLanguageModel.model_only|async|complete|unstructured|model_only",
+    "F04|typescript|anthropic|anthropic-messages|nested_provider_client_ownership|async|complete|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|cancel_and_close|async|stream|unstructured|native_executor"
+  ],
+  "acceptance_items": [],
+  "provider_live": false
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "evidence_class": "local_runtime_performance",
+  "recorded_at": "2026-09-09T17:33:39.321Z",
+  "node": "v22.22.2",
+  "platform": "darwin",
+  "arch": "arm64",
+  "cpu_count": 11,
+  "runtime_build": "dev",
+  "runtime_sha256": "07ea74d85de7f62c7f50405a7b312813bee689ba21d296db4ce85c395dced92f",
+  "concurrency": 16,
+  "warmup_calls": 100,
+  "payload_bytes": 102400,
+  "adapter_only": {
+    "requests": 1000,
+    "p50_ms": 4.303707999999915,
+    "p95_ms": 4.660375000000045,
+    "max_ms": 5.0742910000000165,
+    "bypass_count": 0,
+    "bypass_fraction": 0,
+    "statuses": {
+      "optimized": 1000
+    }
+  },
+  "cold": {
+    "requests": 1000,
+    "p50_ms": 27.798125000000027,
+    "p95_ms": 63.92975000000001,
+    "max_ms": 122.25274999999965,
+    "bypass_count": 386,
+    "bypass_fraction": 0.386,
+    "statuses": {
+      "optimized": 614,
+      "deadline": 15,
+      "circuit_open": 371
+    }
+  },
+  "warm": {
+    "requests": 1000,
+    "p50_ms": 15.571458999999777,
+    "p95_ms": 36.39979199999971,
+    "max_ms": 72.71424999999999,
+    "bypass_count": 0,
+    "bypass_fraction": 0,
+    "statuses": {
+      "optimized": 1000
+    }
+  },
+  "gates": {
+    "adapter_p95_under_5ms": true,
+    "roundtrip_p95_under_50ms": false,
+    "bypass_under_1pct": false
+  },
+  "hosted_provider_tested": false
+}

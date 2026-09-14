@@ -34,6 +34,9 @@ type Store struct {
 
 const DefaultMaxStorageBytes int64 = 512 << 20 // 512 MiB retained payloads
 
+// Persistent distinguishes durable exact recovery from an in-memory test store.
+func (s *Store) Persistent() bool { return s != nil && s.path != ":memory:" }
+
 const minimumStoragePages int64 = 16
 
 const schema = `

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "evidence_class": "local_native_stream_lifecycle",
+  "hosted_inference_calls": 0,
+  "adapter_source_sha256": "1e83b8bc5eebca5e7b515e8bc97ff4a6359e9ffd4865f38cc9ee61fe5282dc6b",
+  "versions": {
+    "llama-index-core": "0.14.24",
+    "llama-index-llms-openai": "0.8.1",
+    "llama-index-llms-anthropic": "0.12.0",
+    "openai": "2.54.0",
+    "anthropic": "0.125.0",
+    "httpx": "0.28.1"
+  },
+  "socket_observation_ms": 200,
+  "runs": [
+    {
+      "protocol": "openai",
+      "wrapped": false,
+      "operation": "sync_close",
+      "first_response_type": "ChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "openai",
+      "wrapped": false,
+      "operation": "async_close",
+      "first_response_type": "ChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "openai",
+      "wrapped": false,
+      "operation": "async_cancel",
+      "first_response_type": "ChatResponse",
+      "first_before_fixture_completion": true,
+      "cancelled_error_propagated": true,
+      "peer_eof_before_fixture_release": true,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "openai",
+      "wrapped": true,
+      "operation": "sync_close",
+      "first_response_type": "ChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "openai",
+      "wrapped": true,
+      "operation": "async_close",
+      "first_response_type": "ChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "openai",
+      "wrapped": true,
+      "operation": "async_cancel",
+      "first_response_type": "ChatResponse",
+      "first_before_fixture_completion": true,
+      "cancelled_error_propagated": true,
+      "peer_eof_before_fixture_release": true,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "anthropic",
+      "wrapped": false,
+      "operation": "sync_close",
+      "first_response_type": "AnthropicChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "anthropic",
+      "wrapped": false,
+      "operation": "async_close",
+      "first_response_type": "AnthropicChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "anthropic",
+      "wrapped": false,
+      "operation": "async_cancel",
+      "first_response_type": "AnthropicChatResponse",
+      "first_before_fixture_completion": true,
+      "cancelled_error_propagated": true,
+      "peer_eof_before_fixture_release": true,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "anthropic",
+      "wrapped": true,
+      "operation": "sync_close",
+      "first_response_type": "AnthropicChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "anthropic",
+      "wrapped": true,
+      "operation": "async_close",
+      "first_response_type": "AnthropicChatResponse",
+      "first_before_fixture_completion": true,
+      "peer_eof_before_fixture_release": false,
+      "provider_requests": 1,
+      "fixture_errors": []
+    },
+    {
+      "protocol": "anthropic",
+      "wrapped": true,
+      "operation": "async_cancel",
+      "first_response_type": "AnthropicChatResponse",
+      "first_before_fixture_completion": true,
+      "cancelled_error_propagated": true,
+      "peer_eof_before_fixture_release": true,
+      "provider_requests": 1,
+      "fixture_errors": []
+    }
+  ],
+  "resource_warnings": [
+    "unclosed <socket.socket fd=7, family=2, type=1, proto=6, laddr=('127.0.0.1', 59537), raddr=('127.0.0.1', 59535)>",
+    "unclosed transport <_SelectorSocketTransport fd=7 read=idle write=<idle, bufsize=0>>",
+    "unclosed <socket.socket fd=7, family=2, type=1, proto=6, laddr=('127.0.0.1', 59562), raddr=('127.0.0.1', 59561)>",
+    "unclosed transport <_SelectorSocketTransport fd=7 read=idle write=<idle, bufsize=0>>"
+  ],
+  "event_loop_errors": []
+}

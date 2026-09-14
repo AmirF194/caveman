@@ -1,0 +1,1244 @@
+[
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "stdio.call_tool",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_provider_tool_loops_stdio_http_openai_anthropic_and_streams",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_native_tool_cancellation_and_options"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "streamable_http.call_tool",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_provider_tool_loops_stdio_http_openai_anthropic_and_streams",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_native_tool_cancellation_and_options"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "host_recovery_registration",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_twenty_turn_resume_native_serialization_and_scoped_recovery",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_one_hundred_interleaved_native_host_scopes"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "native_result_identity_and_blocks",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_certifies_exact_f13_native_operations",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_provider_tool_loops_stdio_http_openai_anthropic_and_streams",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_mixed_resources_annotations_media_and_native_errors",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_off_record_outage_fake_collision_and_mutated_definition"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "stdio.host_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_provider_tool_loops_stdio_http_openai_anthropic_and_streams",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_one_hundred_interleaved_native_host_scopes"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "streamable_http.host_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_provider_tool_loops_stdio_http_openai_anthropic_and_streams",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_one_hundred_interleaved_native_host_scopes"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "cancel_and_options",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_native_tool_cancellation_and_options"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "twenty_turn_restart",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_twenty_turn_resume_native_serialization_and_scoped_recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "existing_server_interoperation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2024-11-05",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_existing_caveman_engine_server_interoperation"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "structuredContent_and_outputSchema",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_certifies_exact_f13_native_operations",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_provider_tool_loops_stdio_http_openai_anthropic_and_streams",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_mixed_resources_annotations_media_and_native_errors",
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_off_record_outage_fake_collision_and_mutated_definition"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "python",
+    "framework": "mcp",
+    "version": "2.2.0",
+    "method": "mixed_structured_text_protection",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2026-07-28",
+    "provider_sdk_versions": {
+      "mcp": "2.2.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/mcp.py",
+        "sha256": "40fb60e90d6be5ad5677f0296cd65fe66a02c9bd3a337a4f28ab0927d0bb86df"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/requirements.lock",
+        "sha256": "a31cabc14080cbdb7bdcd5f7286b5a5bad8995ab38c20af766b99123c1deed17"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/test_native.py",
+        "sha256": "3c6e40e1332c7e1cdc9cd9cac21ba7ef768ec4089c3f85d2e0d2a93197121c1d"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/test_native.py::NativeMCP.test_mixed_resources_annotations_media_and_native_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "stdio.call_tool",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native MCP stdio/HTTP OpenAI/Anthropic generation and streaming recovery journeys",
+      "examples/middleware/mcp/conformance.test.mjs::native MCP tool cancellation and transport options retain the connection",
+      "examples/middleware/mcp/conformance.test.mjs::existing Caveman MCP server remains authoritative for its own tools",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 stdio.call_tool"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "streamable_http.call_tool",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native MCP stdio/HTTP OpenAI/Anthropic generation and streaming recovery journeys",
+      "examples/middleware/mcp/conformance.test.mjs::native MCP tool cancellation and transport options retain the connection",
+      "examples/middleware/mcp/conformance.test.mjs::existing Caveman MCP server remains authoritative for its own tools",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 stdio.call_tool"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "host_recovery_registration",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native MCP stdio/HTTP OpenAI/Anthropic generation and streaming recovery journeys",
+      "examples/middleware/mcp/conformance.test.mjs::recovery requires the actual unchanged executor; off, record, outage and protected contracts retain originals",
+      "examples/middleware/mcp/conformance.test.mjs::twenty-turn native serialization and Engine restart preserve choices and scoped recovery",
+      "examples/middleware/mcp/conformance.test.mjs::one hundred interleaved native MCP host scopes get distinct exact recovery grants"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "native_result_identity_and_blocks",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native provider loops keep original results with off, record and runtime outage",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 native_result_identity_and_blocks"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "stdio.host_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native MCP stdio/HTTP OpenAI/Anthropic generation and streaming recovery journeys",
+      "examples/middleware/mcp/conformance.test.mjs::one hundred interleaved native MCP host scopes get distinct exact recovery grants",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 stdio.call_tool",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 streamable_http.call_tool"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "streamable_http.host_stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native MCP stdio/HTTP OpenAI/Anthropic generation and streaming recovery journeys",
+      "examples/middleware/mcp/conformance.test.mjs::one hundred interleaved native MCP host scopes get distinct exact recovery grants",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 streamable_http.call_tool",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 host_recovery_registration"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "cancel_and_options",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native MCP tool cancellation and transport options retain the connection",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 cancel_and_options"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "twenty_turn_restart",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::twenty-turn native serialization and Engine restart preserve choices and scoped recovery",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 twenty_turn_restart"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "existing_server_interoperation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2024-11-05",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::existing Caveman MCP server remains authoritative for its own tools",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 existing_server_interoperation"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "structuredContent_and_outputSchema",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 structuredContent_and_outputSchema"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F13",
+    "language": "typescript",
+    "framework": "@modelcontextprotocol/sdk",
+    "version": "1.30.0",
+    "method": "mixed_structured_text_protection",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "host",
+    "protocol": "mcp-2025-11-25",
+    "provider_sdk_versions": {
+      "@modelcontextprotocol/sdk": "1.30.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "host_result",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/mcp.ts",
+        "sha256": "f11755df0c8f23e1b37f68ff596cffdfed8ae8c80f6931e9ee68e4aaaf6ddd9f"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/package-lock.json",
+        "sha256": "394a3451c1eb8bc492ad223a3da203f202c066d54fd93106b0afd6fd80c75909"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/mcp/conformance.test.mjs",
+        "sha256": "2deae94c7a47613d320a874c70e80a9e27b70182b85f893d263e6f4e826f6102"
+      }
+    ],
+    "tests": [
+      "examples/middleware/mcp/conformance.test.mjs::native mixed media, resources, annotations, output schemas and errors preserve values",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 structuredContent_and_outputSchema",
+      "examples/middleware/mcp/conformance.test.mjs::MCP F13 mixed_structured_text_protection"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed.",
+      "The protocol names the actual native-host/server negotiation: Python SDK 2.2 uses 2026-07-28, TypeScript SDK 1.30 uses 2025-11-25, and the existing Engine MCP server uses 2024-11-05. Host-result handling does not establish provider-wire or usage evidence."
+    ]
+  }
+]

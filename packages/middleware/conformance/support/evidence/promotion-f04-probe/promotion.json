@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "producer": "caveman-middleware-scoped-promotion-v1",
+  "evidence_class": "reviewable_native_support_promotion",
+  "scoped_execution_preserved": true,
+  "shared_inventory_mutated": false,
+  "proof": {
+    "path": "packages/middleware/conformance/support/evidence/promotion-f04-probe/proof.json",
+    "sha256": "3c72cb3540d58d5371396fb2fedf3f07a29d62b2b3f384df21d8f7c7c89b712c"
+  },
+  "rows": {
+    "path": "packages/middleware/conformance/support/evidence/promotion-f04-probe/rows.json",
+    "sha256": "5da88fcd99c8a852ed9156c5ebcbe655e1f2837aab80f579d8311bae9904d09e"
+  },
+  "cells": [
+    "F04|typescript|openai|openai-chat-completions|generateText|async|complete|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|streamText|async|stream|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|generateText.structured|async|complete|structured|model_only",
+    "F04|typescript|openai|openai-chat-completions|streamText.structured|async|stream|structured|model_only",
+    "F04|typescript|openai|openai-chat-completions|public_tool_loop|async|complete|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|public_tool_loop.stream|async|stream|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|wrapLanguageModel.model_only|async|complete|unstructured|model_only",
+    "F04|typescript|openai|openai-chat-completions|nested_provider_client_ownership|async|complete|unstructured|native_executor",
+    "F04|typescript|openai|openai-chat-completions|cancel_and_close|async|stream|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|generateText|async|complete|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|streamText|async|stream|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|generateText.structured|async|complete|structured|model_only",
+    "F04|typescript|anthropic|anthropic-messages|streamText.structured|async|stream|structured|model_only",
+    "F04|typescript|anthropic|anthropic-messages|public_tool_loop|async|complete|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|public_tool_loop.stream|async|stream|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|wrapLanguageModel.model_only|async|complete|unstructured|model_only",
+    "F04|typescript|anthropic|anthropic-messages|nested_provider_client_ownership|async|complete|unstructured|native_executor",
+    "F04|typescript|anthropic|anthropic-messages|cancel_and_close|async|stream|unstructured|native_executor"
+  ],
+  "exact_tests": [
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai generateText.structured exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai streamText.structured exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai public_tool_loop exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai public_tool_loop.stream exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai wrapLanguageModel.model_only exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai nested_provider_client_ownership exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 openai cancel_and_close exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic streamText exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic generateText.structured exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic streamText.structured exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic public_tool_loop exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic public_tool_loop.stream exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic wrapLanguageModel.model_only exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic nested_provider_client_ownership exact journey",
+    "examples/middleware/ai-sdk/conformance.test.mjs::AI SDK F04 anthropic cancel_and_close exact journey"
+  ],
+  "verified_assertions": 144,
+  "acceptance_items": [],
+  "live_provider_promotions": 0
+}

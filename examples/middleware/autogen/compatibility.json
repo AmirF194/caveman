@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "integration_id": "F11",
+  "framework_version": "0.7.5",
+  "rejected": [
+    {
+      "sdk": "anthropic",
+      "version": "1.4.0",
+      "reason": "The unwrapped AutoGen client unconditionally passes temperature; AsyncMessages.create rejects that argument.",
+      "native_error": "TypeError: AsyncMessages.create() got an unexpected keyword argument 'temperature'"
+    },
+    {
+      "sdk": "openai",
+      "version": "3.10.0",
+      "transport": "httpx2 2.12.0 / httpcore2 2.12.0",
+      "outcomes": [
+        {
+          "wrapped": false,
+          "finalization_errors": [
+            {
+              "type": "RuntimeError",
+              "message": "generator didn't stop after athrow()"
+            }
+          ],
+          "first_event": "nat",
+          "cancelled": true,
+          "iterator_closed": true,
+          "transport_closed": true,
+          "provider_calls": 1,
+          "provider_errors": []
+        },
+        {
+          "wrapped": true,
+          "finalization_errors": [
+            {
+              "type": "RuntimeError",
+              "message": "generator didn't stop after athrow()"
+            }
+          ],
+          "first_event": "nat",
+          "cancelled": true,
+          "iterator_closed": true,
+          "transport_closed": true,
+          "provider_calls": 1,
+          "provider_errors": []
+        }
+      ]
+    }
+  ],
+  "selected": {
+    "versions": {
+      "autogen-agentchat": "0.7.5",
+      "autogen-core": "0.7.5",
+      "autogen-ext": "0.7.5",
+      "openai": "2.54.0",
+      "anthropic": "0.125.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.13.5"
+    },
+    "lifecycle": [
+      {
+        "wrapped": false,
+        "finalization_errors": [],
+        "first_event": "nat",
+        "cancelled": true,
+        "iterator_closed": true,
+        "transport_closed": true,
+        "provider_calls": 1,
+        "provider_errors": []
+      },
+      {
+        "wrapped": true,
+        "finalization_errors": [],
+        "first_event": "nat",
+        "cancelled": true,
+        "iterator_closed": true,
+        "transport_closed": true,
+        "provider_calls": 1,
+        "provider_errors": []
+      }
+    ]
+  },
+  "sources": [
+    "https://pypi.org/project/openai/2.54.0/",
+    "https://pypi.org/project/anthropic/0.125.0/"
+  ],
+  "native_configuration_limit": {
+    "operation": "redump_loaded_FunctionTool",
+    "native_error": "OSError: could not get source code",
+    "middleware_behavior": "preserved",
+    "test": "test_native_token_helpers_and_component_workbench_configuration"
+  }
+}

@@ -1,0 +1,3514 @@
+[
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "batch",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.abatch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "batch",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.bind_tools",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.bind_tools",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.with_structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.with_structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "callbacks_and_request_config",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "callbacks_and_request_config",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "document_compressor",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "document_compressor",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "retriever.source_expansion",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "operator_bound",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "retriever.source_expansion",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "3.10.0",
+      "langchain-openai": "1.6.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "operator_bound",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_openai_graph_interleaved_threads_restart_branch_interrupt_and_native_tools",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_model_helpers_batch_callbacks_stream_and_rag_preserve_native_values",
+      "examples/middleware/langchain/test_native.py::AsyncNativeLangChain.test_passive_reports_preserve_native_model_calls_streams_and_errors"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "batch",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.abatch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "batch",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.bind_tools",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.bind_tools",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.with_structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "chat_model.with_structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "callbacks_and_request_config",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "callbacks_and_request_config",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "document_compressor",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "document_compressor",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "retriever.source_expansion",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "operator_bound",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "python",
+    "framework": "langchain",
+    "version": "1.4.0",
+    "method": "retriever.source_expansion",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "1.4.0",
+      "langchain-anthropic": "1.7.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "operator_bound",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/langchain.py",
+        "sha256": "72db2bc5ec8e546300d381d2bf7f8f54f441160bc87fbde8beadfcee90358818"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/requirements.lock",
+        "sha256": "df366b2feff81331ae4751d3596de5b6f3c40de64522e1760a813501c66adf8f"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/test_native.py",
+        "sha256": "f1f03ecfbf24d744b45ccb123f7ecb24e4fe9499cb9a805a4dadc904586fcc17"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/test_native.py::NativeLangChain.test_anthropic_native_agent_and_recovery",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f05_anthropic_exact_journeys",
+      "examples/middleware/langchain/test_native.py::LangChainCertification.test_f06_anthropic_exact_journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 OpenAI exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 OpenAI exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::native model helper binding, batch, streaming, callbacks and document views survive"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 OpenAI exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 OpenAI exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "batch",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::native model helper binding, batch, streaming, callbacks and document views survive"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::native model helper binding, batch, streaming, callbacks and document views survive"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.bindTools",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 OpenAI exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 OpenAI exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.withStructuredOutput",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 OpenAI exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 OpenAI exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "callbacks_and_request_config",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::native model helper binding, batch, streaming, callbacks and document views survive"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "document_compressor",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::native model helper binding, batch, streaming, callbacks and document views survive"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "retriever.source_expansion",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "7.12.1",
+      "@langchain/openai": "1.5.11"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "operator_bound",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 OpenAI exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 OpenAI exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "batch",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.bindTools",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "chat_model.withStructuredOutput",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "callbacks_and_request_config",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "document_compressor",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F05",
+    "language": "typescript",
+    "framework": "langchain",
+    "version": "1.5.10",
+    "method": "retriever.source_expansion",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.120.0",
+      "@langchain/anthropic": "1.5.9"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "operator_bound",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain.ts",
+        "sha256": "cb3e647a6c197d4180be5e66a041d47608aafafbae16ada017b09c0a79e3712c"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/langchain-model.ts",
+        "sha256": "57142cccc99bf8af3ff1513ff9ee244ba0d9836889dc9cb65c04540d1db01557"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/package-lock.json",
+        "sha256": "5762a695d51dabcdd6b176baf4a3cdf961af823213e3fff4604bfc8304d8b6cd"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/langchain/conformance.test.mjs",
+        "sha256": "93f9cd91baae248e38c884a827d0a0e99c22c6db6f169094ec1c900b2f10477b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F05 Anthropic exact native operation journeys",
+      "examples/middleware/langchain/conformance.test.mjs::LangChain F06 Anthropic exact native graph journeys",
+      "examples/middleware/langchain/conformance.test.mjs::native LangChain Anthropic path executes scoped recovery"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  }
+]

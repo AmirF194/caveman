@@ -1,0 +1,22 @@
+{
+  "provider": "openai",
+  "endpoint": "https://api.openai.com/v1",
+  "auth_class": "api_key",
+  "model": "REQUIRED_EXACT_MODEL_ID",
+  "effort": null,
+  "maximum_input_tokens": "REQUIRED_VERIFIED_MODEL_INPUT_CEILING_INTEGER",
+  "maximum_output_tokens": 2048,
+  "rates_usd_per_million": {
+    "input": "REQUIRED_DECIMAL_USD",
+    "output": "REQUIRED_DECIMAL_USD",
+    "cache_read": "REQUIRED_DECIMAL_USD",
+    "cache_write_5m": "REQUIRED_DECIMAL_USD",
+    "cache_write_1h": "REQUIRED_DECIMAL_USD"
+  },
+  "per_request_usd": "REQUIRED_DECIMAL_USD",
+  "pricing_source": {
+    "url": "REQUIRED_OFFICIAL_PROVIDER_PRICING_URL",
+    "retrieved_at": "REQUIRED_UTC_RETRIEVAL_DATE",
+    "sha256": "REQUIRED_RETAINED_SOURCE_SHA256"
+  }
+}

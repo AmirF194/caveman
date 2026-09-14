@@ -1,0 +1,2413 @@
+[
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.__call__",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.invoke_async",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.stream_async",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "model.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "parallel_tool_batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "resumed_session",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "every_model_continuation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "2.54.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.__call__",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.invoke_async",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.stream_async",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "model.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "parallel_tool_batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "resumed_session",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "every_model_continuation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "anthropic": "0.125.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.__call__",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "sync",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::NativeStrands.test_sync_native_recovery_and_original_history_then_off_and_outage",
+      "examples/middleware/strands/test_native.py::NativeStrands.test_structured_output_gap_is_covered_without_changing_forced_schema",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.invoke_async",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "agent.stream_async",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "model.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "model.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::NativeStrands.test_structured_output_gap_is_covered_without_changing_forced_schema"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "parallel_tool_batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::NativeStrands.test_sync_native_recovery_and_original_history_then_off_and_outage",
+      "examples/middleware/strands/test_native.py::NativeStrands.test_structured_output_gap_is_covered_without_changing_forced_schema",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "resumed_session",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::NativeStrands.test_sync_native_recovery_and_original_history_then_off_and_outage",
+      "examples/middleware/strands/test_native.py::NativeStrands.test_structured_output_gap_is_covered_without_changing_forced_schema",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "every_model_continuation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::NativeStrands.test_sync_native_recovery_and_original_history_then_off_and_outage",
+      "examples/middleware/strands/test_native.py::NativeStrands.test_structured_output_gap_is_covered_without_changing_forced_schema",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "python",
+    "framework": "strands-agents",
+    "version": "1.55.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "caveman-middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "boto3": "1.43.90",
+      "botocore": "1.43.90"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/python/caveman_middleware/strands.py",
+        "sha256": "1bb9be0a63f66912a8a03380dc4e8003bad5b246b546bec1ae73fe92f2b09a9e"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/requirements.lock",
+        "sha256": "41b455c4ced60ad5f896c8b18a8c105f44cb0c969c87ef2c958d72dd4976a086"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/test_native.py",
+        "sha256": "3721cd7b23bb8f93aae0a69030d4cfa4ee67b2a44bd9e61e499e82b47f70f76b"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/test_native.py::NativeStrands.test_sync_native_recovery_and_original_history_then_off_and_outage",
+      "examples/middleware/strands/test_native.py::NativeStrands.test_structured_output_gap_is_covered_without_changing_forced_schema",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_certifies_exact_f09_native_operations",
+      "examples/middleware/strands/test_native.py::AsyncNativeStrands.test_async_agents_scope_isolation_and_native_stream_first_chunk"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "model.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "parallel_tool_batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "resumed_session",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "every_model_continuation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "openai",
+    "protocol": "openai-chat-completions",
+    "provider_sdk_versions": {
+      "openai": "6.49.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "model.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "parallel_tool_batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "resumed_session",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "every_model_continuation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "anthropic",
+    "protocol": "anthropic-messages",
+    "provider_sdk_versions": {
+      "@anthropic-ai/sdk": "0.109.1"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      }
+    ],
+    "tests": [],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "No exact native test source was identified for this operation/provider cell.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "agent.invoke",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::native Strands invoke preserves off and unavailable behavior",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai agent.invoke",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic agent.invoke",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock agent.invoke"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "agent.stream",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::native Strands tool loop, signed Bedrock streaming and original state",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai agent.stream",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic agent.stream",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock agent.stream"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "model.structured_output",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": true,
+    "recovery": "model_only",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai model.structured_output",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic model.structured_output",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock model.structured_output"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "parallel_tool_batch",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::native Strands tool loop, signed Bedrock streaming and original state",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai parallel_tool_batch",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic parallel_tool_batch",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock parallel_tool_batch"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "resumed_session",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai resumed_session",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic resumed_session",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock resumed_session"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "every_model_continuation",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": false,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai every_model_continuation",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic every_model_continuation",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock every_model_continuation"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  },
+  {
+    "schema_version": 1,
+    "family": "F09",
+    "language": "typescript",
+    "framework": "@strands-agents/sdk",
+    "version": "1.17.0",
+    "method": "cancel_and_close",
+    "runtime_protocol": 1,
+    "state": "implemented",
+    "adapter_package": "@caveman-ai/middleware",
+    "adapter_version": "0.1.0",
+    "provider": "bedrock",
+    "protocol": "bedrock-converse",
+    "provider_sdk_versions": {
+      "@aws-sdk/client-bedrock-runtime": "3.1128.0"
+    },
+    "execution": "async",
+    "streaming": true,
+    "structured_output": false,
+    "recovery": "native_executor",
+    "persistence": "scoped_durable",
+    "serialization_visibility": "native_model",
+    "evidence": [
+      {
+        "kind": "source_probe",
+        "artifact": "packages/middleware/typescript/src/strands.ts",
+        "sha256": "b50d94add6fea57d03af4d4f47251e1522d387a3828704230f42a6fb27d0ffc9"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/package-lock.json",
+        "sha256": "9cdd3f60b9c2b0d41e3ef039ca60f87255f054c0255a50f5312ae6c531b51c2a"
+      },
+      {
+        "kind": "upstream_source",
+        "artifact": "packages/middleware/conformance/upstream-lock.json",
+        "sha256": "22ab75434b1189333cb1742ab4a449010db71c0ae49619563e5557928c3c7959"
+      },
+      {
+        "kind": "source_probe",
+        "artifact": "examples/middleware/strands/conformance.test.mjs",
+        "sha256": "fc397281d90f5550ba8ef4e3cf851b29a41d5d9a7c77856e30aafecf06a646fa"
+      }
+    ],
+    "tests": [
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 openai cancel_and_close",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 anthropic cancel_and_close",
+      "examples/middleware/strands/conformance.test.mjs::Strands F09 bedrock cancel_and_close"
+    ],
+    "limitations": [
+      "No accepted, independently replayed execution record proves the full seven-step installed-framework journey for this exact operation cell.",
+      "Implemented records the inspected native adapter seam only; method/provider behavior and all matching acceptance criteria remain unverified.",
+      "Listed tests are related source coverage, not a claim that this operation or its entire journey passed. No fixture result is upgraded to live-provider proof.",
+      "No live-provider, complete packaged-consumer, native OS distribution, provider cache-hit, or economic certification is claimed."
+    ]
+  }
+]

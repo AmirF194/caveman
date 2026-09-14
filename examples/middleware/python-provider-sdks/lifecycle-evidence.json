@@ -1,0 +1,1617 @@
+{
+  "evidence_class": "installed_native_sdk_lifecycle_comparison",
+  "versions": {
+    "openai": "3.10.0",
+    "anthropic": "1.4.0",
+    "httpx2": "2.12.0",
+    "httpcore2": "2.12.0"
+  },
+  "runtime_sha256": "3c252a3a7e9f494b95d2b367f519484c2766a6243766eb3081f9c02b594278a8",
+  "observations": [
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f375f30>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d5b70>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f605300>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d63e0>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x108f9c130>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d4e50>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 235
+            },
+            {
+              "file": "_utils.py",
+              "function": "safe_async_iterate",
+              "line": 62
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object HTTP11ConnectionByteStream.__aiter__ at 0x10f369e00>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "HTTP11ConnectionByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d5a80>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f374d60>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-chat",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d4f40>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d4a90>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 235
+            },
+            {
+              "file": "_utils.py",
+              "function": "safe_async_iterate",
+              "line": 62
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d6200>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 235
+            },
+            {
+              "file": "_utils.py",
+              "function": "safe_async_iterate",
+              "line": 62
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f604c70>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x1012998a0>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 235
+            },
+            {
+              "file": "_utils.py",
+              "function": "safe_async_iterate",
+              "line": 62
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object safe_async_iterate at 0x108465460>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "safe_async_iterate",
+          "frames": [
+            {
+              "file": "_utils.py",
+              "function": "safe_async_iterate",
+              "line": 62
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        },
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d5e40>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d7f10>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "openai-responses",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object HTTP11ConnectionByteStream.__aiter__ at 0x10f36b230>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "HTTP11ConnectionByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        },
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d4f40>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object HTTP11ConnectionByteStream.__aiter__ at 0x10f36bcd0>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "HTTP11ConnectionByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        },
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f6066b0>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": false,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [],
+      "terminal_usage": [],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d5b70>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": false,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f6917b0>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": false,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": true,
+      "action": "close",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": [
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object safe_async_iterate at 0x10f7ee500>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "safe_async_iterate",
+          "frames": [
+            {
+              "file": "_utils.py",
+              "function": "safe_async_iterate",
+              "line": 62
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 320
+            },
+            {
+              "file": "http11.py",
+              "function": "__aiter__",
+              "line": 311
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        },
+        {
+          "message": "an error occurred during closing of asynchronous generator <async_generator object PoolByteStream.__aiter__ at 0x10f5d7b50>",
+          "exception": "RuntimeError(\"generator didn't stop after athrow()\")",
+          "generator": "PoolByteStream.__aiter__",
+          "frames": [
+            {
+              "file": "connection_pool.py",
+              "function": "__aiter__",
+              "line": 425
+            },
+            {
+              "file": "contextlib.py",
+              "function": "__aexit__",
+              "line": 271
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 0,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 1,
+      "shutdown_diagnostics": []
+    },
+    {
+      "protocol": "anthropic-messages",
+      "wrapped": true,
+      "helper": true,
+      "action": "task_cancel",
+      "provider_requests": 1,
+      "peer_closed_before_release": true,
+      "receipt_events": [
+        "dispatch_intent",
+        "cancelled"
+      ],
+      "terminal_usage": [
+        null
+      ],
+      "repetition": 2,
+      "shutdown_diagnostics": []
+    }
+  ]
+}
