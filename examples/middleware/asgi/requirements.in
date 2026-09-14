@@ -1,5 +1,0 @@
-fastapi==0.141.1
-starlette==1.6.0
-openai==3.10.0
-anthropic==1.4.0
-uvicorn==0.52.4

@@ -1,9 +1,0 @@
-headroom-ai==0.37.0
-langchain==1.4.0
-langchain-core==1.6.2
-langgraph==1.2.11
-langchain-openai==1.6.1
-langchain-anthropic==1.7.1
-openai==3.10.0
-anthropic==1.4.0
-httpx2==2.12.0
