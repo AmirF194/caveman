@@ -50,6 +50,7 @@ it does not replace the wider completion requirements above.
 | W2 | MCP shrink argv split quoted paths and discarded grouping | Literal argv parser plus JSON-array input; real config round trips and native PowerShell test cases | Reviewed; native Windows pending |
 | W3 | Binary probes used POSIX lookup and inherited real Windows profile roots | Portable launchers; isolated HOME/USERPROFILE/AppData/XDG/config roots; credential stripping and prerelease comparison regressions | Reviewed |
 | W4 | Rewriter accepted changes to Windows drive/UNC prefixes, paths with spaces and numeric source-coordinate prefixes | Complete source-location tokens must survive; actual `Accept` regressions reject drive/share changes and `42` to `420` | Reviewed |
+| W5 | Hermes config, plugins and MCP used `~/.hermes` on Windows, and environment overrides expanded a tilde that native Hermes treats literally | Follow pinned Hermes's `LOCALAPPDATA/hermes` default, whitespace stripping and literal override semantics | Actual pinned Python resolver exercised with six isolated cases; five permanent cases include three CLI MCP round trips. Independent review and native Windows execution pending; sticky profile selection remains unverified |
 | A1 | Azure `api-key` and Gemini `x-goog-api-key` disappeared, allowing another configured account upstream | Preserve native inbound credentials before environment fallback; full local gateway regressions | Reviewed |
 | A2 | Azure guessed Bearer versus API key from opaque credential bytes | Preserve explicit Bearer scheme; treat scheme-less keys as opaque | Reviewed |
 | A3 | Native AWS SigV4 authorization became a Bedrock bearer token | Re-sign actual outgoing bytes only with matching configured IAM identity/session/region/service; fail before upstream on mismatch | Reviewed |
@@ -65,8 +66,11 @@ it does not replace the wider completion requirements above.
 | P3 | Stale Pi state plus an unrelated live listener could receive a provider key | Health response must identify the same running instance; CLI status also checks token, rejects redirects and bounds the probe | Reviewed; actual Pi stale-listener probe sends no provider request/key |
 | P4 | OpenClaw renamed providers and selected model API could change siblings/fallbacks | Keep provider identity/auth/catalog/defaults; preserve provider API and check every affected model API before a provider-wide endpoint override | Reviewed; supported-route, direct fallback and sibling fixtures |
 | P5 | Replacing Pi's URL changed Chat/Responses compatibility defaults and dropped resolved account or attribution headers | Freeze source-derived public defaults; resolve headers through the public registry API; only reroute when endpoint-specific attribution can be preserved | Reviewed with actual Pi SDK payloads |
-| P6 | OpenClaw's URL rewrite changed private provider metadata and payload policy, beyond its public `compat` settings; raw provider casing bypassed native guards | Normalize policy comparisons as the actual configured-model resolver does, without changing config keys. Unsupported native policies stay direct; public settings are frozen for supported custom routes. Full native compression remains unfinished | Pinned-source payload/compaction oracles and configured-model path reproduced defects; 40 route/compatibility cases pass. Final normalization re-review in progress |
-| P7 | Hermes's native SDK appended `/chat/completions` to an injected base missing `/v1`, causing 404 in wrap and permanent activation | Add `/v1` to the profile and native configuration/journal/status route; fix the conformance stub to append the actual SDK resource path | Native Hermes 0.19.1 reproduced 404; remediation and full recovery assertions under final review |
+| P6 | OpenClaw's URL rewrite changed private provider metadata and payload policy, beyond its public `compat` settings; raw provider casing bypassed native guards | Normalize policy comparisons as the actual configured-model resolver does, without changing config keys. Unsupported native policies stay direct; public settings are frozen for supported custom routes. Full native compression remains unfinished | Reviewed; 40 route/compatibility cases and an independent ten-case pinned configured-model resolver probe passed |
+| P7 | Hermes and API-key Codex append resource paths to a base missing `/v1`, causing native 404s | Add `/v1` to wrap and native configuration/journal/status routes; retain Codex's dedicated unversioned ChatGPT root. Conformance stubs now append the actual SDK resources | Actual Hermes 0.19.1 and Codex 0.153.4 reproduced the failures. Route regressions and native Codex streamed recovery pass; independent review pending |
+| P8 | opencode wrap discarded its entire existing inline configuration, losing model, permissions, account settings and MCP servers | Merge the routing overlay into native JSONC; preserve environment/file references and reject malformed input without disclosing values | Six regressions failed before the fix; 19 focused cases and pinned native opencode 1.18.27 configuration checks pass. Independent review pending |
+| P9 | Hermes and opencode can retain the original provider credential while replacing its custom endpoint with a different proxy destination | Open: preserve the original provider/account contract and require proof of the effective destination before routing | Actual Hermes requests reached provider B using provider A's synthetic key; pinned opencode configuration and SDK resolution prove the same endpoint/key mismatch |
+| P10 | Hermes direct fallback retained Caveman's forced `--provider custom`, overriding the user's configured provider when proxy startup failed | Strip Hermes's injected provider prefix on direct fallback while retaining the user's original arguments | Both permanent cases failed before the fix; 172 Hermes/Qwen regression cases pass. Independent review pending |
 | A9 | Provider-specific custom headers disappeared, while header forwarding lacked per-mount scope | Publish `forward_headers` names per configured compatibility mount; preserve declared headers and supported SDK attribution/affinity headers; unrelated mount secrets remain blocked | Reviewed with actual HTTP gateways and SDK header behavior |
 | A10 | `Connection` nominations could reach upstream after the `Connection` field itself was discarded | Remove nominated hop-by-hop headers before transport, including after authentication fallback and retries | Reviewed; custom and native header regressions |
 | E1 | `stop caveman` still received reminders | Explicit stop-state behavior and provider composer regressions | Reviewed |
@@ -82,6 +86,7 @@ it does not replace the wider completion requirements above.
 | M2 | MCP “session” stats returned lifetime database totals and missed repeat/pass-through calls | Process-local call accounting independent of shared-store history/concurrent servers; Engine lifetime stats unchanged | Reviewed |
 | M3 | Repeat recovery assumed old results remained visible after host compaction | Every valid handle/query stays retrievable; no process-lifetime repeat denial or query-count widening; actual binary repeat/restart tests | Reviewed |
 | M4 | SQLite replacement let recovery writes succeed against retired files and could let cleanup alter replacement journals | Any observed main/WAL/SHM identity change permanently invalidates that Store; withhold handles and retain unsafe connections until exit. Failed initial opens also retain opened disk connections; no automatic replacement adoption | Reviewed; real old/fresh process operations, journal-byte preservation and fresh CCR race tests pass. Concurrent initial opening remains a documented driver limit |
+| M5 | Codex clears custom recovery-location variables from its MCP child, so valid proxy handles cannot be found | Forward only `CAVEMAN_HOME` and `CAVEMAN_CCR_DB` through Codex's supported `env_vars` in wrap, native enable and MCP install | Native streamed Codex request stored a valid handle, then actual MCP returned `cave_unknown_handle`; three permanent cases failed before the fix. Native Codex 0.153.4 now retrieves exact content with default home, custom home and an explicit database path containing spaces; 48 focused regressions pass. Independent review pending |
 | N1 | Unrelated Pixel transforms rounded large numeric tool arguments/schema constraints | Preserve JSON number lexemes across parse/clone/render paths; integer/decimal/exponent and live-tail regressions | Reviewed |
 | N2 | Top-level `Decoder.More` accepted valid JSON plus malformed suffixes and emitted repaired content | Require second decode to return EOF; compressor pass-through and retrieval record-boundary regressions | Reviewed |
 | N3 | Shrink's prose rules removed CJK intent and significant whitespace (#575) | Bypass prose transforms for Han, Hiragana, Katakana, Hangul and Bopomofo input; exact Chinese/Japanese/Korean/astral-Han fixtures | Reviewed; 20 shrink cases passed |
@@ -127,6 +132,8 @@ it does not replace the wider completion requirements above.
 ## Verification ledger
 
 These are observations of the tested source snapshot, not a final audit PASS.
+The broad CLI/Windows observations below precede the latest Codex and opencode
+changes. Their focused checks are recorded above; integrated refresh remains due.
 
 | Command / mechanism | Latest completed observation |
 | --- | --- |
@@ -142,6 +149,7 @@ These are observations of the tested source snapshot, not a final audit PASS.
 | Standalone installer safety | 22 Bash/PowerShell cases passed; PowerShell 7.6.5 ran on macOS |
 | Pi `npm test` | 87 passed, including build/typecheck, actual Pi payload generation, registry preservation, stale-listener refusal and recovery lifecycle |
 | OpenClaw wrapper runtime | 11 passed with portable fixtures, live local listener and explicit routing-state proof |
+| Native Codex recovery | Actual Codex 0.153.4, real proxy and stdio MCP: three isolated streamed runs passed against a synthetic loopback Responses provider. Default/custom homes and explicit database path covered; exact retrieval reached the next request and recorded savings stayed zero. Pinned registry version remains 0.153.0; this is not that version or Windows proof |
 | Provider protocol batch | 14 packages passed; 42 streaming/error cases, 32 count-route cases, credential and signing regressions |
 | Go Engine/compressors/shrink/MCP and Rewriter batches | Passed; fresh-home, repeated retrieval and restart stats use actual compiled MCP binary |
 | Full `GOMAXPROCS=2 go test -p 2 ./...` | Refreshed after final CCR and stats changes: passed |
@@ -151,6 +159,24 @@ These are observations of the tested source snapshot, not a final audit PASS.
 | Windows Go compile | Refreshed on settled source: all packages compiled for both amd64 and arm64 |
 | Full CLI `npm test` with the rebuilt real proxy | Refreshed: 1,016 passed, 18 skipped. A POSIX Node fixture now preserves shared-library lookup; all previously failing Qwen/status/sync cases pass |
 | Complete Windows compatibility gate | Passed on macOS: CLI/agent builds, 177 Node contracts and both Windows Go architecture compilations. Native Windows execution remains unverified |
+
+The opt-in [native Codex recovery probe](../../scripts/probe-native-codex-recovery.mjs)
+requires built CLI output and explicit native Codex, proxy and MCP binaries:
+
+```sh
+CAVEMAN_NATIVE_CODEX_BIN=/absolute/path/to/codex \
+CAVEMAN_PROXY_BIN=/absolute/path/to/caveman-proxy \
+CAVEMAN_MCP_BIN=/absolute/path/to/caveman-mcp \
+node scripts/probe-native-codex-recovery.mjs --custom-home --explicit-db
+```
+
+Omit both flags to exercise the default store with neither recovery-location
+variable set. Use only `--custom-home` for the custom-home case. The probe requires
+macOS `sandbox-exec`, denies the native host external network and user-home reads,
+uses synthetic credentials and keeps logs plus a hashed receipt under its printed
+scratch directory. Its synthetic provider requests the actual MCP tool; the
+probe grants that tool approval only in the isolated launch configuration. It
+does not test hosted inference, production tool approval, or native Windows.
 
 ## Issue hints without a reproduced remaining defect
 

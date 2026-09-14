@@ -5423,10 +5423,10 @@ async function spawnWrapped(
     childArgs = cmdArgs;
     process.stderr.write(`${mark("warn")} temporary native pack unavailable: ${(error as Error).message}; launching ${agent?.display_name ?? bin} directly\n`);
   }
-  // Profile args are routing injection too. Qwen's extension lock must never
-  // leak into a launch we explicitly classified as direct; preserve only the
-  // user's argv on every bypass and native-pack failure path.
-  if (direct && agent?.id === "qwen"
+  // Qwen's extension lock and Hermes's forced custom provider are routing
+  // injection too. Remove them on direct fallback so the host keeps the user's
+  // provider and policy. OpenClaw's `chat` is a command, not a routing override.
+  if (direct && (agent?.id === "qwen" || agent?.id === "hermes")
     && agent.args.every((arg, index) => childArgs[index] === arg)) {
     childArgs = childArgs.slice(agent.args.length);
   }
@@ -6218,6 +6218,11 @@ function codexGatewayBase(gw: string, subscription: boolean): string {
   return appendUrlPath(gw, subscription ? "/chatgpt" : "/w/codex/v1");
 }
 
+// Codex clears the stdio MCP environment, including these non-secret store
+// selectors. Forward their names so the proxy and recovery server share the
+// current launch's store without persisting provider credentials or stale paths.
+const CODEX_RECOVERY_ENV = 'env_vars = ["CAVEMAN_HOME", "CAVEMAN_CCR_DB"]';
+
 function codexCavemanProviderToml(gw: string, subscription = true): string {
   return [
     `model_provider = "caveman"`,
@@ -6559,7 +6564,7 @@ function buildCodexEphemeralHome(
   const providerRoot = providerLines.shift()!;
   const providerTables = providerLines.join("\n");
   const mcp = mcpBinary
-    ? `\n\n[mcp_servers.caveman]\ncommand = ${JSON.stringify(mcpBinary)}\n`
+    ? `\n\n[mcp_servers.caveman]\ncommand = ${JSON.stringify(mcpBinary)}\n${CODEX_RECOVERY_ENV}\n`
     : "\n";
   const delegateArgs = delegateMcp?.args.length
     ? `\nargs = [${delegateMcp.args.map((arg) => JSON.stringify(arg)).join(", ")}]`
@@ -7391,6 +7396,7 @@ function codexNativeConfig(source: string, gw: string, subscription: boolean, mc
     "",
     "[mcp_servers.caveman]",
     `command = ${JSON.stringify(mcpBinary)}`,
+    CODEX_RECOVERY_ENV,
     CODEX_NATIVE_TABLES_END,
   ].join("\n");
   const middle = stripped ? `\n\n${stripped}` : "";
@@ -10562,8 +10568,15 @@ const HERMES_PLUGIN_ENABLE_BEGIN = "# >>> caveman:hermes-plugin-enable";
 const HERMES_PLUGIN_ENABLE_END = "# <<< caveman:hermes-plugin-enable";
 const HERMES_PLUGIN_NAME = "caveman_shrink";
 
-function hermesHome(): string {
-  return expandTilde(process.env.HERMES_HOME || "~/.hermes");
+export function hermesHome(env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform): string {
+  // Hermes 0.19.1 hermes_constants.py: native Windows uses LOCALAPPDATA,
+  // overrides are stripped, and Path(value) does not expand a literal tilde.
+  const override = env.HERMES_HOME?.trim();
+  if (override) return resolve(override);
+  if (platform === "win32") {
+    return join(env.LOCALAPPDATA?.trim() || join(homedir(), "AppData", "Local"), "hermes");
+  }
+  return join(homedir(), ".hermes");
 }
 
 function hermesConfigPath(): string {
@@ -12929,7 +12942,8 @@ function installMcpCodexToml(mcp: { command: string; args: string[] }, serverNam
   }
   const header = `[mcp_servers.${serverName}]`;
   const argsLine = mcp.args.length ? `\nargs = [${mcp.args.map((s) => JSON.stringify(s)).join(", ")}]` : "";
-  const expectedBlock = `${header}\ncommand = ${JSON.stringify(mcp.command)}${argsLine}\n`;
+  const recoveryEnv = serverName === "caveman" ? `\n${CODEX_RECOVERY_ENV}` : "";
+  const expectedBlock = `${header}\ncommand = ${JSON.stringify(mcp.command)}${argsLine}${recoveryEnv}\n`;
   if (existing.includes(header)) {
     const headerMatch = new RegExp(`(^|\\n)[ \\t]*\\[mcp_servers\\.${escapeRegExp(serverName)}\\][ \\t]*(?:\\r?\\n|$)`, "m").exec(existing);
     if (!headerMatch) {
@@ -12975,7 +12989,8 @@ function codexMcpRegistrationMatches(serverName: string, mcp: { command: string;
   const nextHeaderOffset = existing.slice(contentStart).search(/^[ \\t]*\[/m);
   const blockEnd = nextHeaderOffset === -1 ? existing.length : contentStart + nextHeaderOffset;
   const argsLine = mcp.args.length ? `\nargs = [${mcp.args.map((arg) => JSON.stringify(arg)).join(", ")}]` : "";
-  const expected = `[mcp_servers.${serverName}]\ncommand = ${JSON.stringify(mcp.command)}${argsLine}`;
+  const recoveryEnv = serverName === "caveman" ? `\n${CODEX_RECOVERY_ENV}` : "";
+  const expected = `[mcp_servers.${serverName}]\ncommand = ${JSON.stringify(mcp.command)}${argsLine}${recoveryEnv}`;
   return existing.slice(blockStart, blockEnd).trim() === expected.trim();
 }
 
