@@ -53,7 +53,7 @@ func TestInstanceIdentityIsPublishedOnlyOnHealth(t *testing.T) {
 		}
 		w.WriteHeader(http.StatusOK)
 	})
-	handler := withInstanceIdentity(next, token)
+	handler := withInstanceIdentity(next, token, true)
 	for _, tt := range []struct {
 		method, path string
 		wantIdentity bool
@@ -89,7 +89,7 @@ func TestRunStatusRequiresThisListenerGeneration(t *testing.T) {
 			const listenerToken = "live-listener-token"
 			server := httptest.NewServer(withInstanceIdentity(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusOK)
-			}), listenerToken))
+			}), listenerToken, true))
 			defer server.Close()
 			state, err := runstate.New(strings.TrimPrefix(server.URL, "http://"), "record", "start", "test")
 			if err != nil {
@@ -139,4 +139,70 @@ func captureStdout(t *testing.T, fn func()) string {
 		t.Fatal(err)
 	}
 	return string(out)
+}
+
+// The identity header exists so the local CLI can match a run-state file it can
+// already read. On a shared listener it only hands unauthenticated /health/live
+// callers a value that correlates restarts and tells instances apart behind a
+// load balancer, so a non-loopback bind publishes nothing.
+func TestInstanceIdentityIsLoopbackOnly(t *testing.T) {
+	for _, tt := range []struct {
+		listen   string
+		loopback bool
+	}{
+		{"127.0.0.1:8787", true},
+		{"localhost:8787", true},
+		{"[::1]:8787", true},
+		{"0.0.0.0:8787", false},
+		{"10.0.0.5:8787", false},
+		{"[::]:8787", false},
+		{"not-an-address", false},
+	} {
+		t.Run(tt.listen, func(t *testing.T) {
+			if got := loopbackListen(tt.listen); got != tt.loopback {
+				t.Fatalf("loopbackListen(%q) = %v, want %v", tt.listen, got, tt.loopback)
+			}
+			handler := withInstanceIdentity(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			}), "listener-token", loopbackListen(tt.listen))
+			response := httptest.NewRecorder()
+			handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/health/live", nil))
+			want := ""
+			if tt.loopback {
+				want = "listener-token"
+			}
+			if got := response.Header().Get(runstate.InstanceHeader); got != want {
+				t.Fatalf("identity header = %q, want %q", got, want)
+			}
+		})
+	}
+}
+
+// The keepalive beacon from older CLIs carries no credential and changes
+// nothing, so it is answered in front of the inbound token gate. A 401 here
+// would make an old CLI log a failure for a no-op.
+func TestKeepaliveIsAnsweredBeforeTheTokenGate(t *testing.T) {
+	beacons := 0
+	gated := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "gated", http.StatusUnauthorized)
+	})
+	handler := withKeepalive(gated, func() { beacons++ })
+
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, httptest.NewRequest(http.MethodPost, "/caveman/keepalive", nil))
+	if response.Code != http.StatusNoContent || beacons != 1 {
+		t.Fatalf("keepalive status = %d, beacons = %d, want 204 and 1", response.Code, beacons)
+	}
+	// Everything else still reaches the gated handler.
+	response = httptest.NewRecorder()
+	handler.ServeHTTP(response, httptest.NewRequest(http.MethodPost, "/v1/messages", nil))
+	if response.Code != http.StatusUnauthorized {
+		t.Fatalf("inference status = %d, want the gate to answer it", response.Code)
+	}
+	// A GET is not the beacon.
+	response = httptest.NewRecorder()
+	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/caveman/keepalive", nil))
+	if response.Code != http.StatusUnauthorized || beacons != 1 {
+		t.Fatalf("GET keepalive status = %d, beacons = %d, want the gate to answer it", response.Code, beacons)
+	}
 }

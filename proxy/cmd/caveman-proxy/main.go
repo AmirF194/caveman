@@ -251,15 +251,7 @@ func runServe(logger *slog.Logger) {
 	if nativeRuntime != nil {
 		// Keep accepting heartbeats from older CLIs. Listener lifetime no longer
 		// depends on these beacons or on native session tracking.
-		proxied := handler
-		handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.URL.Path == "/caveman/keepalive" && r.Method == http.MethodPost {
-				nativeRuntime.Keepalive()
-				w.WriteHeader(http.StatusNoContent)
-				return
-			}
-			proxied.ServeHTTP(w, r)
-		})
+		handler = withKeepalive(handler, nativeRuntime.Keepalive)
 	}
 	srv := &http.Server{
 		Addr:              cfg.Listen,
@@ -289,7 +281,7 @@ func runServe(logger *slog.Logger) {
 	for name, mount := range cfg.CompatUpstreams() {
 		state.CompatForwardHeaders[name] = append([]string(nil), mount.ForwardHeaders...)
 	}
-	srv.Handler = withInstanceIdentity(handler, state.InstanceToken)
+	srv.Handler = withInstanceIdentity(handler, state.InstanceToken, loopbackListen(cfg.Listen))
 	if err := runstate.Write(home, state); err != nil {
 		_ = listener.Close()
 		logger.Error("cannot write proxy run state", "error", err)
@@ -303,10 +295,8 @@ func runServe(logger *slog.Logger) {
 		// A token on a loopback listener still gates every request, but the
 		// local `caveman wrap` path sends none — /health/live stays green while
 		// each inference 401s. Say so once here, where it is readable.
-		if host, _, err := net.SplitHostPort(cfg.Listen); err == nil {
-			if ip := net.ParseIP(host); strings.EqualFold(host, "localhost") || (ip != nil && ip.IsLoopback()) {
-				logger.Warn("CAVEMAN_AUTH_TOKEN is set on a loopback listener; local clients must present the token in x-cave-api-key or Authorization: Bearer", "addr", cfg.Listen)
-			}
+		if loopbackListen(cfg.Listen) {
+			logger.Warn("CAVEMAN_AUTH_TOKEN is set on a loopback listener; local clients must present the token in x-cave-api-key or Authorization: Bearer", "addr", cfg.Listen)
 		}
 	}
 	go func() {
@@ -325,11 +315,46 @@ func runServe(logger *slog.Logger) {
 	}
 }
 
+// withKeepalive answers the no-op beacon older CLIs still send. It sits OUTSIDE
+// the gateway's inbound token gate on purpose: the beacon carries no credential,
+// reads nothing and changes nothing, and a 401 here would make an old CLI log a
+// failure for a call whose only effect is a timestamp.
+func withKeepalive(next http.Handler, beacon func()) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/caveman/keepalive" && r.Method == http.MethodPost {
+			beacon()
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// loopbackListen reports whether addr binds only the local machine. It is the
+// one test behind two decisions: whether a token on this listener deserves the
+// startup warning, and whether the instance identity header may be published.
+func loopbackListen(addr string) bool {
+	host, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		return false
+	}
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
+}
+
 // withInstanceIdentity proves that the health listener is the generation named
 // by its run-state file. The token is never attached to inference traffic.
-func withInstanceIdentity(next http.Handler, token string) http.Handler {
+//
+// loopback gates the whole header: the only consumer is the local CLI matching
+// a run-state file it can already read, so on a shared listener the header
+// hands every unauthenticated /health/live caller a value that correlates
+// restarts and distinguishes instances behind a load balancer, for nothing.
+func withInstanceIdentity(next http.Handler, token string, loopback bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet && r.URL.Path == "/health/live" {
+		if loopback && r.Method == http.MethodGet && r.URL.Path == "/health/live" {
 			w.Header().Set(runstate.InstanceHeader, token)
 			w.Header().Set("Cache-Control", "no-store")
 		}
