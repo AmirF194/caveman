@@ -83,6 +83,7 @@ jobs:
           docker buildx create --use
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
+            --provenance=true --sbom=true \
             --build-arg VERSION="$GITHUB_REF_NAME" \
             -t "ghcr.io/$owner/caveman-proxy:$GITHUB_REF_NAME" \
             -t "ghcr.io/$owner/caveman-proxy:latest" \
