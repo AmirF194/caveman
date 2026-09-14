@@ -173,3 +173,21 @@ jobs:
       # platform this job exists to cover.
       - name: Go test suite
         run: go test ./engine/... ./proxy/... ./shared/...
+
+  # The Dockerfile is a deploy artifact like the installer is: nothing else in
+  # CI builds it, so a broken COPY or a moved package path would only surface at
+  # release time. Cheap check — one native-arch build, no registry, no push.
+  container-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Build the proxy image
+        run: docker build --build-arg VERSION=ci -t caveman-proxy:ci .
+      # Proves the binary runs in the distroless image AND that the ldflags
+      # version stamp actually reached `var version` in main.go.
+      - name: Image runs and reports the stamped version
+        run: |
+          set -euo pipefail
+          got="$(docker run --rm caveman-proxy:ci version)"
+          [[ "$got" == "ci" ]] || { echo "expected version 'ci', got '$got'" >&2; exit 1; }

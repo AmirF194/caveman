@@ -7,11 +7,14 @@ package standalone
 
 import (
 	"context"
+	"crypto/subtle"
 	"crypto/tls"
+	"errors"
 	"log/slog"
 	"net/http"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/JuliusBrussee/caveman/engine"
@@ -27,17 +30,61 @@ import (
 	"github.com/JuliusBrussee/caveman/proxy/providers/openai"
 	"github.com/JuliusBrussee/caveman/proxy/providers/openaicompat"
 	"github.com/JuliusBrussee/caveman/proxy/providers/vertex"
+	"github.com/JuliusBrussee/caveman/shared/platform/awscreds"
 	"github.com/JuliusBrussee/caveman/shared/platform/env"
 	"github.com/JuliusBrussee/caveman/shared/platform/ssrf"
 )
 
-// Auth is the single-operator authenticator: it accepts every request and
-// returns a static context built from caveman.yaml. There is no multi-tenant key
-// to validate — the proxy listens on loopback for one operator.
-type Auth struct{ rc gateway.RequestContext }
+// Auth is the single-operator authenticator: it returns a static context built
+// from caveman.yaml. There is still no multi-tenant key to validate — token is
+// one shared secret (CAVEMAN_AUTH_TOKEN), and it exists only so an operator can
+// bind past loopback (config.validateListen refuses that bind without it).
+type Auth struct {
+	rc    gateway.RequestContext
+	token string
+}
+
+// errInboundTokenRejected is deliberately uniform: the gateway maps any non-nil
+// error to 401 cave_unauthorized, and an error that told a missing token apart
+// from a wrong one would be an oracle for the caller probing the port.
+var errInboundTokenRejected = errors.New("inbound token rejected")
 
 func (a Auth) Authenticate(ctx context.Context, r *http.Request) (gateway.RequestContext, error) {
-	return a.rc, nil
+	if a.token == "" {
+		// Loopback single-operator mode, unchanged: accept everything.
+		return a.rc, nil
+	}
+	// The token is OURS, not the provider's, so it must not leave this hop — and
+	// it must not still be in the header set when Creds.Resolve and
+	// ClassifyResolvedAuthMode read the request, or the operator's shared secret
+	// gets classified (and forwarded) as a provider credential. x-cave-api-key is
+	// a caveman header, so it always goes. Authorization goes ONLY when it
+	// carried the token: a real provider bearer (Claude Pro/Max OAuth, the
+	// /chatgpt/ ChatGPT login) arrives in that same header and the request dies
+	// without it.
+	accepted := false
+	if presented := strings.TrimSpace(r.Header.Get("x-cave-api-key")); presented != "" {
+		r.Header.Del("x-cave-api-key")
+		accepted = tokenEqual(presented, a.token)
+	}
+	// Checked even when x-cave-api-key already matched: a client that hedges and
+	// sends the token in both headers would otherwise leave it in Authorization,
+	// which every adapter forwards.
+	if scheme, value, ok := strings.Cut(strings.TrimSpace(r.Header.Get("Authorization")), " "); ok &&
+		strings.EqualFold(scheme, "Bearer") && tokenEqual(strings.TrimSpace(value), a.token) {
+		r.Header.Del("Authorization")
+		accepted = true
+	}
+	if accepted {
+		return a.rc, nil
+	}
+	return gateway.RequestContext{}, errInboundTokenRejected
+}
+
+// tokenEqual compares a presented secret in constant time so the port cannot be
+// used to recover the token one byte at a time.
+func tokenEqual(presented, token string) bool {
+	return subtle.ConstantTimeCompare([]byte(presented), []byte(token)) == 1
 }
 
 // Creds preserves a real inbound provider credential first; otherwise it falls
@@ -46,7 +93,17 @@ func (a Auth) Authenticate(ctx context.Context, r *http.Request) (gateway.Reques
 // work as a Bearer, never as x-api-key). Placeholder bearer tokens are preserved
 // here so the gateway's upstream-header fallback can replace only that narrow
 // case and log it.
-type Creds struct{ cfg config.Config }
+type Creds struct {
+	cfg config.Config
+	// bedrock is the AWS default credential chain (task role, pod identity,
+	// IRSA, instance profile) consulted only after the env pair says nothing.
+	// Nil (hand-built Creds in tests) means env-only, exactly as before.
+	bedrock *awscreds.Provider
+	// logger and sourceLogged disclose, once, which chain entry the proxy signs
+	// as: "which AWS identity am I billed as" must be observable.
+	logger       *slog.Logger
+	sourceLogged *sync.Once
+}
 
 func (c Creds) Resolve(provider string, r *http.Request) providers.Credential {
 	fallbackEnv := c.authFallbackEnv(provider, r)
@@ -113,7 +170,7 @@ func (c Creds) Resolve(provider string, r *http.Request) providers.Credential {
 			// cannot survive a base-URL swap. Resolve IAM separately from bearer
 			// fallback; the Bedrock adapter checks the caller's requested principal
 			// and signs the actual upstream bytes, or rejects the request.
-			credential := c.cfg.BedrockSigningCredential()
+			credential := c.bedrockSigningCredential(r.Context())
 			credential.Scheme = "sigv4"
 			credential.AuthKind = "aws_access_keys"
 			return credential
@@ -133,6 +190,12 @@ func (c Creds) Resolve(provider string, r *http.Request) providers.Credential {
 	}
 	if credential := c.cfg.Credential(provider); credential.Key != "" || credential.AuthFallbackEnv != "" {
 		return credential
+	}
+	if provider == "bedrock" {
+		// No bearer key and no env pair: a proxy running inside AWS still has a
+		// role. Config.Credential cannot ask for it (it is a pure env read), so
+		// the chain lives here, after every explicit source has declined.
+		return c.bedrockSigningCredential(r.Context())
 	}
 	return providers.Credential{Mode: "ephemeral_header"}
 }
@@ -215,8 +278,8 @@ func New(cfg config.Config, sink gateway.TelemetrySink, opts Options) *gateway.S
 	}
 	return gateway.New(gateway.Config{
 		Adapters:             buildAdapters(cfg),
-		Auth:                 Auth{rc: gateway.RequestContext{Label: cfg.Label, RuntimeMode: cfg.Mode, Optimizers: cfg.Optimizers, ProviderBillingTiers: cfg.BillingTiers()}},
-		Creds:                Creds{cfg: cfg},
+		Auth:                 Auth{rc: gateway.RequestContext{Label: cfg.Label, RuntimeMode: cfg.Mode, Optimizers: cfg.Optimizers, ProviderBillingTiers: cfg.BillingTiers()}, token: cfg.AuthToken},
+		Creds:                Creds{cfg: cfg, bedrock: awscreds.New(awscreds.Options{Region: cfg.BedrockRegion()}), logger: opts.Logger, sourceLogged: new(sync.Once)},
 		Sink:                 sink,
 		Compressor:           opts.Compressor,
 		PrefixCache:          opts.PrefixCache,

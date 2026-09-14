@@ -58,9 +58,14 @@ func (t *captureUpstreamTransport) RoundTrip(r *http.Request) (*http.Response, e
 // TestMain isolates the suite from the host's corporate-network variables,
 // which config.Load now reads (#1001).
 func TestMain(m *testing.M) {
-	for _, name := range []string{"CAVE_UPSTREAM_PROXY", "CAVE_CA_BUNDLE", "NO_PROXY", "no_proxy", "SSL_CERT_FILE", "REQUESTS_CA_BUNDLE", "NODE_EXTRA_CA_CERTS"} {
+	for _, name := range []string{"CAVE_UPSTREAM_PROXY", "CAVE_CA_BUNDLE", "NO_PROXY", "no_proxy", "SSL_CERT_FILE", "REQUESTS_CA_BUNDLE", "NODE_EXTRA_CA_CERTS",
+		"AWS_CONTAINER_CREDENTIALS_FULL_URI", "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI", "AWS_WEB_IDENTITY_TOKEN_FILE", "AWS_ROLE_ARN"} {
 		os.Unsetenv(name)
 	}
+	// The Bedrock resolver now ends in the AWS default chain. A runner that is
+	// itself an EC2/ECS host would hand every "no credentials" test a real role,
+	// and any other host would spend the IMDS dial timeout per case instead.
+	os.Setenv("AWS_EC2_METADATA_DISABLED", "true")
 	os.Exit(m.Run())
 }
 

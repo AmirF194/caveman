@@ -2,8 +2,10 @@
 
 Local proxy presents provider-compatible HTTP routes on loopback, applies
 configured local transforms, forwards requests to provider endpoints, and
-records local usage. It is a single-operator developer tool, not a multi-user
-network gateway.
+records local usage. By default it is a single-operator developer tool with no
+inbound authentication. Setting `CAVEMAN_AUTH_TOKEN` turns it into a shared,
+token-gated service that may bind beyond loopback — see
+[Deploy the proxy for a team](deploy.md).
 
 Start it with:
 
@@ -223,10 +225,14 @@ metadata, not raw secrets.
 
 ## Endpoint security
 
-Proxy rejects non-loopback listen addresses. Outbound Server-Side Request
-Forgery protection checks configured endpoints and redirects. Private,
-link-local, and loopback upstreams are blocked unless explicitly included in
-`CAVE_SSRF_ALLOWLIST` for a self-hosted setup.
+Proxy rejects a non-loopback listen address unless `CAVEMAN_AUTH_TOKEN` is set.
+With that token every request must present it in `x-cave-api-key` or
+`Authorization: Bearer`; the proxy consumes the header before resolving a
+provider credential, so it never reaches a provider. Health and metrics
+endpoints stay unauthenticated. Outbound Server-Side Request Forgery protection
+checks configured endpoints and redirects. Private, link-local, and loopback
+upstreams are blocked unless explicitly included in `CAVE_SSRF_ALLOWLIST` for a
+self-hosted setup; link-local and metadata addresses have no allowlist escape.
 
 See [Security and privacy](security-and-privacy.md) before allowing a local
 model endpoint.

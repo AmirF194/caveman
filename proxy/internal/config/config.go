@@ -39,6 +39,15 @@ type Config struct {
 	Mode string `yaml:"mode"`
 	// Listen is the host:port standalone mode binds to.
 	Listen string `yaml:"listen"`
+	// AuthToken is the optional INBOUND shared secret. It is read only from
+	// CAVEMAN_AUTH_TOKEN, never from caveman.yaml — secrets never live in that
+	// file (see the package doc) and an inbound credential is no exception.
+	// Empty keeps the historical behavior: standalone.Auth accepts every request,
+	// which is only safe on loopback. A non-empty token is what makes a
+	// non-loopback listen legal (see validateListen), because it is the sole
+	// thing standing between a VPC/container bind and every configured provider
+	// credential.
+	AuthToken string `yaml:"-" json:"-"`
 	// Optimizers gates provider-native optimizers by id.
 	Optimizers map[string]bool `yaml:"optimizers"`
 	// SubscriptionCompress is the operator off-switch for subscription-auth
@@ -146,7 +155,10 @@ func Load(path string) (Config, error) {
 		}
 	}
 	cfg = cfg.withDefaults()
-	if err := validateListen(cfg.Listen); err != nil {
+	if err := validateAuthToken(cfg.AuthToken); err != nil {
+		return Config{}, err
+	}
+	if err := validateListen(cfg.Listen, cfg.AuthToken != ""); err != nil {
 		return Config{}, err
 	}
 	if err := cfg.validateCompat(); err != nil {
@@ -251,10 +263,37 @@ func parseUpstreamProxy(raw string) (func(*http.Request) (*url.URL, error), erro
 	return func(req *http.Request) (*url.URL, error) { return selector(req.URL) }, nil
 }
 
-// validateListen keeps standalone's unauthenticated BYOK proxy local to one
-// operator. Binding an empty, wildcard, or non-loopback host would expose every
-// configured provider credential to the network with no inbound authentication.
-func validateListen(listen string) error {
+// minAuthTokenBytes is the floor for the inbound shared secret. The token is the
+// only gate in front of every configured provider credential once the proxy is
+// reachable off-host, so a short one is not a weaker deployment, it is an open one.
+const minAuthTokenBytes = 16
+
+// validateAuthToken refuses a token that cannot survive one HTTP header value:
+// control bytes terminate the field, and a space would split scheme from value in
+// `Authorization: Bearer <token>`. The error never echoes the value — it is a
+// secret and this message reaches the proxy log.
+func validateAuthToken(token string) error {
+	if token == "" {
+		return nil
+	}
+	if len(token) < minAuthTokenBytes {
+		return fmt.Errorf("CAVEMAN_AUTH_TOKEN must be at least %d bytes", minAuthTokenBytes)
+	}
+	for _, r := range token {
+		if r == ' ' || r < 0x20 || r == 0x7f {
+			return fmt.Errorf("CAVEMAN_AUTH_TOKEN must contain no spaces or control characters")
+		}
+	}
+	return nil
+}
+
+// validateListen keeps standalone's BYOK proxy local to one operator unless an
+// inbound credential gates it. Binding an empty, wildcard, or non-loopback host
+// would expose every configured provider credential to the network with no
+// inbound authentication; authenticated says CAVEMAN_AUTH_TOKEN is set, so
+// standalone.Auth rejects every request that does not present it and the wider
+// bind becomes a deliberate operator choice instead of an accident.
+func validateListen(listen string, authenticated bool) error {
 	host, port, err := net.SplitHostPort(strings.TrimSpace(listen))
 	if err != nil || port == "" {
 		return fmt.Errorf("listen address %q must be loopback host:port", listen)
@@ -264,7 +303,10 @@ func validateListen(listen string) error {
 	}
 	ip := net.ParseIP(host)
 	if ip == nil || !ip.IsLoopback() {
-		return fmt.Errorf("listen address %q is not loopback; standalone proxy has no inbound authentication", listen)
+		if authenticated {
+			return nil
+		}
+		return fmt.Errorf("listen address %q is not loopback; standalone proxy has no inbound authentication; set CAVEMAN_AUTH_TOKEN to expose the proxy beyond loopback", listen)
 	}
 	return nil
 }
@@ -282,6 +324,9 @@ func (c Config) withDefaults() Config {
 	if listen := env.String("CAVEMAN_LISTEN", ""); listen != "" {
 		c.Listen = listen
 	}
+	// Assigned unconditionally: the environment is the ONLY source for this
+	// secret, so nothing a config file (or a caller) put in the field may survive.
+	c.AuthToken = strings.TrimSpace(env.String("CAVEMAN_AUTH_TOKEN", ""))
 	if sub := env.String("CAVEMAN_SUBSCRIPTION_COMPRESS", ""); sub != "" {
 		c.SubscriptionCompress = sub
 	}

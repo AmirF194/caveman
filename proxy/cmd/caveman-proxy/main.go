@@ -295,8 +295,22 @@ func runServe(logger *slog.Logger) {
 		logger.Error("cannot write proxy run state", "error", err)
 		os.Exit(1)
 	}
+	// Whether inbound requests are gated is the difference between a loopback
+	// dev proxy and one reachable from a VPC. Log the fact, never the token.
+	inboundAuth := "none"
+	if cfg.AuthToken != "" {
+		inboundAuth = "token"
+		// A token on a loopback listener still gates every request, but the
+		// local `caveman wrap` path sends none — /health/live stays green while
+		// each inference 401s. Say so once here, where it is readable.
+		if host, _, err := net.SplitHostPort(cfg.Listen); err == nil {
+			if ip := net.ParseIP(host); strings.EqualFold(host, "localhost") || (ip != nil && ip.IsLoopback()) {
+				logger.Warn("CAVEMAN_AUTH_TOKEN is set on a loopback listener; local clients must present the token in x-cave-api-key or Authorization: Bearer", "addr", cfg.Listen)
+			}
+		}
+	}
 	go func() {
-		logger.Info("caveman proxy listening", "addr", cfg.Listen, "mode", cfg.Mode, "basis", "inferred")
+		logger.Info("caveman proxy listening", "addr", cfg.Listen, "mode", cfg.Mode, "basis", "inferred", "inbound_auth", inboundAuth)
 		if err := srv.Serve(listener); err != nil && err != http.ErrServerClosed {
 			logger.Error("proxy stopped", "error", err)
 			cancel()

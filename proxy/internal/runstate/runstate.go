@@ -293,9 +293,11 @@ func instanceMatches(listen, token string) bool {
 	case "::":
 		host = "::1"
 	}
-	// The listen address comes out of a file. config.validateListen keeps the
-	// proxy on loopback; this probe holds itself to the same rule rather than
-	// issuing a request to whatever host that file happens to name.
+	// The listen address comes out of a file. config.validateListen allows a
+	// non-loopback bind only behind CAVEMAN_AUTH_TOKEN; this probe deliberately
+	// holds a stricter rule and only ever dials loopback, rather than issuing a
+	// request to whatever remote host that file happens to name. A local CLI
+	// next to an explicitly non-loopback listener therefore runs direct.
 	if addr, err := netip.ParseAddr(host); err != nil || !addr.IsLoopback() {
 		return false
 	}
