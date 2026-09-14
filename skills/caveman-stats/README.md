@@ -4,7 +4,7 @@ Recorded session usage. Savings stay unknown without a measured comparison.
 
 ## What it does
 
-Reads the current Claude Code session log and reports output tokens, cache-read input tokens, and response counts. When a mode-transition log is available, it separates output by the mode active for each response. Missing mode attribution stays unknown.
+Reads the current Claude Code session log and reports output tokens, cache-read input tokens, and response counts. When a mode-transition log is available, it separates output by the mode active for each response. Missing mode attribution stays unknown. Numbers come from the JSONL session log on disk — the model itself does not compute or estimate them. Output is injected by the `caveman-mode-tracker` hook, which intercepts `/caveman-stats`, runs the stats script, and hands the formatted block back as `additionalContext` with an instruction to print it verbatim.
 
 The transcript does not contain the same session without Caveman, so the report cannot calculate tokens saved, a reduction percentage, dollars saved, rule overhead, or a net result. Earlier releases applied a fixed ratio without a committed reviewed benchmark. Those estimates no longer appear in session reports, lifetime totals, shared summaries, or the statusline.
 

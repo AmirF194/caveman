@@ -201,14 +201,47 @@ across the automatic context compaction that happens in long sessions.
 
 Statusline should show `[CAVEMAN]` (orange) at the bottom of Claude Code. `/caveman-stats` reports recorded usage; savings remain unknown without a measured comparison.
 
+## Update
+
+**Claude Code.** The plugin is `caveman@caveman` — plugin name, then the
+marketplace it came from. Both are called `caveman`, so the short name looks
+right and fails: `claude plugin update caveman` answers *Failed to update
+plugin "caveman": Plugin "caveman" not found*. Use the full name:
+
+```bash
+claude plugin update caveman@caveman
+```
+
+`claude plugin list` shows what you have now. Restart Claude Code after an
+update — hooks are read once at session start.
+
+**Everything else:**
+
+| Agent | Update command |
+|---|---|
+| **Gemini CLI** | The Gemini CLI owns its extensions — see `gemini extensions --help` for its update subcommand |
+| **Installed via `npx skills add`** | Re-run the same `npx skills add` command — it overwrites in place |
+| **Hooks / opencode / OpenClaw / rule files** | Re-run the installer; it is idempotent for everything it owns |
+
+```bash
+# Re-run the installer (safe to repeat — overwrites only installer-owned files)
+npx -y github:JuliusBrussee/caveman
+```
+
 ## Uninstall
 
 ```bash
 npx -y github:JuliusBrussee/caveman -- --uninstall
 ```
 
+Run this **before** `npm uninstall -g @caveman-ai/cli`. It hands native agent
+integrations to `caveman disable --all`, so it needs the `caveman` CLI still on
+PATH. If the CLI is already gone, it says which agents are still routed and what
+to run; reinstall the CLI, run `caveman disable --all`, then remove it again.
+
 What it removes:
 
+- Native agent routing written by `caveman setup --install` / `caveman enable <agent>` — for Claude Code that is `ANTHROPIC_BASE_URL` and `_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL` in `~/.claude/settings.json`, which is what makes [Claude Code Remote Control](docs/technical/agent-wrapping.md) unavailable while Caveman is routing. Restored from each agent's integration journal, so your own prior value comes back.
 - Caveman hook entries from `$CLAUDE_CONFIG_DIR/settings.json` (default `~/.claude/`; matched by the substring `caveman`).
 - Hook files in `$CLAUDE_CONFIG_DIR/hooks/` (`caveman-activate.js`, `caveman-mode-tracker.js`, `caveman-parse.js`, `caveman-stats.js`, `caveman-config.js`, `cavecrew-model-overrides.js`, `caveman-statusline.{sh,ps1}`, plus the dir's `package.json` marker).
 - The Claude Code plugin and the Gemini CLI extension (if installed).
