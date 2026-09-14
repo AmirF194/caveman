@@ -48,3 +48,8 @@ packages/middleware/conformance/support/acceptance-restart-evidence/
 # Python build output — never a source of truth.
 packages/sdk/python/build/
 packages/middleware/python/build/
+# examples/middleware certification runs: per-cell evidence JSON and TAP output
+# (1,700+ files, hundreds of MB). The test sources next to them stay tracked.
+examples/middleware/*/certification/
+examples/middleware/*/proof/
+examples/middleware/**/*.tap
