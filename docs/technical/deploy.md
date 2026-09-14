@@ -22,7 +22,8 @@ EC2 instance profile needs no keys at all.
 `CAVEMAN_AUTH_TOKEN` is the switch. Set it and the proxy accepts a non-loopback
 listen address; leave it unset and a non-loopback address is refused at startup,
 exactly as before. At least 16 characters, no whitespace or control characters,
-environment variable only — never `caveman.yaml`.
+environment variable only — an `auth_token:` key in `caveman.yaml` is refused
+at startup rather than ignored.
 
 Generate one, never type one — a memorable token is a guessable token:
 
