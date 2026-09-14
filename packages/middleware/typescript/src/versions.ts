@@ -33,7 +33,7 @@ export function installedFrameworkVersion(name: string, entry = name): string | 
 /** Numeric release segments, prerelease and build metadata dropped. */
 function release(value: string): number[] {
   const parts: number[] = [];
-  for (const chunk of value.split('+')[0].split('-')[0].split('.')) {
+  for (const chunk of (value.split('+')[0] ?? '').split('-')[0]!.split('.')) {
     const number = Number.parseInt(chunk, 10);
     if (!Number.isInteger(number) || number < 0) break;
     parts.push(number);

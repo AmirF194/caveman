@@ -14,10 +14,6 @@
     "LICENSE"
   ],
   "exports": {
-    "./strands": {
-      "types": "./dist/strands.d.ts",
-      "import": "./dist/strands.js"
-    },
     "./ai-sdk": {
       "types": "./dist/ai-sdk.d.ts",
       "import": "./dist/ai-sdk.js"
@@ -30,13 +26,17 @@
       "types": "./dist/anthropic.d.ts",
       "import": "./dist/anthropic.js"
     },
+    "./google": {
+      "types": "./dist/google.d.ts",
+      "import": "./dist/google.js"
+    },
     "./langchain": {
       "types": "./dist/langchain.d.ts",
       "import": "./dist/langchain.js"
     },
-    "./google": {
-      "types": "./dist/google.d.ts",
-      "import": "./dist/google.js"
+    "./strands": {
+      "types": "./dist/strands.d.ts",
+      "import": "./dist/strands.js"
     },
     "./mastra": {
       "types": "./dist/mastra.d.ts",
@@ -45,7 +45,8 @@
     "./mcp": {
       "types": "./dist/mcp.d.ts",
       "import": "./dist/mcp.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc",
@@ -55,6 +56,54 @@
   },
   "dependencies": {
     "@caveman-ai/sdk": "workspace:^"
+  },
+  "peerDependencies": {
+    "ai": ">=7.0.94 <8",
+    "@ai-sdk/provider": ">=4.0.11 <5",
+    "openai": ">=7.12 <8",
+    "@anthropic-ai/sdk": ">=0.124 <1",
+    "@google/genai": ">=2.21 <3",
+    "langchain": ">=1.5 <2",
+    "@langchain/core": ">=1.2 <2",
+    "@langchain/langgraph": ">=1.4 <2",
+    "@strands-agents/sdk": ">=1.17 <2",
+    "@mastra/core": ">=1.65 <2",
+    "@modelcontextprotocol/sdk": ">=1.30 <2"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    },
+    "@ai-sdk/provider": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    },
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "@google/genai": {
+      "optional": true
+    },
+    "langchain": {
+      "optional": true
+    },
+    "@langchain/core": {
+      "optional": true
+    },
+    "@langchain/langgraph": {
+      "optional": true
+    },
+    "@strands-agents/sdk": {
+      "optional": true
+    },
+    "@mastra/core": {
+      "optional": true
+    },
+    "@modelcontextprotocol/sdk": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "typescript": "5.9.3",
@@ -75,16 +124,16 @@
     "access": "public"
   },
   "testedFrameworkVersions": {
-    "ai": "7.0.94",
-    "@ai-sdk/provider": "4.0.11",
-    "openai": "7.12.1",
-    "@anthropic-ai/sdk": "0.124.0",
-    "langchain": "1.5.10",
-    "@langchain/core": "1.2.9",
-    "@langchain/langgraph": "1.4.14",
-    "@strands-agents/sdk": "1.17.0",
-    "@google/genai": "2.21.0",
-    "@mastra/core": "1.65.0",
-    "@modelcontextprotocol/sdk": "1.30.0"
+    "ai": ">=7.0.94 <8",
+    "@ai-sdk/provider": ">=4.0.11 <5",
+    "openai": ">=7.12 <8",
+    "@anthropic-ai/sdk": ">=0.124 <1",
+    "@google/genai": ">=2.21 <3",
+    "langchain": ">=1.5 <2",
+    "@langchain/core": ">=1.2 <2",
+    "@langchain/langgraph": ">=1.4 <2",
+    "@strands-agents/sdk": ">=1.17 <2",
+    "@mastra/core": ">=1.65 <2",
+    "@modelcontextprotocol/sdk": ">=1.30 <2"
   }
 }

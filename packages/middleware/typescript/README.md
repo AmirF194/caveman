@@ -1,30 +1,16 @@
 # Caveman framework middleware
 
-Native framework adapters for the local Caveman compression runtime. The host
-framework keeps its models, tool loop, retries, streams, and conversation state.
-Selected tool-result text is replaced only in the outbound model view.
+Native framework adapters over the local Caveman compression runtime. Your
+framework keeps its models, tool loop, retries, streams and stored conversation.
+Caveman only changes the text of selected tool results in the outbound model
+view, and only when the local runtime answers in time.
 
-This package is under development. Tested native versions are pinned in
-`packages/middleware/conformance/upstream-lock.json` in the source repository.
-Installed-framework tests use a real local Caveman runtime and local provider
-fixtures; they do not establish hosted model quality or billing savings.
-
-Install the adapter package and the exact native framework used by your app.
-For the AI SDK example:
+Alpha. Install the package plus whichever framework you already use — every
+framework is an optional peer, so installing this package installs none of them.
 
 ```sh
-npm install @caveman-ai/sdk @caveman-ai/middleware ai@7.0.94 @ai-sdk/provider@4.0.11 @ai-sdk/openai@4.0.62
+npm install @caveman-ai/sdk @caveman-ai/middleware
 ```
-
-Framework versions are recorded in the package's `testedFrameworkVersions`
-metadata and independently locked example environments. They are not global
-npm peers: different optional adapters require incompatible provider SDK majors.
-Installing the core packages therefore installs no framework. Each adapter
-checks its native version before activation; an untested version keeps the
-original native input and emits `unsupported_version`. Set `strict: true` on
-the middleware runtime only when a pre-inference error is desired.
-
-## AI SDK
 
 ```ts
 import { createMiddlewareRuntime } from '@caveman-ai/sdk/middleware';
@@ -32,59 +18,95 @@ import { withCaveman } from '@caveman-ai/middleware/ai-sdk';
 import { streamText } from 'ai';
 
 const runtime = createMiddlewareRuntime({
-  endpoint: 'http://127.0.0.1:8080',
+  endpoint: 'http://127.0.0.1:8787',
   onReport: report => console.log(report.status, report.reason),
 });
 await runtime.ready();
-const scope = {
-  namespace: 'my-app', session_id: 'conversation-1',
-  branch_id: 'main', cache_epoch: '0',
-};
-// Keep the application's existing model, tools, messages, and stop conditions.
+const scope = { namespace: 'my-app', session_id: 'conversation-1', branch_id: 'main', cache_epoch: '0' };
+
+// Keep the application's existing model, tools, messages and stop conditions.
 const result = streamText(withCaveman(existingOptions, { runtime, scope }));
 ```
 
-`withCaveman` registers a native `caveman_retrieve` tool. The public
-`createCavemanMiddleware` model-only variant uses recovery-free transforms.
-Neither variant changes the caller's stored messages. Close the shared runtime
-when the application shuts down.
+`withCaveman` registers a native `caveman_retrieve` tool so the model can read
+an original back. The `createCavemanMiddleware` model-only variant uses
+recovery-free transforms instead. Neither rewrites your stored messages. Call
+`runtime.close()` at shutdown.
+
+## Supported frameworks
+
+The range is the band the adapter's version gate accepts; the left-hand value is
+the version its wire handling was written against.
+
+| Subpath | Tested range |
+|---|---|
+| `@caveman-ai/middleware/ai-sdk` | `ai >=7.0.94 <8`, `@ai-sdk/provider >=4.0.11 <5` |
+| `@caveman-ai/middleware/openai` | `openai >=7.12 <8` |
+| `@caveman-ai/middleware/anthropic` | `@anthropic-ai/sdk >=0.124 <1` |
+| `@caveman-ai/middleware/google` | `@google/genai >=2.21 <3` |
+| `@caveman-ai/middleware/langchain` | `langchain >=1.5 <2`, `@langchain/core >=1.2 <2`, `@langchain/langgraph >=1.4 <2` |
+| `@caveman-ai/middleware/strands` | `@strands-agents/sdk >=1.17 <2` |
+| `@caveman-ai/middleware/mastra` | `@mastra/core >=1.65 <2` |
+| `@caveman-ai/middleware/mcp` | `@modelcontextprotocol/sdk >=1.30 <2` |
+
+Outside its range an adapter keeps the caller's native input unchanged and
+reports `unsupported_version`. It never throws. Set `strict: true` on the
+runtime only if you want a pre-inference error instead.
 
 ## OpenAI SDK
 
 ```ts
 import { withCavemanOpenAI } from '@caveman-ai/middleware/openai';
 
-const client = withCavemanOpenAI(existingOpenAIClient, {
-  runtime, scope, fetch: existingFetch,
-});
+const client = withCavemanOpenAI(existingOpenAIClient, { runtime, scope, fetch: existingFetch });
 const runner = client.chat.completions.runTools(existingToolLoopOptions);
 const answer = await runner.finalContent();
 ```
 
-Pass the fetch function used by the existing client. The returned native client
-preserves its public response helpers. `runTools` supplies the native recovery
-executor. Ordinary generation calls remain recovery-free unless a native host
-integration supplies its own verified executor. Server-held Responses histories
-remain opaque.
+Pass the fetch function the existing client uses. The returned native client
+keeps its public response helpers. `runTools` supplies the native recovery
+executor; plain generation calls stay recovery-free. Server-held Responses
+histories remain opaque.
 
-## Runtime modes and evidence
+## What you lose
 
-- `off` delegates native calls and emits `disabled` reports without optimizer requests or receipts.
-- `record` measures candidate reductions without replacing request text.
-- `compress` requires recovery when the Engine transformation is lossy.
+Read this before turning on `compress`.
 
-Optimizer failures send the original request and report unavailable cache
-continuity. Measurements remain inferred; client-observed provider usage is
-recorded separately. No inferred token reduction is called verified savings.
+- **Markers are scoped.** A replacement marker is bound to
+  `namespace` + `session_id` + `branch_id` + `cache_epoch` and to the
+  authenticated principal that created it. Replaying it under any other scope
+  returns nothing.
+- **Markers expire.** A scope lives 24 hours, renewed each time it is used.
+  After that the stored original is released.
+- **Persisted compressed history is a trap.** If you save the transformed
+  messages and replay them later — under a different scope, or after the scope
+  expired — that text is gone for good. Caveman does not rewrite your stored
+  history for this reason: keep the originals, let Caveman transform the
+  outbound copy on every call.
+- **Recovery needs a registered executor.** In `compress` mode a lossy
+  transform is only used when your framework really holds the
+  `caveman_retrieve` tool. Without it, only recovery-free transforms apply.
+- **Eligible content is narrow.** Successful tool-result text and explicitly
+  passed document bodies. Never system prompts, user messages, assistant
+  reasoning, errored tool results, images or other non-text parts, anything
+  marked protected, and never a payload the adapter cannot parse exactly.
+- **Failure is silent and safe.** Runtime down, over deadline, out of capacity,
+  expired scope: the original request goes to the provider and the decision is
+  reported as skipped.
 
-`onReport` receives immutable decision metadata after the adapter applies its
-request view. Reports include status, reason, transform IDs, and replacement/
-reuse counts, without original content. `runtime.lastReport` retains one latest
-report across the shared runtime; it is not a conversation history. Callback
-failures do not affect native inference. Passive delegates used by `off` and
-untested versions preserve caller options and native results.
+## Runtime modes and reports
 
-Run the source repository's
-`packages/middleware/conformance/packaged-consumer.mjs` to build tarballs,
-install an isolated consumer, type-check native integrations, and execute the
-real runtime journeys from those installed artifacts.
+- `off` delegates every native call and reports `disabled`, with no optimizer
+  request and no receipts.
+- `record` measures candidates without replacing any request text.
+- `compress` replaces text, and requires recovery when the transform is lossy.
+
+`onReport` receives one immutable record per native call after the adapter picks
+its final request view: status, reason, transform ids, replacement and reuse
+counts. No original content, no provider credentials. `runtime.lastReport` holds
+the most recent one; it is not a history. A callback that throws cannot affect
+inference.
+
+Token counts in reports are estimates from the runtime's tokenizer over the
+segments it saw. They are not measured billing savings, and this package does
+not claim a reduction figure.
