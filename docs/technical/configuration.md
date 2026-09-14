@@ -125,7 +125,7 @@ These are read by the proxy process itself, not by feature configuration.
 | `CAVEMAN_CONFIG` | Path to `caveman.yaml` |
 | `CAVEMAN_HOME` | State directory; default `~/.caveman` |
 | `CAVEMAN_LISTEN` | Listen address; overrides `listen` |
-| `CAVEMAN_AUTH_TOKEN` | Inbound shared token. Required for any non-loopback listen address. Minimum 16 characters, no whitespace or control characters. Environment only — never YAML |
+| `CAVEMAN_AUTH_TOKEN` | Inbound shared token; generate with `openssl rand -hex 32`. Required for any non-loopback listen address. Minimum 16 characters, no whitespace or control characters. Environment only — an `auth_token:` key in `caveman.yaml` is a startup error, not a token |
 | `CAVEMAN_MODE` | Proxy mode; overrides `mode` |
 | `CAVE_UPSTREAM_PROXY` | Outbound proxy; overrides `upstream_proxy` |
 | `CAVE_CA_BUNDLE` | Extra PEM roots; overrides `ca_bundle` |

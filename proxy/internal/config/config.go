@@ -48,6 +48,11 @@ type Config struct {
 	// thing standing between a VPC/container bind and every configured provider
 	// credential.
 	AuthToken string `yaml:"-" json:"-"`
+	// AuthTokenYAML exists only to CATCH `auth_token:` in caveman.yaml. The field
+	// above is yaml:"-", so before this probe such a key was silently dropped and
+	// the operator got a proxy they believed was gated and was not. Load refuses
+	// to start on a non-empty value; nothing ever reads it.
+	AuthTokenYAML string `yaml:"auth_token" json:"-"`
 	// Optimizers gates provider-native optimizers by id.
 	Optimizers map[string]bool `yaml:"optimizers"`
 	// SubscriptionCompress is the operator off-switch for subscription-auth
@@ -153,6 +158,11 @@ func Load(path string) (Config, error) {
 		if err := yaml.Unmarshal(raw, &cfg); err != nil {
 			return cfg, err
 		}
+	}
+	if strings.TrimSpace(cfg.AuthTokenYAML) != "" {
+		// Never echo the value: it reached a file on disk, but this error reaches
+		// the proxy log.
+		return Config{}, fmt.Errorf("auth_token: in %s is ignored — the inbound token is read only from the CAVEMAN_AUTH_TOKEN environment variable; remove the key", path)
 	}
 	cfg = cfg.withDefaults()
 	if err := validateAuthToken(cfg.AuthToken); err != nil {

@@ -726,3 +726,49 @@ func TestUpstreamProxyFunc_HandBuiltConfigNeverPanics(t *testing.T) {
 		}
 	}
 }
+
+// `auth_token:` in caveman.yaml used to be dropped silently by the yaml:"-" tag,
+// leaving an operator convinced their non-loopback proxy was gated when it was
+// not. It is now a hard startup error that names the environment variable.
+func TestLoad_AuthTokenInYAMLIsRefused(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "caveman.yaml")
+	const yamlToken = "cave_tok_from_the_yaml_file_0123"
+	if err := os.WriteFile(path, []byte("listen: \"127.0.0.1:8787\"\nauth_token: \""+yamlToken+"\"\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, err := Load(path)
+	if err == nil {
+		t.Fatal("Load accepted auth_token: in caveman.yaml")
+	}
+	if !strings.Contains(err.Error(), "CAVEMAN_AUTH_TOKEN") || !strings.Contains(err.Error(), "auth_token") {
+		t.Fatalf("error %q must name both the ignored key and the environment variable", err)
+	}
+	if strings.Contains(err.Error(), yamlToken) {
+		t.Fatalf("error echoed the secret: %q", err)
+	}
+}
+
+// AuthToken is env-only in both directions: a YAML or JSON value never reaches
+// it, and the environment is assigned unconditionally so a stale field cannot
+// survive.
+func TestLoad_AuthTokenIsEnvironmentOnly(t *testing.T) {
+	t.Setenv("CAVEMAN_AUTH_TOKEN", "")
+	path := filepath.Join(t.TempDir(), "caveman.yaml")
+	// Aliases and mixed case are not the key the probe catches, so they exercise
+	// the original hole: a YAML value that survives Load must never land in
+	// AuthToken.
+	if err := os.WriteFile(path, []byte("listen: \"127.0.0.1:8787\"\nAuthToken: \"cave_tok_0123456789abcdef012345\"\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.AuthToken != "" {
+		t.Fatalf("AuthToken = %q, want empty: no file value may populate it", cfg.AuthToken)
+	}
+	// A hand-built Config carrying a token is overwritten by the (empty) env too.
+	if got := (Config{AuthToken: "cave_tok_0123456789abcdef012345"}).withDefaults(); got.AuthToken != "" {
+		t.Fatalf("withDefaults kept a non-environment AuthToken %q", got.AuthToken)
+	}
+}
