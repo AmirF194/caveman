@@ -17,6 +17,7 @@ except ModuleNotFoundError as error:
 from caveman_cloud.middleware import MiddlewareRuntime, AsyncMiddlewareRuntime
 from ._httpx2 import observe_response
 from ._native import NativeSession, owner, plain
+from ._versions import in_range
 
 
 class CavemanAnthropicMiddleware(Middleware):
@@ -24,7 +25,7 @@ class CavemanAnthropicMiddleware(Middleware):
     def __init__(self, runtime, scope, *, _binding=None, _overhead=None, _logical_call_id=None, _is_registered=None):
         self.session = NativeSession(runtime, scope, adapter_id="anthropic-sdk", framework_version="1.4.0", protocol="anthropic-messages",
                                      binding=_binding, overhead=_overhead, logical_call_id=_logical_call_id, is_registered=_is_registered,
-                                     passive_reason=None if __version__ == "1.4.0" else "unsupported_version")
+                                     passive_reason=None if in_range(__version__, "1.4", "2") else "unsupported_version")
 
     @staticmethod
     def eligible(request: APIRequest):
@@ -114,7 +115,7 @@ def with_caveman_anthropic(client, *, runtime, scope):
     async_client = isinstance(client, AsyncAnthropic)
     if not isinstance(runtime, AsyncMiddlewareRuntime if async_client else MiddlewareRuntime):
         raise TypeError("Match the sync/async middleware runtime to the native client")
-    version_supported = __version__ == "1.4.0"
+    version_supported = in_range(__version__, "1.4", "2")
     if not version_supported and runtime.mode != "off":
         runtime.decline("unsupported_version")
     native = client.with_middleware(CavemanAnthropicMiddleware(runtime, scope))

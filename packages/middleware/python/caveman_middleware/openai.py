@@ -18,6 +18,7 @@ from caveman_cloud.middleware import MiddlewareRuntime, AsyncMiddlewareRuntime
 from ._httpx2 import observe_response, OpenAICall, CavemanOpenAITransport, CavemanAsyncOpenAITransport
 from ._usage import usage
 from ._native import NativeSession, owner, plain
+from ._versions import in_range
 
 
 def with_caveman_openai(client, *, runtime, scope, transport=None):
@@ -74,7 +75,7 @@ def with_caveman_openai_tools(client, *, runtime, scope, protocol, tools, functi
         raise ValueError("Duplicate or reserved caveman_retrieve tool name")
     if set(names) != set(functions):
         raise ValueError("Every native function definition needs exactly one executor")
-    if runtime.mode != "compress" or __version__ != "3.10.0":
+    if runtime.mode != "compress" or not in_range(__version__, "3.10", "4"):
         return CavemanOpenAIToolLoop(with_caveman_openai(client, runtime=runtime, scope=scope, transport=transport), MappingProxyType(dict(functions)), json.dumps(definitions))
     binding = runtime.recovery(scope)
     tool = {"name": binding.name, "description": binding.description, "parameters": copy.deepcopy(binding.input_schema)}
@@ -94,7 +95,7 @@ def _wrap(client, *, runtime, scope, registration=None, transport=None):
         raise TypeError("Match the sync/async middleware runtime to the native client")
     if transport is not None and not isinstance(transport, CavemanAsyncOpenAITransport if is_async else CavemanOpenAITransport):
         raise TypeError("Match the sync/async Caveman transport to the native client")
-    version_supported = __version__ == "3.10.0"
+    version_supported = in_range(__version__, "3.10", "4")
     if not version_supported and runtime.mode != "off":
         runtime.decline("unsupported_version")
     native = client.with_options()
