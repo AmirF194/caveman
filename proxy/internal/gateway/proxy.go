@@ -93,15 +93,19 @@ func (s *Server) proxy(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("x-cave-request-id", requestID)
 	w.Header().Set("x-cave-trace-id", traceID)
 
+	// Authenticate FIRST. The two checks are independent, and matching the route
+	// first turned the 401/404 split into a route oracle: an unauthenticated
+	// caller could enumerate which providers and compat mounts this proxy serves
+	// by watching which paths answered 404.
+	rc, err := s.auth.Authenticate(r.Context(), r)
+	if err != nil {
+		s.rejectUnauthorized(w, r)
+		return
+	}
 	adapter := s.matchAdapter(r)
 	if adapter == nil {
 		// fail-closed routing: an unrecognized path is a 404, never a blind pass-through.
 		httpx.Error(w, r, http.StatusNotFound, "cave_route_not_found", "Proxy path is not recognized.")
-		return
-	}
-	rc, err := s.auth.Authenticate(r.Context(), r)
-	if err != nil {
-		httpx.Error(w, r, http.StatusUnauthorized, "cave_unauthorized", "Request rejected by the proxy authenticator.")
 		return
 	}
 	credential := s.creds.Resolve(adapter.Name(), r)

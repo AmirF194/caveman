@@ -16,6 +16,7 @@ package gateway
 import (
 	"context"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -361,6 +362,11 @@ type Server struct {
 	sessionFallback  func(time.Time, string, string) (string, string)
 	logger           *slog.Logger
 	inflight         atomic.Int64
+	// unauthorized counts inbound requests the authenticator rejected. A token
+	// gate that is being probed has to be visible to the operator: without a
+	// counter (and the Warn beside it) a brute-force attempt against
+	// CAVEMAN_AUTH_TOKEN is indistinguishable from an idle proxy.
+	unauthorized atomic.Int64
 	// capture is the local body-capture instrument (see capture.go). It is nil
 	// unless CAVE_CAPTURE_DIR names a writable directory, and it never affects
 	// what is sent, recorded, or claimed.
@@ -593,7 +599,27 @@ func (s *Server) metrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/plain; version=0.0.4")
 	_, _ = w.Write([]byte("cave_proxy_inflight_requests "))
 	_, _ = w.Write([]byte(itoa(s.inflight.Load())))
+	_, _ = w.Write([]byte("\ncave_proxy_unauthorized_total "))
+	_, _ = w.Write([]byte(itoa(s.unauthorized.Load())))
 	_, _ = w.Write([]byte("\n"))
+}
+
+// rejectUnauthorized is the single 401 exit for every handler behind the
+// inbound gate. It counts the rejection and logs it once — the path and the
+// remote HOST, never the presented token, the Authorization header, or the
+// source port. standalone.Auth deliberately returns one uniform error (a
+// missing token must not be distinguishable from a wrong one), so this is the
+// only place the operator learns the gate fired at all.
+func (s *Server) rejectUnauthorized(w http.ResponseWriter, r *http.Request) {
+	s.unauthorized.Add(1)
+	if s.logger != nil {
+		remote := r.RemoteAddr
+		if host, _, err := net.SplitHostPort(remote); err == nil {
+			remote = host
+		}
+		s.logger.Warn("inbound token rejected", "path", r.URL.Path, "remote", remote)
+	}
+	httpx.Error(w, r, http.StatusUnauthorized, "cave_unauthorized", "Request rejected by the proxy authenticator.")
 }
 
 func itoa(n int64) string {

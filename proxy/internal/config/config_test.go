@@ -68,12 +68,70 @@ func TestCompatForwardHeaderConfiguration(t *testing.T) {
 func TestLoad_RejectsNonLoopbackListen(t *testing.T) {
 	for _, listen := range []string{"0.0.0.0:8787", "[::]:8787", ":8787", "192.0.2.1:8787"} {
 		t.Run(listen, func(t *testing.T) {
+			// Explicit: a developer's exported token must not be what decides
+			// whether this rejection test passes.
+			t.Setenv("CAVEMAN_AUTH_TOKEN", "")
 			path := filepath.Join(t.TempDir(), "caveman.yaml")
 			if err := os.WriteFile(path, []byte("listen: \""+listen+"\"\n"), 0o600); err != nil {
 				t.Fatal(err)
 			}
-			if _, err := Load(path); err == nil {
+			_, err := Load(path)
+			if err == nil {
 				t.Fatalf("Load accepted unauthenticated non-loopback listen %q", listen)
+			}
+			if !strings.Contains(err.Error(), "CAVEMAN_AUTH_TOKEN") {
+				t.Fatalf("error %q does not name the way out (CAVEMAN_AUTH_TOKEN)", err)
+			}
+		})
+	}
+}
+
+func TestLoad_AuthTokenAllowsNonLoopbackListen(t *testing.T) {
+	const token = "cave_tok_0123456789abcdef012345"
+	for _, listen := range []string{"0.0.0.0:8787", "[::]:8787", ":8787", "192.0.2.1:8787"} {
+		t.Run(listen, func(t *testing.T) {
+			t.Setenv("CAVEMAN_AUTH_TOKEN", "  "+token+"  ")
+			path := filepath.Join(t.TempDir(), "caveman.yaml")
+			if err := os.WriteFile(path, []byte("listen: \""+listen+"\"\n"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			cfg, err := Load(path)
+			if err != nil {
+				t.Fatalf("Load rejected token-gated listen %q: %v", listen, err)
+			}
+			if cfg.Listen != listen {
+				t.Fatalf("listen = %q, want %q", cfg.Listen, listen)
+			}
+			if cfg.AuthToken != token {
+				t.Fatalf("AuthToken = %q, want the trimmed env value", cfg.AuthToken)
+			}
+		})
+	}
+}
+
+func TestLoad_RejectsUnusableAuthToken(t *testing.T) {
+	for name, token := range map[string]string{
+		"too short":       "cave_tok",
+		"embedded return": "cave_tok_0123456789ab\ncdef",
+		"embedded space":  "cave_tok_0123456789 abcdef",
+	} {
+		t.Run(name, func(t *testing.T) {
+			t.Setenv("CAVEMAN_AUTH_TOKEN", token)
+			path := filepath.Join(t.TempDir(), "caveman.yaml")
+			// Loopback: an unusable token fails Load outright, it does not merely
+			// fail to unlock a wider bind.
+			if err := os.WriteFile(path, []byte("listen: \"127.0.0.1:8787\"\n"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			_, err := Load(path)
+			if err == nil {
+				t.Fatal("Load accepted an unusable CAVEMAN_AUTH_TOKEN")
+			}
+			if !strings.Contains(err.Error(), "CAVEMAN_AUTH_TOKEN") {
+				t.Fatalf("error %q does not name CAVEMAN_AUTH_TOKEN", err)
+			}
+			if strings.Contains(err.Error(), strings.TrimSpace(token)) {
+				t.Fatalf("error echoed the secret: %q", err)
 			}
 		})
 	}
@@ -676,5 +734,51 @@ func TestUpstreamProxyFunc_HandBuiltConfigNeverPanics(t *testing.T) {
 		if got := (Config{UpstreamProxy: raw}).UpstreamProxyFunc(); (got != nil) != wantSelector {
 			t.Fatalf("UpstreamProxyFunc(%q) selector = %v, want %v", raw, got != nil, wantSelector)
 		}
+	}
+}
+
+// `auth_token:` in caveman.yaml used to be dropped silently by the yaml:"-" tag,
+// leaving an operator convinced their non-loopback proxy was gated when it was
+// not. It is now a hard startup error that names the environment variable.
+func TestLoad_AuthTokenInYAMLIsRefused(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "caveman.yaml")
+	const yamlToken = "cave_tok_from_the_yaml_file_0123"
+	if err := os.WriteFile(path, []byte("listen: \"127.0.0.1:8787\"\nauth_token: \""+yamlToken+"\"\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, err := Load(path)
+	if err == nil {
+		t.Fatal("Load accepted auth_token: in caveman.yaml")
+	}
+	if !strings.Contains(err.Error(), "CAVEMAN_AUTH_TOKEN") || !strings.Contains(err.Error(), "auth_token") {
+		t.Fatalf("error %q must name both the ignored key and the environment variable", err)
+	}
+	if strings.Contains(err.Error(), yamlToken) {
+		t.Fatalf("error echoed the secret: %q", err)
+	}
+}
+
+// AuthToken is env-only in both directions: a YAML or JSON value never reaches
+// it, and the environment is assigned unconditionally so a stale field cannot
+// survive.
+func TestLoad_AuthTokenIsEnvironmentOnly(t *testing.T) {
+	t.Setenv("CAVEMAN_AUTH_TOKEN", "")
+	path := filepath.Join(t.TempDir(), "caveman.yaml")
+	// Aliases and mixed case are not the key the probe catches, so they exercise
+	// the original hole: a YAML value that survives Load must never land in
+	// AuthToken.
+	if err := os.WriteFile(path, []byte("listen: \"127.0.0.1:8787\"\nAuthToken: \"cave_tok_0123456789abcdef012345\"\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.AuthToken != "" {
+		t.Fatalf("AuthToken = %q, want empty: no file value may populate it", cfg.AuthToken)
+	}
+	// A hand-built Config carrying a token is overwritten by the (empty) env too.
+	if got := (Config{AuthToken: "cave_tok_0123456789abcdef012345"}).withDefaults(); got.AuthToken != "" {
+		t.Fatalf("withDefaults kept a non-environment AuthToken %q", got.AuthToken)
 	}
 }

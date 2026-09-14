@@ -51,7 +51,7 @@ func (s *Server) chatgpt(w http.ResponseWriter, r *http.Request) {
 
 	rc, err := s.auth.Authenticate(r.Context(), r)
 	if err != nil {
-		httpx.Error(w, r, http.StatusUnauthorized, "cave_unauthorized", "Request rejected by the proxy authenticator.")
+		s.rejectUnauthorized(w, r)
 		return
 	}
 	rc.AgentSlug = labelOrDefault(r.Header.Get("x-cave-agent"), "unlabeled-agent")

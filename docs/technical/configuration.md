@@ -100,7 +100,7 @@ ca_bundle: ""
 |---|---|
 | `label` | Human-readable installation label |
 | `mode` | Proxy operating mode |
-| `listen` | Local listen address |
+| `listen` | Listen address. Loopback by default; a non-loopback address requires `CAVEMAN_AUTH_TOKEN` |
 | `optimizers` | Optimizer overrides; provider-cache optimizers default on in optimization modes and accept explicit `false` |
 | `subscription_compress` | Allow eligible subscription traffic compression |
 | `toolschema_strip` | Allow configured tool-schema annotation stripping |
@@ -115,6 +115,27 @@ Accepted internal proxy modes are `record`, `recommend`, `shadow`, `canary`,
 Operator-facing local workflows normally use `record`, `compress`, or `pixel`.
 
 `CAVEMAN_MODE` can override proxy YAML mode for `caveman start`.
+
+### Proxy environment
+
+These are read by the proxy process itself, not by feature configuration.
+
+| Variable | Meaning |
+|---|---|
+| `CAVEMAN_CONFIG` | Path to `caveman.yaml` |
+| `CAVEMAN_HOME` | State directory; default `~/.caveman` |
+| `CAVEMAN_LISTEN` | Listen address; overrides `listen` |
+| `CAVEMAN_AUTH_TOKEN` | Inbound shared token; generate with `openssl rand -hex 32`. Required for any non-loopback listen address. Minimum 16 characters, no whitespace or control characters. Environment only — an `auth_token:` key in `caveman.yaml` is a startup error, not a token |
+| `CAVEMAN_MODE` | Proxy mode; overrides `mode` |
+| `CAVE_UPSTREAM_PROXY` | Outbound proxy; overrides `upstream_proxy` |
+| `CAVE_CA_BUNDLE` | Extra PEM roots; overrides `ca_bundle` |
+| `CAVE_SSRF_ALLOWLIST` | Exact private or loopback upstream hosts to permit |
+
+With `CAVEMAN_AUTH_TOKEN` set, every request must present the token in
+`x-cave-api-key` or `Authorization: Bearer`. The proxy consumes that header
+before resolving the provider credential, so the token is never forwarded
+upstream. `/health/live`, `/health/ready` and `/metrics` stay unauthenticated.
+See [Deploy the proxy for a team](deploy.md).
 
 ### Provider overrides
 
@@ -259,6 +280,14 @@ OPENCODE_API_KEY
 Amazon Bedrock supports its native authentication paths, including AWS
 credentials and supported bearer-token configuration. Prefer provider-native
 credential discovery over copying secrets into shell history.
+
+Bedrock resolves credentials in the AWS default chain order: environment keys
+(`AWS_BEARER_TOKEN_BEDROCK`, then `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`
+/ optional `AWS_SESSION_TOKEN`), then web identity
+(`AWS_WEB_IDENTITY_TOKEN_FILE` + `AWS_ROLE_ARN`, which is how IRSA works), then
+container credentials (ECS task role, EKS Pod Identity), then the EC2 IMDSv2
+instance profile. On ECS, EKS, or EC2 you therefore grant the task, pod, or
+instance role `bedrock:InvokeModel*` and set no AWS keys at all.
 
 ## Precedence summary
 

@@ -203,6 +203,8 @@ One rule file, one talking style, plus a small toolbox. `/caveman lite|full|ultr
 
 One local process. Your agent talks to it, it talks to your provider. No Caveman server in the path, and your Claude Pro/Max login passes through to Anthropic untouched. Originals of everything it compresses sit in a SQLite file on your machine with a recovery handle, so the agent can always ask for the full version back.
 
+**Whole team? One container.** Same proxy in your VPC, one shared token, keys stay on server. [Deploy it →](docs/technical/deploy.md)
+
 <p align="center">
   <img src="docs/assets/caveman-demo.gif" alt="Terminal demo: caveman compress reads a large JSON payload and emits a much smaller compressed version, byte-exact recoverable">
 </p>
