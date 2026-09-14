@@ -20,7 +20,7 @@ export class CavemanStrandsModel<T extends BaseModelConfig=BaseModelConfig> exte
   registration:StrandsRegistration|null=null;
   private readonly versionSupported:boolean;
   constructor(readonly inner:Model<T>,readonly options:StrandsOptions){
-    super();this.versionSupported=matchesFramework('@strands-agents/sdk','1.17.0');
+    super();this.versionSupported=matchesFramework('@strands-agents/sdk','1.17','2');
     if(!this.versionSupported&&options.runtime.mode!=='off')options.runtime.decline('unsupported_version');
   }
   override get stateful(){return this.inner.stateful;}
@@ -125,7 +125,7 @@ export function withCavemanStrandsModel<T extends BaseModelConfig>(model:Model<T
 
 export function withCavemanStrands(input:AgentConfig&{model:Model},options:StrandsOptions):AgentConfig{
   const model=new CavemanStrandsModel(input.model,options);
-  if(options.runtime.mode==='off'||!matchesFramework('@strands-agents/sdk','1.17.0'))return {...input,model};
+  if(options.runtime.mode==='off'||!matchesFramework('@strands-agents/sdk','1.17','2'))return {...input,model};
   const registration=new StrandsRegistration(options);
   model.registration=registration;
   return {...input,model,plugins:[...(input.plugins??[]),registration]};

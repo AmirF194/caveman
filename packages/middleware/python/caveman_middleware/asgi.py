@@ -71,7 +71,7 @@ class CavemanASGIMiddleware:
         self.app, self.runtime = app, runtime
         self.routes, self.resolve_context = dict(routes), resolve_context
         self.max_body_bytes, self.max_request_chunks = max_body_bytes, max_request_chunks
-        self._version_supported = matches_framework(("fastapi", "0.141.1"), ("starlette", "1.6.0"))
+        self._version_supported = matches_framework(("fastapi", "0.141", "1"), ("starlette", "1.6", "2"))
         if not self._version_supported and runtime.mode != "off":
             runtime.decline("unsupported_version")
 

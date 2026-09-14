@@ -42,7 +42,7 @@ class CavemanMCPHost:
                  server_id: str, protocol_version: str):
         if not isinstance(runtime, AsyncMiddlewareRuntime):
             raise TypeError("Native MCP clients require AsyncMiddlewareRuntime")
-        self._version_supported = matches_framework(("mcp", "2.2.0"))
+        self._version_supported = matches_framework(("mcp", "2.2", "3"))
         if not self._version_supported and runtime.mode != "off":
             runtime.decline("unsupported_version")
         if not server_id or not protocol_version:

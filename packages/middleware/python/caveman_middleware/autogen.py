@@ -67,11 +67,11 @@ def _runtime(key):
 
 
 def _supported(runtime):
-    return supports_framework(runtime, ("autogen-core", "0.7.5"), ("autogen-agentchat", "0.7.5"), ("autogen-ext", "0.7.5"))
+    return supports_framework(runtime, ("autogen-core", "0.7", "0.8"), ("autogen-agentchat", "0.7", "0.8"), ("autogen-ext", "0.7", "0.8"))
 
 
 def _version_supported():
-    return matches_framework(("autogen-core", "0.7.5"), ("autogen-agentchat", "0.7.5"), ("autogen-ext", "0.7.5"))
+    return matches_framework(("autogen-core", "0.7", "0.8"), ("autogen-agentchat", "0.7", "0.8"), ("autogen-ext", "0.7", "0.8"))
 
 
 def _check(runtime, scope):

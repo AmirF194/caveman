@@ -27,7 +27,7 @@ export class CavemanMCPHost {
   private readonly versionSupported;
   constructor(private readonly options: MCPHostOptions) {
     if (!options.serverId || !options.protocolVersion) throw new TypeError('Provide the native server identity and negotiated MCP protocol version');
-    this.versionSupported = matchesFramework('@modelcontextprotocol/sdk', '1.30.0', '@modelcontextprotocol/sdk/client/index.js');
+    this.versionSupported = matchesFramework('@modelcontextprotocol/sdk', '1.30', '2', '@modelcontextprotocol/sdk/client/index.js');
     if (!this.versionSupported && options.runtime.mode !== 'off') options.runtime.decline('unsupported_version');
     this.binding = options.runtime.recovery(options.scope);
     this.adapter = { id: 'mcp', version: '0.1.0', framework_version: '1.30.0', serialization_revision: `mcp-native-${options.protocolVersion}-v1` };

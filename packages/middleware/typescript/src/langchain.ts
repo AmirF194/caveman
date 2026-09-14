@@ -16,7 +16,7 @@ export interface LangChainDocumentOptions extends LangChainOptions {
   sourceExpansion?: RecoveryBinding;
 }
 export const langChainAdapter = { id:'langchain', version:'0.1.0', framework_version:'1.5.10', serialization_revision:'langchain-message-v1' };
-export const langChainSupported=(_runtime:MiddlewareRuntime)=>matchesFramework('langchain','1.5.10')&&matchesFramework('@langchain/core','1.2.9','@langchain/core/messages')&&matchesFramework('@langchain/langgraph','1.4.14');
+export const langChainSupported=(_runtime:MiddlewareRuntime)=>matchesFramework('langchain','1.5','2')&&matchesFramework('@langchain/core','1.2','2','@langchain/core/messages')&&matchesFramework('@langchain/langgraph','1.4','2');
 
 export function scopeFromConfig(config:RunnableConfig, namespace:string):Scope{
   const c=config.configurable??{};

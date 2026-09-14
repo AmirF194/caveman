@@ -37,7 +37,7 @@ RAG_ADAPTER = Adapter("llama-index-rag", "0.1.0", "0.14.24", "llama-index-node-v
 
 
 def _check_version(runtime):
-    return supports_framework(runtime, ("llama-index-core", ADAPTER.framework_version))
+    return supports_framework(runtime, ("llama-index-core", "0.14", "0.15"))
 
 
 def _scope(source, context=None):
@@ -54,17 +54,17 @@ def _async_runtime(runtime):
 def _protocol(model, runtime):
     provider = (type(model).__module__, type(model).__name__)
     supported = {
-        ("llama_index.llms.openai.base", "OpenAI"): ("llama-index-llms-openai", "0.8.1", "openai-chat"),
-        ("llama_index.llms.anthropic.base", "Anthropic"): ("llama-index-llms-anthropic", "0.12.0", "anthropic-messages"),
+        ("llama_index.llms.openai.base", "OpenAI"): ("llama-index-llms-openai", "0.8", "1", "openai-chat"),
+        ("llama_index.llms.anthropic.base", "Anthropic"): ("llama-index-llms-anthropic", "0.12", "1", "anthropic-messages"),
     }
     match = supported.get(provider)
-    if match and not supports_framework(runtime, (match[0], match[1])):
+    if match and not supports_framework(runtime, match[:3]):
         return None
     if match:
-        sdk, expected = ("openai", "2.54.0") if match[2] == "openai-chat" else ("anthropic", "0.125.0")
-        if not supports_framework(runtime, (sdk, expected)):
+        sdk = ("openai", "2.54", "4") if match[3] == "openai-chat" else ("anthropic", "0.125", "2")
+        if not supports_framework(runtime, sdk):
             return None
-    return match[2] if match else None
+    return match[3] if match else None
 
 
 @dataclass
@@ -765,7 +765,7 @@ class CavemanNodePostprocessor(BaseNodePostprocessor):
         return self._finish(nodes, result, options, query_bundle)
 
     def _report_original(self):
-        reason = "disabled" if self.runtime.mode == "off" else "unsupported_version" if not matches_framework(("llama-index-core", ADAPTER.framework_version)) else "opaque_payload"
+        reason = "disabled" if self.runtime.mode == "off" else "unsupported_version" if not matches_framework(("llama-index-core", "0.14", "0.15")) else "opaque_payload"
         self.runtime.report(reason=reason, adapter=RAG_ADAPTER.id, logical_call_id=str(uuid.uuid4()), attempt_id=str(uuid.uuid4()))
 
     def _finish(self, nodes, result, options, query_bundle):

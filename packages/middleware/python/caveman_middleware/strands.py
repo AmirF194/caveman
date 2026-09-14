@@ -38,7 +38,7 @@ class CavemanModel(Model):
         self.model = model
         self.runtime = runtime.as_async() if isinstance(runtime, MiddlewareRuntime) else runtime
         self.scope, self.registration = scope, None
-        self.version_supported = matches_framework(("strands-agents", "1.55.0"))
+        self.version_supported = matches_framework(("strands-agents", "1.55", "2"))
         if not self.version_supported and self.runtime.mode != "off":
             self.runtime.decline("unsupported_version")
 

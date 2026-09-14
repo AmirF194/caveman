@@ -58,7 +58,7 @@ export function createCavemanMastraProcessor(options: CavemanMastraOptions): Pro
  * processors and prepareStep callback, then attests the executable tool table
  * at Mastra's enforced final prepareStep boundary. No Agent config is mutated. */
 export function withCavemanMastra<T extends Agent>(agent: T, options: CavemanMastraOptions): T {
-  if (!matchesFramework('@mastra/core', adapter.framework_version, '@mastra/core/agent')) {
+  if (!matchesFramework('@mastra/core', '1.65', '2', '@mastra/core/agent')) {
     if (options.runtime.mode !== 'off') options.runtime.decline('unsupported_version');
     return new Proxy(agent, { get(target, key) {
       const value = Reflect.get(target, key, target);
@@ -119,7 +119,7 @@ export function withCavemanMastra<T extends Agent>(agent: T, options: CavemanMas
 }
 
 function createProcessor(options: CavemanMastraOptions, enforcedFinalStep: boolean, isProtectedText: (text: string) => boolean = () => false, rememberProtected: (value: unknown) => void = () => {}): { processor: Processor; attest: (before: FinalStep, result: ProcessInputStepResult | undefined | void) => boolean } {
-  if (!matchesFramework('@mastra/core', adapter.framework_version, '@mastra/core/agent')) {
+  if (!matchesFramework('@mastra/core', '1.65', '2', '@mastra/core/agent')) {
     if (options.runtime.mode !== 'off') options.runtime.decline('unsupported_version');
     return { processor: { id: options.id ?? 'caveman', processInputStep(args) { return { model: passiveModel(args.model, options, 'unsupported_version') }; } }, attest() { return false; } };
   }

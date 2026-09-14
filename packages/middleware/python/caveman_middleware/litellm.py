@@ -61,7 +61,7 @@ class CavemanLiteLLM(CustomLogger):
         self.proxy_scope, self.operator_recovery = proxy_scope, operator_recovery
         self._requests, self._attempts = OrderedDict(), OrderedDict()
         self._lock, self._registrations = threading.RLock(), 0
-        self._version_supported = matches_framework(("litellm", "1.100.0"))
+        self._version_supported = matches_framework(("litellm", "1.100", "2"))
         if not self._version_supported and runtime.mode != "off":
             runtime.decline("unsupported_version")
 

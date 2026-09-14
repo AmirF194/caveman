@@ -216,7 +216,7 @@ export class CavemanGoogleGenAI extends GoogleGenAI {
   declare readonly chats: Chats;
   constructor(nativeOptions: GoogleGenAIOptions, options: GoogleOptions) {
     super(nativeOptions);
-    const supported = supportsFramework(options.runtime, '@google/genai', '2.21.0');
+    const supported = supportsFramework(options.runtime, '@google/genai', '2.21', '3');
     this.models = new Models(delegatedClient(this.apiClient, options, nativeOptions.httpOptions, supported ? undefined : options.runtime.mode === 'off' ? 'disabled' : 'unsupported_version'));
     this.chats = new Chats(this.models, this.apiClient);
     if (!supported) return;

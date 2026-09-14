@@ -115,7 +115,7 @@ class CavemanLLM(BaseLLM):
                          provider=delegate.provider, stream=delegate.stream, stop=list(delegate.stop),
                          is_litellm=delegate.is_litellm)
         self._context = contextvars.ContextVar(f"caveman_crewai_context_{id(self)}", default=None)
-        supported = matches_framework(("crewai", "1.15.20"))
+        supported = matches_framework(("crewai", "1.15", "2"))
         if not supported and runtime.mode != "off":
             runtime.decline("unsupported_version")
         if not supported or runtime.mode == "off":
@@ -191,7 +191,7 @@ class CavemanLLM(BaseLLM):
         if owner.get() is not None:
             return None
         reason = ("closed" if self.closed else "off" if self.runtime.mode == "off" else
-                  "unsupported_version" if not matches_framework(("crewai", "1.15.20")) else
+                  "unsupported_version" if not matches_framework(("crewai", "1.15", "2")) else
                   "unsupported_shape" if type(messages) is not list else None)
         if reason:
             return Attempt(self.runtime, self.scope, str(uuid.uuid4()), str(uuid.uuid4()),
@@ -329,7 +329,7 @@ def with_caveman_agent(options, *, runtime, scope):
     # Adding the first tool switches CrewAI out of its native no-tool/typed
     # response path. There is no eligible tool result in that path anyway.
     params = model.delegate.additional_params
-    recovery_allowed = (runtime.mode == "compress" and matches_framework(("crewai", "1.15.20")) and tools
+    recovery_allowed = (runtime.mode == "compress" and matches_framework(("crewai", "1.15", "2")) and tools
                         and not getattr(model.delegate, "response_format", None)
                         and params.get("tool_choice", "auto") == "auto"
                         and not any(params.get(key) for key in ("response_format", "output_config", "output_format")))

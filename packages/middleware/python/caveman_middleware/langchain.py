@@ -83,7 +83,7 @@ def _apply(messages, outcome, setters):
 
 
 def _supported(runtime):
-    return matches_framework(("langchain", "1.4.0"), ("langchain-core", "1.6.2"), ("langgraph", "1.2.11"))
+    return matches_framework(("langchain", "1.4", "2"), ("langchain-core", "1.6", "2"), ("langgraph", "1.2", "2"))
 
 
 class _Connection:

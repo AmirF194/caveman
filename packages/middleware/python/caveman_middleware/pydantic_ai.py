@@ -53,7 +53,7 @@ def _runtime(runtime):
 
 
 def _check_version(runtime):
-    return supports_framework(runtime, ("pydantic-ai-slim", ADAPTER.framework_version))
+    return supports_framework(runtime, ("pydantic-ai-slim", "2.42", "3"))
 
 
 def _protocol(model):

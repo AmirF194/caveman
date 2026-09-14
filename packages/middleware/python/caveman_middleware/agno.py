@@ -131,7 +131,7 @@ class _Connection:
         self.async_runtime = runtime.as_async() if self.sync else runtime
         self.scope, self.recovery_tool = scope, None
         self.active = contextvars.ContextVar("caveman_agno_run", default=None)
-        self.version_supported = matches_framework(("agno", ADAPTER.framework_version))
+        self.version_supported = matches_framework(("agno", "3.0", "4"))
         if not self.version_supported and runtime.mode != "off":
             runtime.decline("unsupported_version")
 

@@ -163,7 +163,7 @@ def with_caveman_google(client, *, runtime, scope):
     """
     if not isinstance(client, genai.Client) or not isinstance(runtime, MiddlewareRuntime):
         raise TypeError("Expected a Google Client and synchronous MiddlewareRuntime")
-    if not supports_framework(runtime, ("google-genai", "2.22.0")):
+    if not supports_framework(runtime, ("google-genai", "2.22", "3")):
         return client
     _wrap_model(client.models, runtime, scope)
     _wrap_model(client.aio.models, runtime.as_async(), scope, True)
@@ -183,7 +183,7 @@ def with_caveman_google_chat(chat, *, runtime, scope, config=None):
         runtime = runtime.as_async()
     if not isinstance(runtime, AsyncMiddlewareRuntime if asynchronous else MiddlewareRuntime):
         raise TypeError("Match the sync/async runtime to the chat")
-    if not supports_framework(runtime, ("google-genai", "2.22.0")):
+    if not supports_framework(runtime, ("google-genai", "2.22", "3")):
         return chat
     send, stream, default = chat.send_message, chat.send_message_stream, config
     if asynchronous:
@@ -250,7 +250,7 @@ def _prepare(request, runtime, scope):
     context = _invocation.get() or {}
     attempt = Attempt(runtime, scope, context.get("logical_call_id") or str(uuid.uuid4()), str(uuid.uuid4()),
                       adapter="google-sdk", reason="opaque_payload")
-    if runtime.mode == "off" or not supports_framework(runtime, ("google-genai", "2.22.0")):
+    if runtime.mode == "off" or not supports_framework(runtime, ("google-genai", "2.22", "3")):
         attempt.passive = True
         attempt.reason = "disabled" if runtime.mode == "off" else "unsupported_version"
         return attempt, None

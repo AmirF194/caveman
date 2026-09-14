@@ -22,7 +22,7 @@ interface RecoveryRegistration {
 
 const adapter = { id: 'ai-sdk', version: '0.1.0', framework_version: '7.0.94', serialization_revision: 'ai-sdk-v4.1' };
 const supported = (runtime: MiddlewareRuntime) => {
-  const yes = matchesFramework('ai', '7.0.94') && matchesFramework('@ai-sdk/provider', '4.0.11');
+  const yes = matchesFramework('ai', '7.0.94', '8') && matchesFramework('@ai-sdk/provider', '4.0.11', '5');
   if (!yes && runtime.mode !== 'off') runtime.decline('unsupported_version');
   return yes;
 };
