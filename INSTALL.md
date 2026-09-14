@@ -222,8 +222,14 @@ npx -y github:JuliusBrussee/caveman
 npx -y github:JuliusBrussee/caveman -- --uninstall
 ```
 
+Run this **before** `npm uninstall -g @caveman-ai/cli`. It hands native agent
+integrations to `caveman disable --all`, so it needs the `caveman` CLI still on
+PATH. If the CLI is already gone, it says which agents are still routed and what
+to run; reinstall the CLI, run `caveman disable --all`, then remove it again.
+
 What it removes:
 
+- Native agent routing written by `caveman setup --install` / `caveman enable <agent>` — for Claude Code that is `ANTHROPIC_BASE_URL` and `_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL` in `~/.claude/settings.json`, which is what makes [Claude Code Remote Control](docs/technical/agent-wrapping.md) unavailable while Caveman is routing. Restored from each agent's integration journal, so your own prior value comes back.
 - Caveman hook entries from `$CLAUDE_CONFIG_DIR/settings.json` (default `~/.claude/`; matched by the substring `caveman`).
 - Hook files in `$CLAUDE_CONFIG_DIR/hooks/` (`caveman-activate.js`, `caveman-mode-tracker.js`, `caveman-parse.js`, `caveman-stats.js`, `caveman-config.js`, `cavecrew-model-overrides.js`, `caveman-statusline.{sh,ps1}`, plus the dir's `package.json` marker).
 - The Claude Code plugin and the Gemini CLI extension (if installed).

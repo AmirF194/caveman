@@ -166,6 +166,56 @@ test('uninstall does not invoke `caveman` when it is not on PATH', () => {
   }
 });
 
+// `~/.caveman/integrations/<agent>.json` is what `caveman enable <agent>` writes
+// and what `caveman disable` removes, so its presence AFTER uninstall is exact
+// evidence that a native route (ANTHROPIC_BASE_URL and friends) is still in the
+// host's settings — never a false positive on a user's own base-URL export.
+function seedIntegrationJournal(root, agent, route) {
+  const dir = path.join(root, 'home', '.caveman', 'integrations');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, `${agent}.json`), JSON.stringify({
+    agent, operations: [{ kind: `${agent}-settings`, owned: { route, assume_first_party: '1' }, previous_route: null }],
+  }, null, 2));
+  return dir;
+}
+
+test('uninstall says so when a native route survives it', () => {
+  const dir = freshTmpDir();
+  const configDir = path.join(dir, 'claude');
+  // No `caveman` on PATH — the documented order is `--uninstall` first, but a
+  // user who ran `npm uninstall -g @caveman-ai/cli` first lands exactly here,
+  // and so does anyone whose `disable --all` failed. Without a word from the
+  // installer they keep a dead ANTHROPIC_BASE_URL and the Remote Control
+  // breakage of #947, with nothing pointing at the cause (#1040).
+  const env = isolatedEnv(dir);
+  try {
+    assert.equal(runInstaller(['--only', 'claude', '--with-hooks'], configDir, env).status, 0);
+    seedIntegrationJournal(dir, 'claude', 'http://127.0.0.1:8787/w/claude');
+
+    const removed = runInstaller(['--uninstall'], configDir, env);
+    assert.equal(removed.status, 0, removed.stderr || removed.stdout);
+    const output = `${removed.stdout}${removed.stderr}`;
+    assert.match(output, /claude/);
+    assert.match(output, /caveman disable --all/, 'name the command that withdraws the route');
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('uninstall stays quiet when no native integration is journaled', () => {
+  const dir = freshTmpDir();
+  const configDir = path.join(dir, 'claude');
+  const env = isolatedEnv(dir);
+  try {
+    assert.equal(runInstaller(['--only', 'claude', '--with-hooks'], configDir, env).status, 0);
+    const removed = runInstaller(['--uninstall'], configDir, env);
+    assert.equal(removed.status, 0, removed.stderr || removed.stdout);
+    assert.doesNotMatch(`${removed.stdout}${removed.stderr}`, /caveman disable --all/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test("install and uninstall leave another plugin's hooks/package.json alone", () => {
   const dir = freshTmpDir();
   const configDir = path.join(dir, 'claude');
