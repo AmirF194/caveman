@@ -23,6 +23,7 @@ bin/caveman-wasm
 */dist/
 packages/*/dist/
 packages/sdk/typescript/dist/
+packages/middleware/typescript/dist/
 packages/shared/*/dist/
 skills/*/dist/
 *.egg-info/
@@ -33,3 +34,17 @@ bin/cave
 .claude/skills/preflight/SKILL.md
 docs/GITHUB_OPEN_TRIAGE_2026-08-19.md
 docs/plans/
+# Sept-2026 middleware work: examples/middleware holds the native adapter tests
+# (source); everything else under examples/ is scratch.
+/examples/*
+!/examples/middleware/
+# Conformance RUN OUTPUT (evidence, soak samples, plots, logs). The catalogs
+# under conformance/support/*.json are inputs and stay tracked.
+.artifacts/
+packages/middleware/conformance/evidence/
+packages/middleware/conformance/support/acceptance-evidence/
+packages/middleware/conformance/support/acceptance-restart-evidence/
+*.samples.jsonl
+# Python build output — never a source of truth.
+packages/sdk/python/build/
+packages/middleware/python/build/
