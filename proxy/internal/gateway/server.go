@@ -360,6 +360,7 @@ type Server struct {
 	upstreamProxy    func(*http.Request) (*url.URL, error)
 	sessionMarkerKey []byte
 	sessionFallback  func(time.Time, string, string) (string, string)
+	middleware       http.Handler
 	logger           *slog.Logger
 	inflight         atomic.Int64
 	// unauthorized counts inbound requests the authenticator rejected. A token
@@ -437,6 +438,9 @@ func (s *Server) prefixStabilized(adapter providers.Adapter) bool {
 // defaults to a plain client with no total request deadline; the standalone
 // binary passes an SSRF-guarded client (see StandaloneHTTPClient).
 type Config struct {
+	// Middleware is the independently authenticated compression-only API. It
+	// never enters provider forwarding or credential resolution.
+	Middleware http.Handler
 	Adapters   []providers.Adapter
 	Auth       Authenticator
 	Creds      CredentialResolver
@@ -555,14 +559,14 @@ func New(cfg Config) *Server {
 		upstreamProxy:        upstreamProxy,
 		sessionMarkerKey:     append([]byte(nil), cfg.SessionMarkerKey...),
 		sessionFallback:      cfg.SessionFallback,
+		middleware:           cfg.Middleware,
 		logger:               cfg.Logger,
 		capture:              newBodyCapture(os.Getenv("CAVE_CAPTURE_DIR"), cfg.Logger),
 	}
 }
 
 // Handler returns the standalone HTTP handler: health, metrics, and the proxy
-// catch-all. Unlike the managed gateway it serves no SDK/OTLP endpoints — the
-// standalone proxy is a pure base-URL swap.
+// catch-all, plus the separately authenticated framework optimization API.
 func (s *Server) Handler() http.Handler {
 	mux := serveMux(s)
 	if s.upstreamProxy == nil {
@@ -578,6 +582,13 @@ func serveMux(s *Server) *http.ServeMux {
 	mux.HandleFunc("GET /health/live", s.health)
 	mux.HandleFunc("GET /health/ready", s.health)
 	mux.HandleFunc("GET /metrics", s.metrics)
+	mux.Handle("/caveman/v1/middleware/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if s.middleware == nil {
+			httpx.JSON(w, http.StatusServiceUnavailable, map[string]any{"schema_version": 1, "error": map[string]string{"code": "runtime_unavailable"}})
+			return
+		}
+		s.middleware.ServeHTTP(w, r)
+	}))
 	// ChatGPT-login Codex: OAuth-preserving forward with OpenAI Responses
 	// live-zone compression and exact-original fallback.
 	mux.HandleFunc("/chatgpt/", s.chatgpt)

@@ -607,6 +607,9 @@ func lineFields(line []byte) []field {
 
 // logfmtFields extracts the `key=value` tokens of one log line, in order.
 func logfmtFields(line []byte) []field {
+	if !bytes.ContainsRune(line, '=') {
+		return nil
+	}
 	matches := logfmtPairRe.FindAllSubmatch(line, invariantMaxFieldsPerUnit)
 	if len(matches) == 0 {
 		return nil

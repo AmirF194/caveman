@@ -29,8 +29,10 @@ const storeTSLayout = "2006-01-02 15:04:05.000"
 
 // Store is a SQLite-backed TelemetrySink.
 type Store struct {
-	db     *sql.DB
-	logger *slog.Logger
+	db               *sql.DB
+	logger           *slog.Logger
+	persistent       bool
+	middlewareWriter chan struct{}
 }
 
 const schema = `
@@ -367,8 +369,11 @@ func Open(path string, logger *slog.Logger) (*Store, error) {
 			return nil, fmt.Errorf("migrate sqlite %q: %w", path, err)
 		}
 	}
-	return &Store{db: db, logger: logger}, nil
+	return &Store{db: db, logger: logger, persistent: path != ":memory:", middlewareWriter: make(chan struct{}, 1)}, nil
 }
+
+// Persistent reports whether this store retains middleware choices on restart.
+func (s *Store) Persistent() bool { return s != nil && s.persistent }
 
 // Close closes the underlying database.
 func (s *Store) Close() error { return s.db.Close() }

@@ -15,6 +15,10 @@ test("package publishes only built runtime, types, license, and README", () => {
       types: "./dist/index.d.ts",
       import: "./dist/index.js",
     },
+    "./middleware": {
+      types: "./dist/middleware/index.d.ts",
+      import: "./dist/middleware/index.js",
+    },
   });
   assert.equal(packageJSON.sideEffects, false);
   assert.equal(packageJSON.publishConfig.access, "public");

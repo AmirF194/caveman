@@ -214,6 +214,11 @@ func runServe(logger *slog.Logger) {
 	// objects. Record mode still never writes recovery originals: it only permits
 	// metadata-safe native runtime state when an installed host pack sends events.
 	opts := standalone.Options{SessionMarkerKey: sessionMarkerKey, Logger: logger}
+	if runtime, err := standalone.NewMiddleware(cfg, spend, recovery, version); err != nil {
+		logger.Warn("framework middleware unavailable", "code", "runtime_initialization")
+	} else {
+		opts.Middleware = runtime
+	}
 	switch {
 	case (cfg.Mode == "compress" || cfg.Mode == "pixel") && recovery != nil:
 		opts.Compressor = standalone.NewEngineCompressor(recovery)

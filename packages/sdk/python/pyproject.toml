@@ -26,7 +26,7 @@ Repository = "https://github.com/JuliusBrussee/caveman"
 Issues = "https://github.com/JuliusBrussee/caveman/issues"
 
 [tool.setuptools]
-packages = ["caveman_cloud"]
+packages = ["caveman_cloud", "caveman_cloud.middleware"]
 
 [tool.setuptools.package-data]
 caveman_cloud = ["py.typed"]
