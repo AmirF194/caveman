@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // Middleware state lives beside the existing replacement cache. Unlike its LRU,
@@ -28,8 +29,9 @@ CREATE TABLE IF NOT EXISTS middleware_plans (
 );
 CREATE TABLE IF NOT EXISTS middleware_receipts (
   authority TEXT NOT NULL, id TEXT NOT NULL, digest TEXT NOT NULL,
-  payload BLOB NOT NULL, PRIMARY KEY(authority,id)
+  payload BLOB NOT NULL, expires_at INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(authority,id)
 );
+CREATE INDEX IF NOT EXISTS middleware_receipts_expiry ON middleware_receipts(expires_at);
 CREATE TABLE IF NOT EXISTS middleware_originals (
   authority TEXT NOT NULL, digest TEXT NOT NULL, PRIMARY KEY(authority,digest)
 );
@@ -49,6 +51,14 @@ func (s *Store) InitMiddleware(ctx context.Context) error {
 	}
 	defer tx.Rollback()
 	if _, err = tx.ExecContext(ctx, middlewareSchema); err != nil {
+		return err
+	}
+	// CREATE TABLE IF NOT EXISTS never adds a column to a store written before
+	// receipts carried their own retention. A duplicate-column error means the
+	// migration already ran; every other failure is real. Pre-existing rows keep
+	// the DEFAULT 0 and are reclaimed by the first Expire, which is the point.
+	if _, err = tx.ExecContext(ctx, `ALTER TABLE middleware_receipts ADD COLUMN expires_at INTEGER NOT NULL DEFAULT 0`); err != nil &&
+		!strings.Contains(err.Error(), "duplicate column name") {
 		return err
 	}
 	// Backfill only at migration time. Trigger-maintained counters make each
@@ -218,14 +228,52 @@ func (t *MiddlewareTx) Delete(authority string) error {
 	return t.purge(`SELECT id FROM middleware_scopes WHERE authority=?`, authority)
 }
 
-// Expire removes payloads from a bounded batch of expired sessions. Original
-// storage is owned by CCR; this operation revokes access, not global originals.
+// MiddlewareGraceSeconds is how long an elapsed scope keeps a metadata-only
+// tombstone after its payloads are reclaimed, and how long a receipt keeps its
+// row. The tombstone is what turns a replayed marker from a dead session into a
+// typed "expired" answer instead of a silent new scope over unrecoverable text.
+const MiddlewareGraceSeconds int64 = 7 * 24 * 60 * 60
+
+// Revocation tombstones (expires_at=0) are excluded on purpose. They are bounded
+// by explicit sessions/delete calls and must keep answering "deleted" for as long
+// as any marker issued before the revocation can still be replayed.
+//
+// Every statement is keyed on an indexed column so an idle store pays index
+// seeks, not table scans: this runs in front of every optimize request. SQLite is
+// not built with UPDATE/DELETE LIMIT here, so batching goes through rowid.
+var middlewareExpire = func() []string {
+	const dead = `SELECT id FROM middleware_scopes WHERE expires_at>0 AND expires_at<=?1 LIMIT 128`
+	return []string{
+		// Originals are credited per authority, and one authority can hold several
+		// scopes (adapter, policy or transform revisions). Drop a credit only once
+		// no unexpired scope shares that authority, so a live scope never loses the
+		// "already counted" record its own replacement accounting depends on.
+		`DELETE FROM middleware_originals WHERE authority IN (SELECT authority FROM middleware_scopes WHERE id IN (` + dead + `))
+ AND authority NOT IN (SELECT authority FROM middleware_scopes WHERE expires_at>?1)`,
+		`DELETE FROM middleware_receipts WHERE rowid IN (SELECT rowid FROM middleware_receipts WHERE expires_at<=?1 LIMIT 128)`,
+		`DELETE FROM middleware_plans WHERE scope IN (` + dead + `)`,
+		`DELETE FROM middleware_choices WHERE scope IN (` + dead + `)`,
+		fmt.Sprintf(`DELETE FROM middleware_scopes WHERE rowid IN (SELECT rowid FROM middleware_scopes
+ WHERE expires_at>0 AND expires_at<=?1-%d LIMIT 128)`, MiddlewareGraceSeconds),
+	}
+}()
+
+// Expire reclaims a bounded batch of elapsed scopes. Payload-bearing rows go
+// first; the scope row itself survives one grace period as a typed tombstone.
+// Original storage is owned by CCR; this revokes access, not global originals.
 func (t *MiddlewareTx) Expire(now int64) error {
-	return t.purge(`SELECT id FROM middleware_scopes WHERE expires_at<=? AND length(manifest)>0 LIMIT 128`, now)
+	for _, statement := range middlewareExpire {
+		if _, err := t.tx.ExecContext(t.ctx, statement, now); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
+// purge is the revocation path: it strips recoverable payload but keeps the
+// scope and choice rows, so a marker issued before the revocation still resolves
+// to a typed revoked result. Elapsed scopes are reclaimed outright by Expire.
 func (t *MiddlewareTx) purge(selection string, argument any) error {
-	// Clear manifests last, since Expire uses them to select unprocessed rows.
 	for _, statement := range []string{
 		`DELETE FROM middleware_plans WHERE scope IN (` + selection + `)`,
 		`UPDATE middleware_choices SET payload=x'',ccr_handle='' WHERE scope IN (` + selection + `)`,
@@ -256,7 +304,7 @@ func (t *MiddlewareTx) CreditOriginal(authority, digest string) (bool, error) {
 	return err == nil, err
 }
 
-func (t *MiddlewareTx) Receipt(authority, id, digest string, body []byte) error {
+func (t *MiddlewareTx) Receipt(authority, id, digest string, body []byte, expires int64) error {
 	var old string
 	err := t.tx.QueryRowContext(t.ctx, `SELECT digest FROM middleware_receipts WHERE authority=? AND id=?`, authority, id).Scan(&old)
 	if err == nil {
@@ -271,7 +319,8 @@ func (t *MiddlewareTx) Receipt(authority, id, digest string, body []byte) error 
 	if err := t.capacity(len(body), 1); err != nil {
 		return err
 	}
-	_, err = t.tx.ExecContext(t.ctx, `INSERT INTO middleware_receipts VALUES (?,?,?,?)`, authority, id, digest, body)
+	_, err = t.tx.ExecContext(t.ctx, `INSERT INTO middleware_receipts (authority,id,digest,payload,expires_at) VALUES (?,?,?,?,?)`,
+		authority, id, digest, body, expires)
 	return err
 }
 

@@ -107,7 +107,11 @@ func (r *Runtime) receipt(ctx context.Context, principal string, req Receipt) er
 		}
 	}
 	b, _ := json.Marshal(req)
+	// Receipts are authority-keyed observations that can outlive every scope
+	// that produced them (a bypassed optimize writes no scope at all), so they
+	// carry their own retention rather than riding scope expiry.
+	expires := r.cfg.Now().Unix() + store.MiddlewareGraceSeconds
 	return r.cfg.Store.WithMiddleware(ctx, func(tx *store.MiddlewareTx) error {
-		return tx.Receipt(authority(principal, req.Scope), identity(req.LogicalCallID, req.AttemptID, req.EventKind), digest(b), b)
+		return tx.Receipt(authority(principal, req.Scope), identity(req.LogicalCallID, req.AttemptID, req.EventKind), digest(b), b, expires)
 	})
 }

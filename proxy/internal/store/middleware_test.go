@@ -2,7 +2,9 @@ package store
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"testing"
 )
@@ -28,7 +30,7 @@ func TestMiddlewareQuotaCountersPersistAndRollback(t *testing.T) {
 		if err := tx.SavePlan("scope", "plan", "hash", make([]byte, 128)); err != nil {
 			return err
 		}
-		if err := tx.Receipt("auth", "receipt", "hash", make([]byte, 64)); err != nil {
+		if err := tx.Receipt("auth", "receipt", "hash", make([]byte, 64), 1<<40); err != nil {
 			return err
 		}
 		credit, err := tx.CreditOriginal("auth", "original")
@@ -111,30 +113,121 @@ func TestMiddlewareExpiryReclaimsPayloadAndKeepsTypedTombstone(t *testing.T) {
 		if err := tx.SaveScope(MiddlewareScope{ID: "expired", Authority: "auth", Manifest: []byte("[]"), ExpiresAt: 10}); err != nil {
 			return err
 		}
+		if err := tx.SaveScope(MiddlewareScope{ID: "live", Authority: "auth", Manifest: []byte("[]"), ExpiresAt: 1 << 40}); err != nil {
+			return err
+		}
 		if err := tx.SaveChoice("expired", "choice", "grant", "ccr", []byte("replacement")); err != nil {
 			return err
 		}
 		if err := tx.SavePlan("expired", "plan", "digest", []byte("plan")); err != nil {
 			return err
 		}
+		if _, err := tx.CreditOriginal("auth", "shared-original"); err != nil {
+			return err
+		}
 		return tx.Expire(11)
 	}); err != nil {
 		t.Fatal(err)
 	}
-	var size int
-	if err := s.db.QueryRow(`SELECT bytes FROM middleware_usage`).Scan(&size); err != nil {
+	var size, rows int
+	if err := s.db.QueryRow(`SELECT rows,bytes FROM middleware_usage`).Scan(&rows, &size); err != nil {
 		t.Fatal(err)
 	}
-	if size != 0 {
-		t.Fatalf("expired payload bytes=%d", size)
+	// Two scope rows (one live, one tombstoned) and the original still credited
+	// to the authority the live scope shares; every payload-bearing row is gone.
+	if rows != 3 {
+		t.Fatalf("expired rows=%d, want scopes plus the live authority's original", rows)
+	}
+	if size != 4+64 {
+		t.Fatalf("expired payload bytes=%d, want the two empty manifests plus one credit", size)
 	}
 	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
-		_, _, expiry, err := tx.Grant("auth", "grant")
-		if expiry != 10 {
-			t.Errorf("expired grant lost expiry identity: %d", expiry)
+		credit, err := tx.CreditOriginal("auth", "shared-original")
+		if credit {
+			t.Error("expiry dropped an original still credited to a live scope")
 		}
 		return err
 	}); err != nil {
 		t.Fatal(err)
+	}
+	// The scope row outlives its payload by one grace period, so a replayed
+	// marker is still answered "expired" rather than starting a silent new scope.
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
+		scope, err := tx.Scope("expired")
+		if err != nil || scope.ExpiresAt != 10 {
+			t.Errorf("expired scope lost its typed tombstone: %v %+v", err, scope)
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error { return tx.Expire(11 + MiddlewareGraceSeconds) }); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
+		if _, err := tx.Scope("expired"); !errors.Is(err, sql.ErrNoRows) {
+			t.Errorf("tombstone outlived its grace period: %v", err)
+		}
+		if _, err := tx.Scope("live"); err != nil {
+			t.Errorf("grace sweep reclaimed a live scope: %v", err)
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// A shared store used to wedge permanently: expiry reclaimed no rows, so the
+// 100,000-row admission cap stayed tripped forever once a few thousand sessions
+// had elapsed. Fill past the cap with elapsed scopes and prove expiry drains it.
+func TestMiddlewareExpiryReclaimsCapacityFromElapsedScopes(t *testing.T) {
+	s, err := Open(filepath.Join(t.TempDir(), "store.db"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+	ctx := context.Background()
+	if err := s.InitMiddleware(ctx); err != nil {
+		t.Fatal(err)
+	}
+	const scopes, choices = 300, 100200
+	seed := []string{
+		fmt.Sprintf(`WITH RECURSIVE n(v) AS (SELECT 0 UNION ALL SELECT v+1 FROM n WHERE v<%d)
+INSERT INTO middleware_scopes(id,authority,manifest,sequence,expires_at) SELECT 'scope-'||v,'auth-'||(v%%8),x'',0,1 FROM n`, scopes-1),
+		fmt.Sprintf(`WITH RECURSIVE n(v) AS (SELECT 0 UNION ALL SELECT v+1 FROM n WHERE v<%d)
+INSERT INTO middleware_choices(scope,id,payload,grant_id,ccr_handle) SELECT 'scope-'||(v%%%d),'choice-'||v,x'',   'grant-'||v,'' FROM n`, choices-1, scopes),
+		`INSERT INTO middleware_receipts(authority,id,digest,payload,expires_at) VALUES ('auth-0','receipt','hash',x'',1)`,
+		`INSERT INTO middleware_originals(authority,digest) VALUES ('auth-0','original')`,
+	}
+	for _, statement := range seed {
+		if _, err := s.db.ExecContext(ctx, statement); err != nil {
+			t.Fatal(err)
+		}
+	}
+	admit := func() error {
+		return s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
+			return tx.SaveScope(MiddlewareScope{ID: "fresh", Authority: "fresh", Manifest: []byte("[]"), ExpiresAt: 1 << 40})
+		})
+	}
+	if err := admit(); !errors.Is(err, ErrMiddlewareCapacity) {
+		t.Fatalf("seeded store did not reach the row cap: %v", err)
+	}
+	// Elapsed past the tombstone grace, so the scope rows go too. Each pass is
+	// one bounded batch; a wedged store recovers over a handful of requests.
+	now := 1 + MiddlewareGraceSeconds + 1
+	for pass := 0; pass < scopes/128+3; pass++ {
+		if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error { return tx.Expire(now) }); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var rows, size int64
+	if err := s.db.QueryRow(`SELECT rows,bytes FROM middleware_usage`).Scan(&rows, &size); err != nil {
+		t.Fatal(err)
+	}
+	if rows != 0 || size != 0 {
+		t.Fatalf("expiry left rows=%d bytes=%d, want an empty middleware store", rows, size)
+	}
+	if err := admit(); err != nil {
+		t.Fatalf("store stayed wedged after expiry: %v", err)
 	}
 }

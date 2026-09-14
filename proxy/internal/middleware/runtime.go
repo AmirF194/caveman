@@ -116,6 +116,13 @@ func (r *Runtime) optimize(ctx context.Context, principal string, req OptimizeRe
 	response.Recovery.Persistent = r.caps.Persistent
 	now := r.cfg.Now().Unix()
 	expires := now + r.caps.RetentionSeconds
+	// Reclaim in its own transaction, ahead of any decision. Sharing the request's
+	// transaction made every rejection - capacity, not_smaller, epoch_changed -
+	// roll back the batch that would have freed the room, so a store at its row
+	// cap could never drain: the next request hit the same cap and rolled back too.
+	if err := r.cfg.Store.WithMiddleware(ctx, func(tx *store.MiddlewareTx) error { return tx.Expire(now) }); err != nil {
+		return response, err
+	}
 	// Read first, then perform Engine work and durable CCR writes without holding
 	// the metadata writer. The final transaction rechecks scope, plan and choices;
 	// a competing process's first published bytes always win.
@@ -141,9 +148,6 @@ func (r *Runtime) optimize(ctx context.Context, principal string, req OptimizeRe
 		}
 	}
 	err = r.cfg.Store.WithMiddleware(ctx, func(tx *store.MiddlewareTx) error {
-		if err := tx.Expire(now); err != nil {
-			return err
-		}
 		prior, err := previousPlan(tx, scopeID, req, inputDigest, now)
 		if err != nil {
 			return err

@@ -3,7 +3,9 @@ package middleware
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -481,5 +483,39 @@ func TestProtocolLimitsAndReceipts(t *testing.T) {
 	receipt.EventKind = "dispatch_intent"
 	if code, _ := call(t, f.runtime, "receipts", receipt, "alice"); code != 400 {
 		t.Fatal("dispatch intent claimed provider usage")
+	}
+}
+
+// Expiry used to share the request's transaction, so every rejected optimize -
+// capacity, not_smaller, epoch_changed - rolled back the batch that would have
+// freed room. A store at its row cap could then never drain. Reclamation has to
+// commit on its own, independently of whether the request that triggered it won.
+func TestExpiryCommitsEvenWhenTheRequestFails(t *testing.T) {
+	f := newFixture(t)
+	req := requestFor(f.runtime)
+	optimizeOK(t, f.runtime, req)
+	ctx := context.Background()
+	if err := f.state.WithMiddleware(ctx, func(tx *store.MiddlewareTx) error {
+		if err := tx.SaveScope(store.MiddlewareScope{ID: "elapsed", Authority: "elapsed", Manifest: []byte("[]"), ExpiresAt: 10}); err != nil {
+			return err
+		}
+		return tx.SaveChoice("elapsed", "choice", "elapsed-grant", "handle", []byte("replacement"))
+	}); err != nil {
+		t.Fatal(err)
+	}
+	// A manifest shorter than the stored one is a rejected epoch, not a retry.
+	stale := requestFor(f.runtime)
+	stale.RequestID, stale.IdempotencyKey = "stale", "stale"
+	stale.ContextManifest = stale.ContextManifest[:1]
+	if code, body := call(t, f.runtime, "optimize", stale, "alice"); code == 200 {
+		t.Fatalf("truncated manifest was accepted: %s", body)
+	}
+	if err := f.state.WithMiddleware(ctx, func(tx *store.MiddlewareTx) error {
+		if _, _, err := tx.Choice("elapsed", "choice"); !errors.Is(err, sql.ErrNoRows) {
+			t.Errorf("a failed request rolled back the expiry batch: %v", err)
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
 	}
 }
