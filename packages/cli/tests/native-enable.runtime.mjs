@@ -353,6 +353,36 @@ test("doctor does not claim a Codex tool rewrite that shrink-hook declines", asy
   assert.equal(result.components.routing, true);
 });
 
+// Everyone who ran `caveman enable codex` on an api key before #1045 has the
+// route-less base_url in ~/.codex/config.toml and a 404 on every `codex exec`.
+// They must land in the state the CLI already knows how to fix, not in a
+// silently-wrong install that reads healthy.
+test("a codex install carrying the pre-/v1 route reads degraded and repairs to /v1", async () => {
+  const fx = fixture();
+  mkdirSync(join(fx.home, ".codex"), { recursive: true });
+  const configPath = join(fx.home, ".codex", "config.toml");
+  writeFileSync(join(fx.home, ".codex", "auth.json"), JSON.stringify({ OPENAI_API_KEY: "sk-local" }));
+  assert.equal((await run(["enable", "codex"], fx.env)).code, 0);
+  assert.match(readFileSync(configPath, "utf8"), /base_url = "http:\/\/127\.0\.0\.1:8787\/w\/codex\/v1"/);
+
+  // Rewind to exactly what the old writer produced, journal included.
+  const journalPath = join(fx.home, ".caveman", "integrations", "codex.json");
+  const rewind = (text) => text.replaceAll("/w/codex/v1", "/w/codex");
+  writeFileSync(configPath, rewind(readFileSync(configPath, "utf8")));
+  writeFileSync(journalPath, rewind(readFileSync(journalPath, "utf8")));
+
+  const doctor = await run(["doctor", "codex"], fx.env);
+  assert.notEqual(doctor.code, 0);
+  const result = JSON.parse(doctor.stdout);
+  assert.equal(result.state, "degraded");
+  assert.equal(result.components.routing, false);
+  assert.equal(result.repair, "caveman doctor codex --fix");
+
+  assert.equal((await run(["doctor", "codex", "--fix"], fx.env)).code, 0);
+  assert.match(readFileSync(configPath, "utf8"), /base_url = "http:\/\/127\.0\.0\.1:8787\/w\/codex\/v1"/);
+  assert.equal(JSON.parse((await run(["doctor", "codex"], fx.env)).stdout).state, "installed");
+});
+
 test("doctor reports Codex routing degraded when auth lane changes", async () => {
   const fx = fixture();
   mkdirSync(join(fx.home, ".codex"), { recursive: true });

@@ -225,7 +225,14 @@ if (profile.wire_protocol === "anthropic-messages") {
   responseKind = "anthropic";
   body = { model: "claude-sonnet-4-6", max_tokens: 32, stream: false, messages: [{ role: "user", content: prompt }] };
 } else if (profile.wire_protocol === "openai-responses") {
-  path = "/v1/responses";
+  // Codex's OpenAI-Responses client appends the bare verb onto base_url,
+  // ALWAYS — it never supplies a "/v1" the config left out, the same way it
+  // behaves against the real api.openai.com. Modelling it as appending
+  // "/v1/responses" quietly supplied the missing segment, so this harness ran
+  // green against the very base_url under which every real codex session 404'd
+  // (#1045): the stub was the camouflage, not the bug. With the real rule, a
+  // base_url missing its "/v1" fails here the way it fails for a user.
+  path = "/responses";
   responseKind = "responses";
   body = { model: "gpt-5.5", stream: false, input: [{ role: "user", content: [{ type: "input_text", text: prompt }] }] };
 } else if (profile.wire_protocol === "gemini-generatecontent") {
