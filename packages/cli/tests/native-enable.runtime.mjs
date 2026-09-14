@@ -440,6 +440,54 @@ test("the env switch honors think.shrink=false the same way", async () => {
   assert.match(settings, /native-hook claude/);
 });
 
+test("a shrink entry an earlier install left behind does not survive think.shrink=false", async () => {
+  const fx = fixture();
+  // A standalone/plugin install, or any caveman old enough to predate #1049,
+  // leaves this entry in the host file. `enable` merges into that file rather
+  // than starting from an empty one, so honoring the switch only on the
+  // entries we ADD leaves the rewrite live on exactly the machines that asked
+  // for it to be off — and the brand new install is born degraded, because
+  // nativeHookEntriesHealthy rejects a managed entry the expected document lacks.
+  mkdirSync(join(fx.home, ".claude"), { recursive: true });
+  const settingsPath = join(fx.home, ".claude", "settings.json");
+  writeFileSync(settingsPath, JSON.stringify({
+    hooks: { PreToolUse: [{ hooks: [{ type: "command", command: "/usr/local/bin/caveman shrink-hook" }] }] },
+  }, null, 2));
+  writeFileSync(join(fx.home, ".claude", "keep.txt"), "unrelated");
+
+  const configDir = join(fx.home, ".caveman-cloud");
+  mkdirSync(configDir, { recursive: true });
+  writeFileSync(join(configDir, "config.json"), JSON.stringify({ think: { shrink: false } }, null, 2));
+
+  assert.equal((await run(["enable", "claude"], fx.env)).code, 0);
+  const settings = readFileSync(settingsPath, "utf8");
+  assert.doesNotMatch(settings, /shrink-hook/, "a stale shrink entry must be withdrawn, not merged through");
+  assert.match(settings, /native-hook claude/);
+
+  // Born healthy, not degraded — otherwise the very next `caveman enable`
+  // refuses and the user is told to repair an install nothing broke.
+  const doctor = await run(["doctor", "claude"], fx.env);
+  assert.equal(JSON.parse(doctor.stdout).state, "installed");
+
+  // ...and `disable` still restores the host file it found, stale entry included.
+  assert.equal((await run(["disable", "claude"], fx.env)).code, 0);
+  assert.match(readFileSync(settingsPath, "utf8"), /shrink-hook/);
+});
+
+test("the degraded gate names the repair that actually repairs", async () => {
+  const fx = fixture();
+  assert.equal((await run(["enable", "claude"], fx.env)).code, 0);
+  const configDir = join(fx.home, ".caveman-cloud");
+  mkdirSync(configDir, { recursive: true });
+  writeFileSync(join(configDir, "config.json"), JSON.stringify({ think: { shrink: false } }, null, 2));
+
+  // `caveman doctor claude` alone only prints JSON saying `degraded`; nothing in
+  // it says how to get out. Pointing at the bare command dead-ends the user.
+  const blocked = await run(["enable", "claude"], fx.env);
+  assert.equal(blocked.code, 1);
+  assert.match(blocked.stderr, /caveman doctor claude --fix/);
+});
+
 test("doctor surfaces independently disabled Core without degrading native integration", async () => {
   const fx = fixture();
   assert.equal((await run(["enable", "claude"], fx.env)).code, 0);

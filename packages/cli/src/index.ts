@@ -6471,22 +6471,32 @@ function nativeHooksDocument(agentId: "claude" | "codex" | "gemini", includeShri
     list.push(nativeHookEntry(command, agentId));
     hooks[event] = list;
   }
-  if (includeShrink) {
+  {
     const shrinkEvent = agentId === "gemini" ? "BeforeTool" : "PreToolUse";
     const list = Array.isArray(hooks[shrinkEvent]) ? hooks[shrinkEvent] as Array<Record<string, unknown>> : [];
     const shrinkCommand = `${cavemanBinForHook()} shrink-hook`;
     // Same replace-not-accumulate rule as the native hook: a shrink-hook entry
-    // under another caveman path is ours.
+    // under another caveman path is ours. When the switch is OFF the rule has
+    // to reach OUR path too (#1049): `base` is the host's live file, so a
+    // standalone install, or any caveman old enough to predate the switch,
+    // leaves an entry here that honoring the switch only on the entries we ADD
+    // would merge straight through — the rewrite stays live on exactly the
+    // machines that asked for it off, and the install is born degraded because
+    // nativeHookEntriesHealthy rejects a managed entry the expected document
+    // lacks. Withdrawing ours is not a claim on the user's other hooks:
+    // managedHookIdentity only matches a caveman binary.
     for (let i = list.length - 1; i >= 0; i--) {
       const entry = list[i];
       const existing = entry ? hookEntryCommand(entry) : undefined;
-      if (existing !== undefined && existing !== shrinkCommand && managedHookIdentity(existing) === "shrink-hook") list.splice(i, 1);
+      if (existing === undefined || managedHookIdentity(existing) !== "shrink-hook") continue;
+      if (!includeShrink || existing !== shrinkCommand) list.splice(i, 1);
     }
-    if (!list.some((entry) => hookEntryCommand(entry) === shrinkCommand)) {
+    if (includeShrink && !list.some((entry) => hookEntryCommand(entry) === shrinkCommand)) {
       list.push(agentId === "gemini"
         ? { matcher: "run_shell_command", ...nativeHookEntry(shrinkCommand, agentId) }
         : nativeHookEntry(shrinkCommand, agentId));
     }
+    // The lifecycle loop above always writes this event, so the key exists either way.
     hooks[shrinkEvent] = list;
   }
   if (agentId === "claude" && includeRecall) {
@@ -7975,7 +7985,10 @@ function enableNative(argv: string[]) {
       const existing = nativeIntegrationStatus(agent);
       if (existing.installed) {
         if (existing.state === "installed") return "already" as const;
-        throw new Error(`${profile.display_name} integration is degraded; run \`caveman doctor ${agent}\` before changing it`);
+        // `--fix` on purpose: bare `caveman doctor <agent>` prints JSON that says
+        // `degraded` and nothing that says how to leave that state, so pointing
+        // at it alone dead-ends the user who followed this line here (#1049).
+        throw new Error(`${profile.display_name} integration is degraded; run \`caveman doctor ${agent} --fix\` before changing it`);
       }
       const mutations = nativeMutationsFor(agent, gw, mcpBinary);
       const route = mutations.find((item) => typeof item.owned?.route === "string")?.owned?.route;
