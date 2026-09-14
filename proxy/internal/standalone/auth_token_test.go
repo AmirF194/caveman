@@ -1,6 +1,8 @@
 package standalone
 
 import (
+	"bytes"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,14 +25,34 @@ const anthropicStubResponse = `{"id":"msg_stub","type":"message","model":"claude
 // assert on the forwarded request, and the gateway skips recording without one.
 func newTokenGatedServer(t *testing.T, token string) (http.Handler, *captureUpstreamTransport) {
 	t.Helper()
+	handler, upstream, _ := newLoggingTokenGatedServer(t, token)
+	return handler, upstream
+}
+
+// newLoggingTokenGatedServer is the same server with its warnings captured, for
+// the tests that assert on what a rejection discloses.
+func newLoggingTokenGatedServer(t *testing.T, token string) (http.Handler, *captureUpstreamTransport, *bytes.Buffer) {
+	t.Helper()
 	upstream := &captureUpstreamTransport{response: anthropicStubResponse}
 	cfg := config.Config{
 		Mode:      "record",
 		AuthToken: token,
 		Providers: map[string]config.ProviderConfig{"anthropic": {BaseURL: "https://upstream.test"}},
 	}
-	srv := New(cfg, nil, Options{HTTPClient: &http.Client{Transport: upstream}})
-	return srv.Handler(), upstream
+	logs := &bytes.Buffer{}
+	srv := New(cfg, nil, Options{
+		HTTPClient: &http.Client{Transport: upstream},
+		Logger:     slog.New(slog.NewTextHandler(logs, nil)),
+	})
+	return srv.Handler(), upstream, logs
+}
+
+// get issues an unauthenticated GET, for the probe routes that stay open.
+func get(t *testing.T, handler http.Handler, path string) *httptest.ResponseRecorder {
+	t.Helper()
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, path, nil))
+	return rec
 }
 
 func postMessages(t *testing.T, handler http.Handler, headers map[string]string) *httptest.ResponseRecorder {
@@ -185,4 +207,75 @@ func TestAuthToken_ConsumesTokenFromBothHeaders(t *testing.T) {
 		t.Fatalf("upstream x-api-key = %q, want the operator key once both token headers are consumed", got)
 	}
 	assertUpstreamNeverSawToken(t, upstream)
+}
+
+// A rejected token used to be completely silent: no log line, no metric, so a
+// brute-force run against the gate looked exactly like an idle proxy. The line
+// must name the path and the remote HOST and nothing else — not the presented
+// secret, not the header, not even the source port.
+func TestAuthToken_RejectionIsCountedAndLogged(t *testing.T) {
+	handler, _, logs := newLoggingTokenGatedServer(t, authToken)
+	rec := postMessages(t, handler, map[string]string{"x-cave-api-key": authToken + "-wrong"})
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, want 401 (body %s)", rec.Code, rec.Body.String())
+	}
+	logged := logs.String()
+	if !strings.Contains(logged, "inbound token rejected") {
+		t.Fatalf("log = %q, want the rejection warning", logged)
+	}
+	if !strings.Contains(logged, "path=/v1/messages") {
+		t.Fatalf("log = %q, want the rejected path", logged)
+	}
+	// httptest.NewRequest uses 192.0.2.1:1234 as RemoteAddr.
+	if !strings.Contains(logged, "remote=192.0.2.1") || strings.Contains(logged, "192.0.2.1:1234") {
+		t.Fatalf("log = %q, want the remote host without its port", logged)
+	}
+	for _, secret := range []string{authToken, "x-cave-api-key", "Authorization"} {
+		if strings.Contains(logged, secret) {
+			t.Fatalf("log = %q, must not disclose %q", logged, secret)
+		}
+	}
+	metrics := get(t, handler, "/metrics").Body.String()
+	if !strings.Contains(metrics, "cave_proxy_unauthorized_total 1") {
+		t.Fatalf("metrics = %q, want cave_proxy_unauthorized_total 1", metrics)
+	}
+}
+
+// Route matching used to run before the gate, so an unauthenticated caller could
+// enumerate the proxy's providers and compat mounts by telling 401 from 404.
+func TestAuthToken_UnknownRouteIsNotARouteOracle(t *testing.T) {
+	handler, _ := newTokenGatedServer(t, authToken)
+	for _, path := range []string{"/v1/messages", "/openai/v1/chat/completions", "/definitely/not/a/route"} {
+		req := httptest.NewRequest(http.MethodPost, path, strings.NewReader(`{}`))
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("%s status = %d, want 401 for every path without a token (body %s)", path, rec.Code, rec.Body.String())
+		}
+	}
+	// With the token presented, an unknown path is still the 404 it always was:
+	// moving the gate earlier must not turn fail-closed routing into a 401.
+	req := httptest.NewRequest(http.MethodPost, "/definitely/not/a/route", strings.NewReader(`{}`))
+	req.Header.Set("x-cave-api-key", authToken)
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("authenticated unknown path status = %d, want 404 (body %s)", rec.Code, rec.Body.String())
+	}
+}
+
+// The probe routes a load balancer needs stay open; /chatgpt/ is inference and
+// does not.
+func TestAuthToken_ProbeRoutesStayOpenAndChatGPTIsGated(t *testing.T) {
+	handler, _ := newTokenGatedServer(t, authToken)
+	for _, path := range []string{"/metrics", "/health/live", "/health/ready"} {
+		if rec := get(t, handler, path); rec.Code != http.StatusOK {
+			t.Fatalf("%s status = %d, want 200 without a token (body %s)", path, rec.Code, rec.Body.String())
+		}
+	}
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/chatgpt/responses", strings.NewReader(`{}`)))
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("/chatgpt/ status = %d, want 401 without a token (body %s)", rec.Code, rec.Body.String())
+	}
 }

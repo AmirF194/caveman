@@ -46,7 +46,10 @@ type Auth struct {
 
 // errInboundTokenRejected is deliberately uniform: the gateway maps any non-nil
 // error to 401 cave_unauthorized, and an error that told a missing token apart
-// from a wrong one would be an oracle for the caller probing the port.
+// from a wrong one would be an oracle for the caller probing the port. The
+// operator still sees that the gate fired — gateway.Server.rejectUnauthorized
+// logs the path and remote host and counts cave_proxy_unauthorized_total — so
+// the silence here costs no observability.
 var errInboundTokenRejected = errors.New("inbound token rejected")
 
 func (a Auth) Authenticate(ctx context.Context, r *http.Request) (gateway.RequestContext, error) {
