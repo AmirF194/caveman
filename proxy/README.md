@@ -30,8 +30,8 @@ task/pod/instance role instead.
 
 ```bash
 docker run -d -p 8787:8787 -v caveman-data:/data \
-  -e CAVEMAN_AUTH_TOKEN=… -e ANTHROPIC_API_KEY=… \
-  ghcr.io/juliusbrussee/caveman-proxy:latest
+  -e CAVEMAN_AUTH_TOKEN="$(openssl rand -hex 32)" -e ANTHROPIC_API_KEY=… \
+  ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7
 ```
 
 See `../docs/technical/deploy.md` for Compose, ECS, Kubernetes, Cloud Run, and

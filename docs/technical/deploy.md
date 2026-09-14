@@ -259,12 +259,18 @@ service mesh in front of it, and keep the listener inside a private network.
 |---|---|
 | `GET /health/live` | Process is up |
 | `GET /health/ready` | Runtime identity and adapter count |
-| `GET /metrics` | Prometheus text; `cave_proxy_inflight_requests` |
+| `GET /metrics` | Prometheus text; `cave_proxy_inflight_requests`, `cave_proxy_unauthorized_total` |
 | `POST /caveman/keepalive` | No-op beacon from older CLIs; changes nothing |
 
-All four are unauthenticated. Do not expose them publicly. `/health/live` also
-carries an `X-Caveman-Instance` header that the local CLI uses to match a
-run-state file; it authenticates nothing inbound.
+All four are unauthenticated. Do not expose them publicly. On a LOOPBACK
+listener `/health/live` also carries an `X-Caveman-Instance` header that the
+local CLI uses to match a run-state file; a shared listener publishes no such
+header, and it authenticates nothing inbound either way.
+
+Every rejected request increments `cave_proxy_unauthorized_total` and writes one
+`inbound token rejected` warning with the request path and the caller's host —
+never the presented token. Alert on that counter: it is the only signal that
+someone is guessing at `CAVEMAN_AUTH_TOKEN`.
 
 ## Limits in this version
 
