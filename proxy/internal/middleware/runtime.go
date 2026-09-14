@@ -60,7 +60,9 @@ func New(cfg Config) (*Runtime, error) {
 		cfg.TrustMode = "resolver"
 	}
 	if cfg.Limits.DeadlineMS <= 0 {
-		cfg.Limits.DeadlineMS = 100
+		// 100ms covered the queue plus Engine work only on an idle machine; the
+		// shared budget is what clients see as a bypass under any real load.
+		cfg.Limits.DeadlineMS = 500
 	}
 	if cfg.Limits.RequestBytes <= 0 {
 		cfg.Limits.RequestBytes = DefaultRequestBytes

@@ -34,6 +34,7 @@ def _json(value: Any) -> str:
 class MiddlewareRuntime:
     def __init__(self, *, endpoint: str = "http://127.0.0.1:8787", token: str | None = None,
                  allow_remote_content: bool = False, mode: str = "compress", deadline_ms: int = 100,
+                 retrieve_deadline_ms: int = 5000,
                  strict: bool = False, on_diagnostic: Callable[[dict], None] | None = None,
                  on_report: Callable[[CallReport], None] | None = None):
         url = urlsplit(endpoint)
@@ -44,8 +45,13 @@ class MiddlewareRuntime:
             raise MiddlewareError("remote_content_not_enabled")
         if type(deadline_ms) is not int or deadline_ms <= 0 or mode not in ("off", "record", "compress"):
             raise MiddlewareError("invalid_configuration")
+        # A model asking to see an original is waiting on a page of stored text,
+        # not on the optimizer in front of a provider call. Separate budget.
+        if type(retrieve_deadline_ms) is not int or retrieve_deadline_ms <= 0:
+            raise MiddlewareError("invalid_configuration")
         self.endpoint = f"{url.scheme}://{url.netloc}"
         self.mode, self.deadline_ms, self.strict = mode, deadline_ms, strict
+        self.retrieve_deadline_ms = retrieve_deadline_ms
         self._token, self._diagnostic = token, on_diagnostic
         self._report_sink, self._last_report = on_report, None
         self._url = url
@@ -228,7 +234,7 @@ class MiddlewareRuntime:
         validate.scope_key(scope)
         limit = limit if limit is not None else (self._caps or {}).get("limits", {}).get("page_bytes", 262144)
         args = {"handle": handle, "offset": offset, "limit": limit, "query": query}
-        value = self._http("retrieve", _json({"schema_version": 1, "scope": asdict(scope), **args}), self.deadline_ms / 1000)
+        value = self._http("retrieve", _json({"schema_version": 1, "scope": asdict(scope), **args}), self.retrieve_deadline_ms / 1000)
         return validate.page(value, args, limit)
 
     def observe(self, receipt: dict) -> None:

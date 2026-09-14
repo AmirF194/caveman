@@ -88,7 +88,7 @@ func TestMiddlewareAcceptanceCapabilitiesAndSemanticCorpus(t *testing.T) {
 		t.Fatal("capability discovery failed", err)
 	}
 	if caps.SchemaVersion != 1 || caps.RuntimeBuild == "" || !caps.Persistent || !caps.Recovery || caps.PolicyRevision == "" || caps.RetentionSeconds <= 0 ||
-		caps.Limits != (Limits{DeadlineMS: 100, RequestBytes: 2 << 20, SegmentBytes: 512 << 10, PageBytes: 256 << 10}) {
+		caps.Limits != (Limits{DeadlineMS: 500, RequestBytes: 2 << 20, SegmentBytes: 512 << 10, PageBytes: 256 << 10}) {
 		t.Fatalf("incomplete or incorrect capabilities: %+v", caps)
 	}
 	engineCaps := engine.New(f.recovery, nil).Capabilities()
@@ -321,10 +321,11 @@ func TestMiddlewareAcceptanceDefaultDeadlineIncludesQueue(t *testing.T) {
 	for i := 0; i < cap(runtime.queue); i++ {
 		runtime.queue <- struct{}{}
 	}
+	budget := time.Duration(runtime.cfg.Limits.DeadlineMS) * time.Millisecond
 	start := time.Now()
 	status, body := call(t, runtime, "optimize", requestFor(runtime), "alice")
 	elapsed := time.Since(start)
-	if status != 504 || failureCode(t, body) != "deadline" || elapsed > 125*time.Millisecond || elapsed < 90*time.Millisecond {
+	if status != 504 || failureCode(t, body) != "deadline" || elapsed > budget+25*time.Millisecond || elapsed < budget-10*time.Millisecond {
 		t.Fatalf("queue multiplied or escaped default shared deadline: %s, %d %s", elapsed, status, body)
 	}
 	for i := 0; i < cap(runtime.queue); i++ {

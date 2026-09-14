@@ -17,6 +17,10 @@ export interface RuntimeOptions {
   allowRemoteContent?: boolean;
   mode?: 'off' | 'record' | 'compress';
   deadlineMs?: number;
+  /** Budget for recovery reads. A model asking to see an original is waiting on
+   * a page of stored text, not on the optimizer in front of a provider call, so
+   * it does not share the optimize deadline. */
+  retrieveDeadlineMs?: number;
   strict?: boolean;
   fetch?: typeof globalThis.fetch;
   onDiagnostic?: (event: { code: string; cacheContinuity: 'unavailable' | 'persistent_choices' }) => void;
@@ -74,7 +78,9 @@ export class MiddlewareRuntime {
     const local = ['127.0.0.1','[::1]','localhost'].includes(url.hostname);
     if (!['http:','https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash || (url.pathname !== '/' && url.pathname !== '')) throw new MiddlewareError('invalid_endpoint');
     if (!local && (!options.allowRemoteContent || url.protocol !== 'https:')) throw new MiddlewareError('remote_content_not_enabled');
-    if (options.deadlineMs !== undefined && (!Number.isSafeInteger(options.deadlineMs) || options.deadlineMs <= 0)) throw new MiddlewareError('invalid_deadline');
+    for (const value of [options.deadlineMs, options.retrieveDeadlineMs]) {
+      if (value !== undefined && (!Number.isSafeInteger(value) || value <= 0)) throw new MiddlewareError('invalid_deadline');
+    }
     this.endpoint = url.origin;
     this.options = { ...options };
     this.mode = options.mode ?? 'compress';
@@ -212,7 +218,7 @@ export class MiddlewareRuntime {
     signal?.throwIfAborted();
     const limit = args.limit ?? this.capsCache.value?.limits.page_bytes ?? 262144;
     const body = JSON.stringify({ schema_version: 1, scope, handle: args.handle, offset: args.offset ?? 0, limit, query: args.query ?? '' });
-    const value = await this.http('retrieve', body, this.options.deadlineMs ?? 100, signal);
+    const value = await this.http('retrieve', body, this.options.retrieveDeadlineMs ?? 5000, signal);
     return validatePage(value, args, limit);
   }
 
