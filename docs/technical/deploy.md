@@ -22,8 +22,15 @@ EC2 instance profile needs no keys at all.
 `CAVEMAN_AUTH_TOKEN` is the switch. Set it and the proxy accepts a non-loopback
 listen address; leave it unset and a non-loopback address is refused at startup,
 exactly as before. At least 16 characters, no whitespace or control characters,
-environment variable only — never `caveman.yaml`. Every request must then carry
-it, in either header:
+environment variable only — never `caveman.yaml`.
+
+Generate one, never type one — a memorable token is a guessable token:
+
+```bash
+openssl rand -hex 32
+```
+
+Every request must then carry it, in either header:
 
 ```text
 x-cave-api-key: <token>
@@ -45,15 +52,17 @@ balancer can probe them. The startup log reports `inbound_auth: token`.
 docker run -d --name caveman-proxy \
   -p 8787:8787 \
   -v caveman-data:/data \
-  -e CAVEMAN_AUTH_TOKEN=<token> \
+  -e CAVEMAN_AUTH_TOKEN="$(openssl rand -hex 32)" \
   -e ANTHROPIC_API_KEY=<anthropic-key> \
-  ghcr.io/juliusbrussee/caveman-proxy:latest
+  ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7
 ```
 
 The image sets `CAVEMAN_HOME=/data` and `CAVEMAN_LISTEN=0.0.0.0:8787`, runs as
 non-root uid 65532, and exposes 8787. It is published multi-arch (amd64, arm64)
-by the signed `bin-v*` release workflow; pin `:<bin-vX.Y.Z>` in production. To
-build it yourself, run `docker build -t caveman-proxy .` at the repository root.
+by the signed `bin-v*` release workflow; always pin a `bin-vX.Y.Z` tag in
+production, never `:latest`. `bin-v1.1.7` is the first tag that publishes the
+image — every example here names it. To build it yourself, run
+`docker build -t caveman-proxy .` at the repository root.
 
 A named volume inherits the right owner. A **bind** mount does not — `chown` the
 host directory to `65532` or the proxy cannot create its SQLite store.
@@ -78,8 +87,8 @@ curl -s http://localhost:8787/v1/messages \
 `deploy/.env`:
 
 ```bash
-cat > deploy/.env <<'EOF'
-CAVEMAN_AUTH_TOKEN=<token>
+cat > deploy/.env <<EOF
+CAVEMAN_AUTH_TOKEN=$(openssl rand -hex 32)
 ANTHROPIC_API_KEY=<anthropic-key>
 EOF
 docker compose -f deploy/docker-compose.yml up -d
@@ -99,7 +108,10 @@ aws ecs register-task-definition \
   and set no AWS keys. The proxy picks the role up from the container credential
   endpoint.
 - Put `CAVEMAN_AUTH_TOKEN` in Secrets Manager or SSM and reference it from the
-  task definition's `secrets` block, not `environment`.
+  task definition's `secrets` block, not `environment`. Generate it with
+  `openssl rand -hex 32`; the committed task definition carries no token value,
+  only a `REPLACE_`-marked ARN that fails `register-task-definition` until you
+  replace it.
 - Mount an EFS access point at `/data` with POSIX uid/gid `65532`.
 - Point the ALB target group health check at `/health/ready` on port 8787.
 - Run the service in private subnets. The ALB is the only thing with a listener
@@ -114,7 +126,17 @@ aws ecs register-task-definition \
 `deploy/kubernetes.yaml` holds a Secret, a PVC, a single-replica Deployment and
 a Service.
 
-Replace the two `REPLACE_...` values in the Secret, then:
+The Secret carries no `CAVEMAN_AUTH_TOKEN` on purpose: a placeholder long enough
+to look like a placeholder is also long enough to pass validation and serve as a
+real token. Create it first, then apply the file — the apply adds the provider
+key beside the token and leaves the token alone:
+
+```bash
+kubectl create secret generic caveman-proxy -n <namespace> \
+  --from-literal=CAVEMAN_AUTH_TOKEN="$(openssl rand -hex 32)"
+```
+
+Replace the remaining `REPLACE_...` provider key in the Secret, then:
 
 ```bash
 kubectl apply -n <namespace> -f deploy/kubernetes.yaml
@@ -132,8 +154,9 @@ EKS Pod Identity association.
 ## Google Cloud Run
 
 ```bash
+openssl rand -hex 32 | gcloud secrets create caveman-token --data-file=-
 gcloud run deploy caveman-proxy \
-  --image ghcr.io/juliusbrussee/caveman-proxy:latest \
+  --image ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7 \
   --port 8787 --ingress internal --allow-unauthenticated --max-instances 1 \
   --set-secrets CAVEMAN_AUTH_TOKEN=caveman-token:latest,ANTHROPIC_API_KEY=anthropic-key:latest
 ```
@@ -147,10 +170,10 @@ originals do not survive a revision unless you mount a volume.
 ## Fly.io
 
 ```bash
-fly launch --image ghcr.io/juliusbrussee/caveman-proxy:latest \
+fly launch --image ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7 \
   --internal-port 8787 --no-deploy
 fly volumes create caveman_data --size 1
-fly secrets set CAVEMAN_AUTH_TOKEN=<token> ANTHROPIC_API_KEY=<anthropic-key>
+fly secrets set CAVEMAN_AUTH_TOKEN="$(openssl rand -hex 32)" ANTHROPIC_API_KEY=<anthropic-key>
 fly deploy
 ```
 
@@ -259,11 +282,12 @@ run-state file; it authenticates nothing inbound.
 
 ## Checklist
 
-1. `CAVEMAN_AUTH_TOKEN` set from a secret store, 16+ characters, not in YAML.
+1. `CAVEMAN_AUTH_TOKEN` generated with `openssl rand -hex 32`, set from a
+   secret store, 16+ characters, not in YAML.
 2. Listener inside a private network, TLS terminated in front of it.
 3. Provider keys on the server, or an AWS role with no keys at all.
 4. `/data` on a durable volume owned by uid 65532.
 5. One replica per volume.
 6. Health check on `/health/ready`; `/metrics` not publicly reachable.
 7. `CAVE_SSRF_ALLOWLIST` entries only for the private endpoints you actually use.
-8. Image pinned to a `bin-v*` tag, not `:latest`.
+8. Image pinned to a `bin-v*` tag (`bin-v1.1.7` or later), not `:latest`.

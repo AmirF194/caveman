@@ -23,7 +23,7 @@
   "containerDefinitions": [
     {
       "name": "caveman-proxy",
-      "image": "ghcr.io/juliusbrussee/caveman-proxy:latest",
+      "image": "ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7",
       "essential": true,
       "portMappings": [
         {

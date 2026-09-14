@@ -1,12 +1,12 @@
 services:
   caveman-proxy:
-    image: ghcr.io/juliusbrussee/caveman-proxy:latest
+    image: ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7
     # Alternative to pulling: build from a clone with `docker compose build`.
     build: ..
     ports:
       - "8787:8787"
     # Put configuration in deploy/.env, e.g.
-    #   CAVEMAN_AUTH_TOKEN=replace-with-a-long-random-string
+    #   CAVEMAN_AUTH_TOKEN=<generate with: openssl rand -hex 32>
     #     Required for the image's default 0.0.0.0 listen — the proxy has no
     #     other inbound auth. Clients send it as x-cave-api-key or
     #     Authorization: Bearer.
@@ -15,6 +15,10 @@ services:
     env_file:
       - path: .env
         required: false
+    environment:
+      # No inline default on purpose: an example token in a committed file is a
+      # real token on someone's VPC. Compose refuses to start when it is unset.
+      CAVEMAN_AUTH_TOKEN: ${CAVEMAN_AUTH_TOKEN:?required - put it in deploy/.env, generate with "openssl rand -hex 32"}
     volumes:
       # SQLite spend store, CCR store, proxy.log and run state live here.
       # A named volume inherits the image's uid 65532 ownership; a bind mount

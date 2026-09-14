@@ -3,7 +3,7 @@
 # Build stage runs on the BUILDER's architecture and cross-compiles with the Go
 # toolchain, so multi-arch images need no QEMU. The runtime stage has no RUN, so
 # nothing ever has to execute a foreign-arch binary during the build.
-FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.26.5-alpine AS build
 ARG TARGETOS
 ARG TARGETARCH
 ARG VERSION=dev

@@ -5,10 +5,16 @@ metadata:
   name: caveman-proxy
 type: Opaque
 stringData:
-  # Required for the container's default 0.0.0.0 listen — the proxy has no other
-  # inbound authentication. Clients send it as x-cave-api-key or Bearer.
-  CAVEMAN_AUTH_TOKEN: REPLACE_WITH_A_LONG_RANDOM_STRING
   ANTHROPIC_API_KEY: REPLACE_WITH_YOUR_PROVIDER_KEY
+# CAVEMAN_AUTH_TOKEN is deliberately absent. It is REQUIRED for the container's
+# default 0.0.0.0 listen — the proxy has no other inbound authentication, and
+# clients send it as x-cave-api-key or Bearer — but any placeholder written here
+# passes validation and ships as a real, guessable token. Generate one and put it
+# in this same Secret BEFORE applying this file:
+#   kubectl create secret generic caveman-proxy \
+#     --from-literal=CAVEMAN_AUTH_TOKEN="$(openssl rand -hex 32)"
+# A later `kubectl apply -f kubernetes.yaml` adds the provider key beside it and
+# leaves the token untouched. Without the token the pod exits at startup.
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -46,7 +52,8 @@ spec:
         fsGroup: 65532
       containers:
         - name: caveman-proxy
-          image: ghcr.io/juliusbrussee/caveman-proxy:latest
+          image: ghcr.io/juliusbrussee/caveman-proxy:bin-v1.1.7
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8787
           envFrom:
