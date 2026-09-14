@@ -5455,7 +5455,13 @@ async function spawnWrapped(
   // Direct mode: inherit the shell env with NO profile injection, stripping only
   // our own routing if it leaked in — so the agent talks straight to the provider
   // with its own key. Any unrelated base URL the user set themselves stays put.
-  const includeShrink = !opts.noShrink && wrapCompressEnabled(opts);
+  // Codex is excluded by design, and the README has said so all along: its runtime
+  // rejects the rewrite (openai/codex#18491). No door actually implemented that, and
+  // since #1037 shrinkHook declines every Codex tool event — so registering it here
+  // bought nothing but a node spawn per tool call. The persistent `caveman enable
+  // codex` door still writes the entry; removing it there needs a migration, since
+  // nativeHookEntriesHealthy would read every existing install as degraded.
+  const includeShrink = !opts.noShrink && wrapCompressEnabled(opts) && agent?.id !== "codex";
   let childArgs = cmdArgs;
   let env: NodeJS.ProcessEnv;
   try {
@@ -6213,12 +6219,26 @@ function stripCodexCavemanProviderToml(text: string): string {
   return out.join("\n").trimEnd();
 }
 
+// The api-key Codex route, in ONE place: the provider TOML writes it, the
+// install journal records it, and the doctor compares against it, and a route
+// only three of those four agree on reads as permanently degraded.
+const CODEX_API_KEY_ROUTE = "/w/codex/v1";
+
 function codexCavemanProviderToml(gw: string, subscription = true): string {
   return [
     `model_provider = "caveman"`,
     `[model_providers.caveman]`,
     `name = "Caveman"`,
-    `base_url = ${JSON.stringify(subscription ? appendUrlPath(gw, "/chatgpt") : appendUrlPath(gw, "/w/codex"))}`,
+    // Codex's OpenAI-Responses client appends "/responses" onto base_url itself,
+    // exactly as it does against the real api.openai.com, so what the proxy
+    // receives is `<this path>/responses`. The openai adapter's Routes are a
+    // closed, exact allowlist holding "/v1/responses" and never "/responses", so
+    // this needs the "/v1" or every api-key Codex session 404s with
+    // cave_route_not_found before one request reaches OpenAI (#1045). Same
+    // convention aider already uses (`/w/aider/openai/v1`). The subscription
+    // route is a different mux handler (`/chatgpt/`) that takes the suffix
+    // verbatim, so it must NOT gain a "/v1".
+    `base_url = ${JSON.stringify(subscription ? appendUrlPath(gw, "/chatgpt") : appendUrlPath(gw, CODEX_API_KEY_ROUTE))}`,
     `wire_api = "responses"`,
     `requires_openai_auth = true`,
   ].join("\n");
@@ -6431,6 +6451,17 @@ function canonicalManagedHookEntry(entry: Record<string, unknown>): string | und
   return JSON.stringify(clone);
 }
 
+// Why: `think.shrink` (and its `CAVEMAN_SHRINK` env form) is the persisted
+// switch for the command-output rewrite, but only the ephemeral launcher ever
+// read it — every native writer passed a literal `true`, so `caveman enable` /
+// `doctor --fix` / `repairNativeAgent` reinstated `shrink-hook` no matter what
+// the config said and there was no persistent way to run the native
+// integration without it (#1049). Read in ONE place so the writers and the
+// health check that judges them cannot disagree about what is expected.
+function nativeShrinkEnabled(): boolean {
+  return resolveCapabilities().values["think.shrink"].value as boolean;
+}
+
 function nativeHooksDocument(agentId: "claude" | "codex" | "gemini", includeShrink: boolean, base: Record<string, unknown> = {}, includeRecall = false): Record<string, unknown> {
   const root = JSON.parse(JSON.stringify(base)) as Record<string, unknown>;
   const hooks = root.hooks && typeof root.hooks === "object" && !Array.isArray(root.hooks)
@@ -6454,22 +6485,32 @@ function nativeHooksDocument(agentId: "claude" | "codex" | "gemini", includeShri
     list.push(nativeHookEntry(command, agentId));
     hooks[event] = list;
   }
-  if (includeShrink) {
+  {
     const shrinkEvent = agentId === "gemini" ? "BeforeTool" : "PreToolUse";
     const list = Array.isArray(hooks[shrinkEvent]) ? hooks[shrinkEvent] as Array<Record<string, unknown>> : [];
     const shrinkCommand = `${cavemanBinForHook()} shrink-hook`;
     // Same replace-not-accumulate rule as the native hook: a shrink-hook entry
-    // under another caveman path is ours.
+    // under another caveman path is ours. When the switch is OFF the rule has
+    // to reach OUR path too (#1049): `base` is the host's live file, so a
+    // standalone install, or any caveman old enough to predate the switch,
+    // leaves an entry here that honoring the switch only on the entries we ADD
+    // would merge straight through — the rewrite stays live on exactly the
+    // machines that asked for it off, and the install is born degraded because
+    // nativeHookEntriesHealthy rejects a managed entry the expected document
+    // lacks. Withdrawing ours is not a claim on the user's other hooks:
+    // managedHookIdentity only matches a caveman binary.
     for (let i = list.length - 1; i >= 0; i--) {
       const entry = list[i];
       const existing = entry ? hookEntryCommand(entry) : undefined;
-      if (existing !== undefined && existing !== shrinkCommand && managedHookIdentity(existing) === "shrink-hook") list.splice(i, 1);
+      if (existing === undefined || managedHookIdentity(existing) !== "shrink-hook") continue;
+      if (!includeShrink || existing !== shrinkCommand) list.splice(i, 1);
     }
-    if (!list.some((entry) => hookEntryCommand(entry) === shrinkCommand)) {
+    if (includeShrink && !list.some((entry) => hookEntryCommand(entry) === shrinkCommand)) {
       list.push(agentId === "gemini"
         ? { matcher: "run_shell_command", ...nativeHookEntry(shrinkCommand, agentId) }
         : nativeHookEntry(shrinkCommand, agentId));
     }
+    // The lifecycle loop above always writes this event, so the key exists either way.
     hooks[shrinkEvent] = list;
   }
   if (agentId === "claude" && includeRecall) {
@@ -6490,6 +6531,8 @@ function assertNativeHooksShape(path: string, root: Record<string, unknown>, age
   }
   const hooks = root.hooks as Record<string, unknown> | undefined;
   if (!hooks) return;
+  // `true` on purpose, unlike the writers: this only reads the event NAMES to
+  // refuse a non-array, so the superset is the safer set to check.
   const expected = nativeHooksDocument(agentId, true).hooks as Record<string, unknown>;
   for (const event of Object.keys(expected)) {
     if (hooks[event] !== undefined && !Array.isArray(hooks[event])) {
@@ -6503,7 +6546,7 @@ function nativeHookEntriesHealthy(root: Record<string, unknown>, agentId: "claud
     ? root.hooks as Record<string, unknown>
     : undefined;
   if (!hooks) return false;
-  const expected = nativeHooksDocument(agentId, true).hooks as Record<string, unknown>;
+  const expected = nativeHooksDocument(agentId, nativeShrinkEnabled()).hooks as Record<string, unknown>;
   const required = Object.entries(expected).every(([event, expectedRaw]) => {
     const actual = Array.isArray(hooks[event]) ? hooks[event] as Array<Record<string, unknown>> : [];
     const actualEntries = new Set(actual.map(canonicalManagedHookEntry).filter(Boolean));
@@ -6929,7 +6972,7 @@ function claudeNativeMutations(gw: string, mcpBinary: string): NativeMutation[] 
   // Claude Code names for the override. Never clobber an explicit user value.
   if (env.ENABLE_TOOL_SEARCH === undefined) env.ENABLE_TOOL_SEARCH = TOOL_SEARCH_DEFAULT;
   settings.env = env;
-  const withHooks = nativeHooksDocument("claude", true, settings);
+  const withHooks = nativeHooksDocument("claude", nativeShrinkEnabled(), settings);
 
   const mcpPath = join(homedir(), ".claude.json");
   const mcpBefore = fileBytes(mcpPath);
@@ -6999,7 +7042,7 @@ function geminiNativeMutations(gw: string, mcpBinary: string): NativeMutation[] 
   const installedMcp = { command: mcpBinary, args: [] };
   servers.caveman = installedMcp;
   settings.mcpServers = servers;
-  const withHooks = nativeHooksDocument("gemini", true, settings);
+  const withHooks = nativeHooksDocument("gemini", nativeShrinkEnabled(), settings);
 
   const envPath = join(homedir(), ".gemini", ".env");
   const envBefore = fileBytes(envPath);
@@ -7388,12 +7431,12 @@ function codexNativeMutations(gw: string, mcpBinary: string): NativeMutation[] {
   const hooksBefore = fileBytes(hooksPath);
   const hooksRoot = parseJsonFileObject(hooksPath, hooksBefore);
   assertNativeHooksShape(hooksPath, hooksRoot, "codex");
-  const hooks = nativeHooksDocument("codex", true, hooksRoot);
+  const hooks = nativeHooksDocument("codex", nativeShrinkEnabled(), hooksRoot);
   const configPath = join(codexHomeDir(), "config.toml");
   const configBefore = fileBytes(configPath);
   const subscription = detectCodexWrapAuthMode() === "subscription";
   const native = codexNativeConfig(configBefore?.toString("utf8") ?? "", gw, subscription, mcpBinary);
-  const route = appendUrlPath(gw, subscription ? "/chatgpt" : "/w/codex");
+  const route = appendUrlPath(gw, subscription ? "/chatgpt" : CODEX_API_KEY_ROUTE);
   return [
     { file: hooksPath, before: hooksBefore, after: Buffer.from(JSON.stringify(hooks, null, 2) + "\n"), kind: "codex-hooks" },
     {
@@ -7956,7 +7999,10 @@ function enableNative(argv: string[]) {
       const existing = nativeIntegrationStatus(agent);
       if (existing.installed) {
         if (existing.state === "installed") return "already" as const;
-        throw new Error(`${profile.display_name} integration is degraded; run \`caveman doctor ${agent}\` before changing it`);
+        // `--fix` on purpose: bare `caveman doctor <agent>` prints JSON that says
+        // `degraded` and nothing that says how to leave that state, so pointing
+        // at it alone dead-ends the user who followed this line here (#1049).
+        throw new Error(`${profile.display_name} integration is degraded; run \`caveman doctor ${agent} --fix\` before changing it`);
       }
       const mutations = nativeMutationsFor(agent, gw, mcpBinary);
       const route = mutations.find((item) => typeof item.owned?.route === "string")?.owned?.route;
@@ -7968,7 +8014,12 @@ function enableNative(argv: string[]) {
         ? `  Core: read-only ${aiderCorePath()}; lifecycle/tool interception unavailable; Ledger observational\n`
         : agent === "pi"
           ? `  lifecycle/Core/tool rewrite: bundled Pi extension -> ${nativeHookCommand(agent)}\n`
-          : `  lifecycle/Core/tool rewrite: ${nativeHookCommand(agent)}${agent === "hermes" ? " via native plugin" : ` + ${cavemanBinForHook()} shrink-hook`}\n`);
+          // Codex gets the lifecycle line without the "tool rewrite" claim: since
+          // #1037 shrink-hook declines every Codex tool event, so promising one here
+          // would be the same false claim `doctor` used to report.
+          : agent === "codex"
+            ? `  lifecycle/Core: ${nativeHookCommand(agent)}; command-output rewrite unavailable in Codex\n`
+            : `  lifecycle/Core/tool rewrite: ${nativeHookCommand(agent)}${agent === "hermes" ? " via native plugin" : ` + ${cavemanBinForHook()} shrink-hook`}\n`);
       applyNativeMutations(agent, profile, mutations);
       return "enabled" as const;
     });
@@ -8001,6 +8052,8 @@ function removeNativeHookEntries(root: Record<string, unknown>, agent: "claude" 
     ? root.hooks as Record<string, unknown>
     : undefined;
   if (!hooks) return root;
+  // `true` on purpose, unlike the writers: disable must withdraw a shrink entry
+  // an earlier install wrote, whatever the config says now.
   const expected = nativeHooksDocument(agent, true).hooks as Record<string, unknown>;
   const allowedManaged = new Set(
     Object.values(expected)
@@ -8410,7 +8463,7 @@ function nativeIntegrationStatus(agent: NativeAgent) {
   const coreResolution = runtimeConfig.resolution.values["think.core"];
   const coreConfigured = coreResolution.value === true;
   const mcp = probeMcpBinary();
-  const expectedRoute = appendUrlPath(gatewayURL(), agent === "claude" ? "/w/claude" : agent === "hermes" ? "/w/hermes" : agent === "gemini" ? "/w/gemini" : agent === "opencode" ? "/w/opencode" : agent === "pi" ? "/w/pi" : agent === "aider" ? "/w/aider/openai/v1" : detectCodexWrapAuthMode() === "subscription" ? "/chatgpt" : "/w/codex");
+  const expectedRoute = appendUrlPath(gatewayURL(), agent === "claude" ? "/w/claude" : agent === "hermes" ? "/w/hermes" : agent === "gemini" ? "/w/gemini" : agent === "opencode" ? "/w/opencode" : agent === "pi" ? "/w/pi" : agent === "aider" ? "/w/aider/openai/v1" : detectCodexWrapAuthMode() === "subscription" ? "/chatgpt" : CODEX_API_KEY_ROUTE);
   const routeKind: NativeMutation["kind"] = agent === "claude" ? "claude-settings" : agent === "codex" ? "codex-config" : agent === "hermes" ? "hermes-config" : agent === "gemini" ? "gemini-env" : agent === "opencode" ? "opencode-config" : agent === "pi" ? "pi-extension" : "aider-config";
   const routeOperation = journal?.operations.find((operation) => operation.kind === routeKind);
   // Pi's artifact encodes no route: the extension resolves the gateway at
@@ -8445,7 +8498,13 @@ function nativeIntegrationStatus(agent: NativeAgent) {
     lifecycle_hooks: agent !== "aider" && ownedHealthy,
     core: coreActive,
     mcp_recovery: agent !== "aider" && ownedHealthy && Boolean(mcp?.probe.current),
-    tool_rewrite: agent !== "aider" && ownedHealthy && (agent === "hermes" ? false : agent === "pi" ? fileText.includes("caveman:native-pi") : fileText.includes("shrink-hook")),
+    // Codex is false for the same reason hermes is: no command rewrite happens. The
+    // shrink-hook entry is still written into ~/.codex/hooks.json (removing it from
+    // nativeHooksDocument would make every existing install read as degraded, since
+    // nativeHookEntriesHealthy rejects a managed entry the expected document lacks),
+    // but since #1037 shrinkHook declines every Codex tool event, so the presence of
+    // that entry no longer evidences a rewrite. Report the behavior, not the file.
+    tool_rewrite: agent !== "aider" && ownedHealthy && (agent === "hermes" || agent === "codex" ? false : agent === "pi" ? fileText.includes("caveman:native-pi") : fileText.includes("shrink-hook")),
     shared_runtime: proxyHealthy,
   };
   const versionStatus = nativeVersionStatus(host.version, profile.tested_agent_version);
@@ -13176,6 +13235,15 @@ function cavemanBinForHook(powershell: boolean = process.platform === "win32"): 
 // CLI (BeforeTool, tool "run_shell_command"). It reads the tool event on stdin and,
 // for a noisy command, rewrites it to run through `caveman shrink`. Anything it won't
 // safely shrink it passes through: exit 0 with NO stdout = "no rewrite, run as-is".
+//
+// Codex is deliberately NOT in that list, and re-adding it is the #1037 regression:
+// Codex matches a saved approval against the command text itself (`prefix_rule`), so
+// any rewrite makes an already-approved command look new and re-prompts the user —
+// and the rewrite leads with the resolved caveman/node path, which differs per
+// machine, so no rule the user writes can cover it either. The old Codex branch also
+// answered the host's approval question with permissionDecision:"allow" against an
+// unverified contract; if Codex ever honors that, caveman silently auto-approves a
+// command the user's `approval_policy` meant to gate. Both ends fail closed instead.
 async function shrinkHook() {
   if (nativePolicyMode() === "record" || !new Set(["full-safe", "full-max"]).has(nativeProfile())) process.exit(0);
   let raw: Buffer;
@@ -13185,16 +13253,16 @@ async function shrinkHook() {
   const tool = evt?.tool_name;
   const isGemini = tool === "run_shell_command"; // Gemini CLI's shell tool
   const isBash = tool === "Bash";                // Claude Code + the opencode plugin
-  const isCodex = tool === "shell" || tool === "shell_command" || tool === "exec_command";
-  if (!isGemini && !isBash && !isCodex) process.exit(0);
+  // Every other tool name — Codex's shell/shell_command/exec_command included — runs
+  // as the host received it. See the #1037 note above before widening this.
+  if (!isGemini && !isBash) process.exit(0);
   const command = evt.tool_input?.command;
   if (typeof command !== "string" || !shouldShrink(command)) process.exit(0);
   // updatedInput.command executes in host shell (Git Bash on Claude Windows),
   // not hook's explicit PowerShell shell. Never leak PowerShell `&` into it.
   const rewritten = `${cavemanBinForHook(false)} shrink -- ${command.trim()}`;
-  // Each harness has a different (silent-on-mismatch) override contract: Gemini merges
-  // hookSpecificOutput.tool_input (snake_case, no event discriminator); Claude replaces
-  // via hookSpecificOutput.updatedInput (camelCase + hookEventName). Emit the right one.
+  // Gemini merges hookSpecificOutput.tool_input (snake_case, no event discriminator);
+  // Claude replaces via hookSpecificOutput.updatedInput (camelCase + hookEventName).
   const out = isGemini
     ? { hookSpecificOutput: { tool_input: { command: rewritten } } }
     : { hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "allow", updatedInput: { command: rewritten } } };
@@ -14243,6 +14311,18 @@ function hookInstalledPhrase(a: AgentProfile): string {
   return "command-output rewrite hook installed";
 }
 
+// codexRewriteRetired: codex's profile still declares the `codex-pretooluse` hard
+// tier, but shrinkHook has declined every Codex tool event since #1037 — rewriting
+// the command breaks the user's saved approval rules. Installing that hook would
+// register a callback with no behavior behind it and report a rewrite that does not
+// happen. Retiring the tier in the profile is the real fix and is NOT done here: the
+// same `command_hook` entry carries codex's directives instructions-file, and
+// nativeHooksDocument would have to migrate the entry `caveman enable codex` already
+// wrote. Both are maintainer decisions; this just stops making the false claim.
+function codexRewriteRetired(a: AgentProfile): boolean {
+  return a.id === "codex";
+}
+
 // ── soft tier: instruction-note ──────────────────────────────────────────────
 // For agents with no deterministic command-rewrite surface, we append a
 // clearly-delimited note to a file the agent auto-reads as model instructions,
@@ -14977,6 +15057,10 @@ function hooksCmd(rest: string[]) {
     let n = 0;
     let hard = 0;
     for (const a of targets) {
+      if (codexRewriteRetired(a)) {
+        process.stderr.write(`${mark("warn")} ${a.display_name}: no command-output rewrite — it breaks saved Codex approval rules (#1037); run noisy commands through ${cyan("caveman shrink -- <cmd>")}\n`);
+        continue;
+      }
       if (installShrinkHookForAgent(a)) {
         writeShrinkHookMarker(a.id);
         n++;

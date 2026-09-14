@@ -1352,12 +1352,52 @@ async function loadRemoteHookChecksums() {
 }
 
 // ── Uninstall ─────────────────────────────────────────────────────────────
+
+// Agents whose `caveman enable` journal is still on disk. `CAVEMAN_HOME` is the
+// same override the CLI itself honors, so a non-default home is not read as a
+// clean machine. Read-only and silent-failing: a machine that never had the CLI
+// has no such directory, and an unreadable one must not fail an uninstall.
+function remainingNativeIntegrations() {
+  const dir = path.join(process.env.CAVEMAN_HOME || path.join(os.homedir(), '.caveman'), 'integrations');
+  try {
+    return fs.readdirSync(dir)
+      // `.pending-<agent>.json` is an interrupted transaction, not an install.
+      .filter((name) => name.endsWith('.json') && !name.startsWith('.'))
+      .map((name) => name.slice(0, -'.json'.length))
+      .sort();
+  } catch (_) {
+    return [];
+  }
+}
+
 function uninstall(ctx) {
   const { say, note, warn, ok, opts, configDir } = ctx;
   let cleanupFailed = false;
   say('🪨 caveman uninstall');
 
   if (opts.dryRun) note('  (dry run — nothing will be removed)');
+
+  // Native integrations (`caveman enable <agent>`) journal their prior state
+  // at ~/.caveman/integrations/<agent>.json; restore it through the CLI's own
+  // `disable --all` rather than re-deriving that logic here.
+  if (hasCmd('caveman')) {
+    const r = runSpawn('caveman', ['disable', '--all'], null, opts.dryRun);
+    if (spawnOk(r)) ok('  disabled native agent integrations');
+  }
+
+  // ...and say so when one survived. `disable` removes the journal it restored
+  // from, so a journal still sitting here after the call above is exact evidence
+  // that a caveman route (ANTHROPIC_BASE_URL + _CLAUDE_CODE_ASSUME_FIRST_PARTY_
+  // BASE_URL for Claude) is still in the host's settings — the CLI was already
+  // npm-uninstalled, or `disable --all` failed. Silence there leaves the user
+  // with a dead route and the Remote Control breakage of #947, with nothing in
+  // the uninstall output pointing at the cause (#1040). Reading the journal
+  // directory is not re-deriving the restore logic: it never writes.
+  if (!opts.dryRun) {
+    const stranded = remainingNativeIntegrations();
+    for (const agent of stranded) warn(`  ${agent}: native Caveman routing is still installed and was not removed here.`);
+    if (stranded.length > 0) warn('  Run `caveman disable --all` (reinstall @caveman-ai/cli first if needed) to restore the host settings.');
+  }
 
   // Hooks: remove from settings.json + delete hook files.
   const hooksDir = path.join(configDir, 'hooks');
