@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -180,19 +181,71 @@ func TestContainerRejectsPlaintextNonLoopbackHost(t *testing.T) {
 	}
 }
 
-func TestContainerAllowsLinkLocalAndHTTPS(t *testing.T) {
+// The plaintext allowlist is the three addresses the AWS SDKs actually use, not
+// every link-local address: 169.254.0.0/16 and fe80::/10 are shared with any
+// other listener on the link, and the container endpoint is handed an
+// Authorization token.
+func TestContainerPlaintextAllowlistIsECSAndEKSOnly(t *testing.T) {
 	for _, endpoint := range []string{
-		"http://169.254.170.2/creds", "http://127.0.0.1:8080/creds",
-		"http://localhost/creds", "http://[::1]/creds", "https://creds.example.com/",
+		"http://169.254.170.2/creds",  // ECS task role
+		"http://169.254.170.23/creds", // EKS Pod Identity
+		"http://[fd00:ec2::23]/creds", // EKS Pod Identity over IPv6
+		"http://127.0.0.1:8080/creds", "http://localhost/creds", "http://[::1]/creds",
+		"https://creds.example.com/",
 	} {
 		if err := checkContainerURI(endpoint); err != nil {
 			t.Errorf("checkContainerURI(%q) = %v, want nil", endpoint, err)
 		}
 	}
-	for _, endpoint := range []string{"http://10.0.0.5/creds", "ftp://169.254.170.2/", "http://%zz/"} {
+	for _, endpoint := range []string{
+		"http://169.254.169.254/creds", // IMDS is not a container credential source
+		"http://169.254.1.1/creds",     // some other tenant of the link
+		"http://[fe80::1]/creds",
+		"http://10.0.0.5/creds", "ftp://169.254.170.2/", "http://%zz/",
+	} {
 		if err := checkContainerURI(endpoint); err == nil {
 			t.Errorf("checkContainerURI(%q) = nil, want an error", endpoint)
 		}
+	}
+}
+
+// AWS_EC2_METADATA_SERVICE_ENDPOINT was taken verbatim and then dialled with the
+// client that ignores every proxy setting.
+func TestIMDSEndpointAllowlist(t *testing.T) {
+	for _, endpoint := range []string{
+		"http://169.254.169.254", "http://[fd00:ec2::254]", "http://127.0.0.1:1234",
+		"http://localhost:8080", "https://imds.example.internal",
+	} {
+		if err := checkIMDSEndpoint(endpoint); err != nil {
+			t.Errorf("checkIMDSEndpoint(%q) = %v, want nil", endpoint, err)
+		}
+	}
+	for _, endpoint := range []string{
+		"http://169.254.170.2", "http://169.254.169.253", "http://[fe80::1]",
+		"http://metadata.example.com", "http://10.0.0.5", "ftp://169.254.169.254",
+		"not-a-url",
+	} {
+		if err := checkIMDSEndpoint(endpoint); err == nil {
+			t.Errorf("checkIMDSEndpoint(%q) = nil, want an error", endpoint)
+		}
+	}
+}
+
+// A rejected endpoint must be rejected before anything is dialled.
+func TestIMDSEndpointRejectionNeverDials(t *testing.T) {
+	blocked := &failTransport{t: t}
+	p, _ := newProvider(t, map[string]string{
+		"AWS_EC2_METADATA_SERVICE_ENDPOINT": "http://metadata.attacker.example",
+	}, Options{})
+	p.link = &http.Client{Transport: blocked}
+
+	if _, err := p.Credentials(context.Background()); err == nil {
+		t.Fatal("expected a rejection for a non-metadata IMDS endpoint")
+	} else if !strings.Contains(err.Error(), "metadata.attacker.example") {
+		t.Fatalf("error = %v, want it to name the rejected host", err)
+	}
+	if blocked.called.Load() {
+		t.Fatal("a request was made to the rejected endpoint")
 	}
 }
 
@@ -207,7 +260,9 @@ func imdsStub(t *testing.T, clk *clock, servePUT bool) (*httptest.Server, *atomi
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
-			if r.Header.Get("X-aws-ec2-metadata-token-ttl-seconds") != "21600" {
+			// The token covers two GETs and is then dropped; a six-hour TTL only
+			// widened the window in which a leaked one still worked.
+			if r.Header.Get("X-aws-ec2-metadata-token-ttl-seconds") != "60" {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
@@ -684,5 +739,41 @@ func TestTemporaryCredentialWithoutExpiryStillRefreshes(t *testing.T) {
 	}
 	if n := fetches.Load(); n != 2 {
 		t.Fatalf("fetches = %d, want a session-token credential refreshed despite no Expiration", n)
+	}
+}
+
+// The whole chain runs under p.mu on the request path, so an endpoint that
+// accepts a connection and then never answers used to hold every other Bedrock
+// request behind it for the sum of the source timeouts. fetchTimeout caps one
+// walk at three seconds.
+func TestStalledEndpointBoundsCredentialsLatency(t *testing.T) {
+	stalled := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Drain first: with an unread request body the server cannot notice the
+		// client hanging up, and httptest.Server.Close would wait out the sleep.
+		_, _ = io.Copy(io.Discard, r.Body)
+		select {
+		case <-r.Context().Done():
+		case <-time.After(10 * time.Second):
+		}
+	}))
+	defer stalled.Close()
+
+	tokenFile := filepath.Join(t.TempDir(), "token")
+	if err := os.WriteFile(tokenFile, []byte(webIdentityToken), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	// Web identity uses the STS client, whose own timeout is 10s — far past the
+	// bound this test asserts.
+	p, _ := newProvider(t, map[string]string{
+		"AWS_WEB_IDENTITY_TOKEN_FILE": tokenFile,
+		"AWS_ROLE_ARN":                "arn:aws:iam::123456789012:role/caveman-proxy",
+	}, Options{STSEndpoint: stalled.URL})
+
+	start := time.Now()
+	if _, err := p.Credentials(context.Background()); err == nil {
+		t.Fatal("expected a timeout error")
+	}
+	if elapsed := time.Since(start); elapsed > 4*time.Second {
+		t.Fatalf("Credentials took %s behind a stalled endpoint, want the fetch bound to ~3s", elapsed)
 	}
 }

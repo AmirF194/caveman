@@ -51,6 +51,12 @@ const (
 	// negativeTTL caches a chain failure so a burst of Bedrock requests on a box
 	// with no credentials cannot hammer IMDS once per request.
 	negativeTTL = 10 * time.Second
+	// fetchTimeout bounds ONE walk of the whole chain. The walk runs under p.mu
+	// on the request path, so without it a stalled STS or metadata endpoint
+	// serialized every Bedrock request behind the sum of four source timeouts
+	// (~16s). Three seconds is longer than any healthy link-local or STS hop and
+	// short enough that a hung endpoint degrades to a fast failure.
+	fetchTimeout = 3 * time.Second
 	// maxBody bounds every credential response we parse.
 	maxBody = 1 << 20
 
@@ -91,6 +97,7 @@ type Provider struct {
 
 	// mu serializes both the cache and the fetch itself: a concurrent caller
 	// blocks on the in-flight refresh and then reads its result from the cache.
+	// fetchTimeout caps how long that block can last.
 	// ponytail: one lock for one credential set; nothing here needs finer grain.
 	mu       sync.Mutex
 	creds    awssig.Credentials
@@ -181,7 +188,11 @@ func (p *Provider) Credentials(ctx context.Context) (awssig.Credentials, error) 
 			return p.creds, nil
 		}
 	}
-	res, err := p.fetch(ctx)
+	// The caller's deadline still wins when it is shorter; this only caps how
+	// long one refresh may hold the lock.
+	fetchCtx, cancelFetch := context.WithTimeout(ctx, fetchTimeout)
+	res, err := p.fetch(fetchCtx)
+	cancelFetch()
 	if err != nil {
 		// Credentials that are stale-but-still-valid beat a hard failure: the
 		// refresh window exists so a flaky metadata endpoint has five minutes of
@@ -420,10 +431,49 @@ func (p *Provider) containerAuthToken() (string, error) {
 	return p.env("AWS_CONTAINER_AUTHORIZATION_TOKEN"), nil
 }
 
+// containerCredentialHosts is the fixed set of non-loopback addresses the AWS
+// SDKs will talk to in PLAINTEXT for container credentials: the ECS task-role
+// endpoint and EKS Pod Identity (v4 and v6). Accepting all of 169.254.0.0/16 and
+// fe80::/10 — every link-local address — instead meant any neighbouring
+// link-local listener could be handed the task role's Authorization token.
+var containerCredentialHosts = []netip.Addr{
+	netip.MustParseAddr("169.254.170.2"),  // ECS task role
+	netip.MustParseAddr("169.254.170.23"), // EKS Pod Identity
+	netip.MustParseAddr("fd00:ec2::23"),   // EKS Pod Identity over IPv6
+}
+
+// imdsHosts is the same idea for the instance metadata service.
+var imdsHosts = []netip.Addr{
+	netip.MustParseAddr("169.254.169.254"),
+	netip.MustParseAddr("fd00:ec2::254"),
+}
+
+// plaintextHostAllowed reports whether host may be reached over plain HTTP by a
+// credential lookup: loopback, or one of the fixed metadata addresses in allow.
+func plaintextHostAllowed(host string, allow []netip.Addr) bool {
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+	addr, err := netip.ParseAddr(host)
+	if err != nil {
+		return false
+	}
+	if addr.IsLoopback() {
+		return true
+	}
+	addr = addr.Unmap()
+	for _, allowed := range allow {
+		if addr == allowed {
+			return true
+		}
+	}
+	return false
+}
+
 // checkContainerURI applies the SDK rule for a caller-supplied credential
-// endpoint: TLS anywhere, plaintext only to the loopback or link-local address
-// of a local agent. Without it, AWS_CONTAINER_CREDENTIALS_FULL_URI is a request
-// to hand a task role's Authorization token to an arbitrary host.
+// endpoint: TLS anywhere, plaintext only to loopback or the fixed ECS/EKS
+// credential addresses. Without it, AWS_CONTAINER_CREDENTIALS_FULL_URI is a
+// request to hand a task role's Authorization token to an arbitrary host.
 func checkContainerURI(raw string) error {
 	u, err := url.Parse(raw)
 	if err != nil {
@@ -433,17 +483,34 @@ func checkContainerURI(raw string) error {
 	case "https":
 		return nil
 	case "http":
-		host := u.Hostname()
-		if strings.EqualFold(host, "localhost") {
+		if plaintextHostAllowed(u.Hostname(), containerCredentialHosts) {
 			return nil
 		}
-		addr, err := netip.ParseAddr(host)
-		if err == nil && (addr.IsLoopback() || addr.IsLinkLocalUnicast()) {
-			return nil
-		}
-		return fmt.Errorf("awscreds: refusing plaintext container credentials endpoint at non-loopback host %q", host)
+		return fmt.Errorf("awscreds: refusing plaintext container credentials endpoint at host %q (allowed: loopback, 169.254.170.2, 169.254.170.23, fd00:ec2::23)", u.Hostname())
 	default:
 		return fmt.Errorf("awscreds: unsupported container credentials scheme %q", u.Scheme)
+	}
+}
+
+// checkIMDSEndpoint is checkContainerURI for AWS_EC2_METADATA_SERVICE_ENDPOINT.
+// That variable was taken verbatim and then dialled with p.link — the client
+// that deliberately ignores every proxy setting — so any host named there became
+// a proxy-bypassing outbound request with the IMDSv2 token attached.
+func checkIMDSEndpoint(raw string) error {
+	u, err := url.Parse(raw)
+	if err != nil || u.Host == "" {
+		return errors.New("awscreds: AWS_EC2_METADATA_SERVICE_ENDPOINT is not a valid URL")
+	}
+	switch u.Scheme {
+	case "https":
+		return nil
+	case "http":
+		if plaintextHostAllowed(u.Hostname(), imdsHosts) {
+			return nil
+		}
+		return fmt.Errorf("awscreds: refusing plaintext IMDS endpoint at host %q (allowed: loopback, 169.254.169.254, fd00:ec2::254)", u.Hostname())
+	default:
+		return fmt.Errorf("awscreds: unsupported IMDS endpoint scheme %q", u.Scheme)
 	}
 }
 
@@ -455,6 +522,9 @@ func (p *Provider) fromIMDS(ctx context.Context) (*result, error) {
 	if base == "" {
 		base = defaultIMDSBase
 	}
+	if err := checkIMDSEndpoint(base); err != nil {
+		return nil, err
+	}
 	base = strings.TrimSuffix(base, "/")
 
 	// IMDSv2 only: a v1 fallback would leave the proxy vulnerable to the SSRF
@@ -463,7 +533,10 @@ func (p *Provider) fromIMDS(ctx context.Context) (*result, error) {
 	if err != nil {
 		return nil, fmt.Errorf("awscreds: build imds token request: %w", err)
 	}
-	tokenReq.Header.Set("X-aws-ec2-metadata-token-ttl-seconds", "21600")
+	// One minute: this token authorizes the two metadata GETs immediately below
+	// and is then dropped. The six-hour maximum only widens the window in which a
+	// leaked token is still usable.
+	tokenReq.Header.Set("X-aws-ec2-metadata-token-ttl-seconds", "60")
 	tokenBody, err := p.doJSON(p.link, tokenReq, "imds token")
 	if err != nil {
 		return nil, err
