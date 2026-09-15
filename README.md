@@ -7,7 +7,7 @@
 **Your AI coding agent bills by the word and writes like it knows that. Caveman make it stop.**
 
 <a href="https://www.youtube.com/watch?v=L29q2LRiMRc">
-  <img src="https://img.youtube.com/vi/L29q2LRiMRc/maxresdefault.jpg" alt="ThePrimeagen reacts to Caveman: No way this actually works" width="100%">
+  <img src="https://img.youtube.com/vi/L29q2LRiMRc/hqdefault.jpg" alt="ThePrimeagen reacts to Caveman: No way this actually works" width="360">
 </a>
 
 ▶️ **[ThePrimeagen reacts: "No way this actually works"](https://www.youtube.com/watch?v=L29q2LRiMRc)**
