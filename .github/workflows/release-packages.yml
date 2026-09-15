@@ -245,9 +245,13 @@ jobs:
         run: |
           set -euo pipefail
           npm install --global npm@11.5.1
-          # A prerelease version (0.1.0-alpha.1) must not become `latest`.
+          # A prerelease must not displace a stable `latest`. While the package has
+          # no stable release yet, the newest prerelease IS `latest`: leaving the
+          # tag on an older (possibly deprecated) prerelease serves a worse build.
+          name="$(node -p "require('./dist/package.json').name" 2>/dev/null || tar -xOf ./dist/*.tgz package/package.json | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).name")"
+          current="$(npm view "$name" dist-tags.latest 2>/dev/null || true)"
           tag=latest
-          [[ "${{ needs.build.outputs.version }}" == *-* ]] && tag=alpha
+          if [[ "${{ needs.build.outputs.version }}" == *-* && -n "$current" && "$current" != *-* ]]; then tag=alpha; fi
           npm publish ./dist/*.tgz --access public --tag "$tag"
 
   publish-pypi:
