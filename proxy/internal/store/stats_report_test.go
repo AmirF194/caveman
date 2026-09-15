@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -51,7 +52,9 @@ func TestStatsHTMLPreservesPrivateEscapedSnapshot(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if info.Mode().Perm() != 0o600 {
+	// Windows FileMode carries only the read-only attribute, so a private file
+	// still reports 0666; os.Stat above already proves it was created.
+	if runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatalf("report permissions = %o, want 600", info.Mode().Perm())
 	}
 }
