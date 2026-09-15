@@ -3,6 +3,15 @@
   "version": "0.1.0-alpha.2",
   "description": "Native framework middleware over the Caveman compression runtime.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuliusBrussee/caveman.git",
+    "directory": "packages/middleware/typescript"
+  },
+  "homepage": "https://caveman.so/docs/sdk/typescript",
+  "bugs": {
+    "url": "https://github.com/JuliusBrussee/caveman/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "engines": {
