@@ -1,6 +1,6 @@
 {
   "name": "@caveman-ai/middleware",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.1",
   "description": "Native framework middleware over the Caveman compression runtime.",
   "license": "MIT",
   "type": "module",
