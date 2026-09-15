@@ -494,7 +494,14 @@ func TestStoreRefusesSymlinkReplacement(t *testing.T) {
 func TestSQLiteGenerationCapturesFileIdentityAtInspection(t *testing.T) {
 	// This does not require replacing an open file. On Windows it catches a
 	// delayed os.SameFile lookup accidentally identifying the replacement twice.
-	path := filepath.Join(t.TempDir(), "closed recovery file.db")
+	// Resolve the temp root the way Open does: inspectSQLiteGeneration takes the
+	// canonical path, and a raw t.TempDir() is not one on every runner (macOS
+	// /var -> /private/var, Windows 8.3 RUNNER~1 -> runneradmin).
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "closed recovery file.db")
 	for _, suffix := range sqliteSuffixes {
 		if err := os.WriteFile(path+suffix, []byte("original bytes"), 0o600); err != nil {
 			t.Fatal(err)

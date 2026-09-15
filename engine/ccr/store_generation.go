@@ -27,6 +27,11 @@ var sqliteSuffixes = [...]string{"", "-wal", "-shm"}
 // only the terminal quarantine decision looks for it.
 var errStorageUnverifiable = errors.New("storage identity could not be verified")
 
+// inspectSQLiteGeneration requires the canonical path PrepareSQLitePathCanonical
+// returned. The parent check below is a re-verification that no component became
+// a symlink since; it compares spellings on purpose, because following a swapped
+// intermediate symlink yields the same directory identity and so cannot be
+// detected by os.SameFile. A non-canonical spelling is reported as a change.
 func inspectSQLiteGeneration(path string) (sqliteGeneration, error) {
 	var files sqliteGeneration
 	if path == ":memory:" {
