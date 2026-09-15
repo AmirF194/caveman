@@ -2153,7 +2153,12 @@ function probeVersionedBinary(binary: string, requiredCapability: string): Versi
 
   let result: Omit<VersionedBinaryProbe, "current"> = { version: "pre-versioned", capabilities: [] };
   try {
-    const raw = execFileSync(binary, ["version", "--json"], {
+    // An npm-installed caveman-mcp on Windows is a `.cmd` shim, which Node
+    // refuses to execFile directly (CVE-2024-27980). Route through the same
+    // shim-aware invocation every other launch site uses; a shim that cannot
+    // be launched safely throws and lands in the fail-closed branch below.
+    const invocation = portableInvocation(binary, ["version", "--json"]);
+    const raw = execFileSync(invocation.command, invocation.args, {
       encoding: "utf8",
       env: process.env,
       timeout: versionedBinaryProbeTimeoutMs(),
