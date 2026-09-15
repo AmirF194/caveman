@@ -170,6 +170,11 @@ func (p *Provider) Source() string {
 // Credentials returns credentials for signing, refreshing them when they are
 // within five minutes of expiry.
 func (p *Provider) Credentials(ctx context.Context) (awssig.Credentials, error) {
+	// A caller that has already hung up gets its own error, not the cache and
+	// not a queue slot behind someone else's refresh.
+	if err := ctx.Err(); err != nil {
+		return awssig.Credentials{}, err
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	now := p.now()
@@ -188,24 +193,36 @@ func (p *Provider) Credentials(ctx context.Context) (awssig.Credentials, error) 
 			return p.creds, nil
 		}
 	}
-	// The caller's deadline still wins when it is shorter; this only caps how
-	// long one refresh may hold the lock.
-	fetchCtx, cancelFetch := context.WithTimeout(ctx, fetchTimeout)
+	// The fetch is shared: every concurrent caller is queued on p.mu waiting for
+	// this one walk, so it must not be abandoned because the caller that happened
+	// to win the lock hung up -- the queue would then re-dial the chain once per
+	// waiter. Detaching it also means the 3s bound is the only bound, which is
+	// what the waiters already face: a mutex does not honour a context.
+	fetchCtx, cancelFetch := context.WithTimeout(context.WithoutCancel(ctx), fetchTimeout)
 	res, err := p.fetch(fetchCtx)
 	cancelFetch()
+	// Because the fetch is detached, err is always about the credential source
+	// and is safe to cache; a caller cancelling can no longer masquerade as an
+	// endpoint failure. The caller's own cancellation is a separate question,
+	// and it must not be answered by a race: whether the response landed before
+	// cancel() reached the transport decided the return value at random. A
+	// caller that hung up now always gets its own ctx.Err(), while what the
+	// fetch found is still recorded for whoever is queued behind it.
+	callerErr := ctx.Err()
 	if err != nil {
 		// Credentials that are stale-but-still-valid beat a hard failure: the
 		// refresh window exists so a flaky metadata endpoint has five minutes of
 		// retries before it can break signing.
 		if p.creds.Valid() && (p.expires.IsZero() || now.Before(p.expires)) {
 			p.errUntil = now.Add(negativeTTL)
+			if callerErr != nil {
+				return awssig.Credentials{}, callerErr
+			}
 			return p.creds, nil
 		}
-		// A caller that hung up says nothing about the credential source; caching
-		// its cancellation would let one aborted request fail every other request
-		// on the process for negativeTTL.
-		if ctx.Err() == nil {
-			p.err, p.errUntil = err, now.Add(negativeTTL)
+		p.err, p.errUntil = err, now.Add(negativeTTL)
+		if callerErr != nil {
+			return awssig.Credentials{}, callerErr
 		}
 		return awssig.Credentials{}, err
 	}
@@ -217,6 +234,9 @@ func (p *Provider) Credentials(ctx context.Context) (awssig.Credentials, error) 
 	}
 	p.creds, p.expires, p.source = res.creds, res.expires, res.source
 	p.err, p.errUntil = nil, time.Time{}
+	if callerErr != nil {
+		return awssig.Credentials{}, callerErr
+	}
 	return p.creds, nil
 }
 

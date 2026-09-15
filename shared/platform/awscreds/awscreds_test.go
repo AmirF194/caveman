@@ -704,7 +704,12 @@ func TestCancelledCallerIsNotNegativeCached(t *testing.T) {
 	// the cache for everyone else on the process.
 	got, err := p.Credentials(context.Background())
 	if err != nil || got.AccessKeyID != "AKIDCONTAINER" {
-		t.Fatalf("got %+v err %v, want a fresh fetch after a caller cancellation", got, err)
+		t.Fatalf("got %+v err %v, want credentials after a caller cancellation", got, err)
+	}
+	// The walk is shared by everyone queued on p.mu, so the caller that started
+	// it hanging up must not abandon it; it completed and its answer was cached.
+	if n := fetches.Load(); n != 1 {
+		t.Fatalf("fetches = %d, want the shared walk to survive its caller", n)
 	}
 }
 
