@@ -9,7 +9,7 @@ from pathlib import Path
 from caveman_cloud.middleware import Adapter, AsyncMiddlewareRuntime, Candidate, MiddlewareError, MiddlewareRuntime, Scope, sha256
 from caveman_cloud.middleware import validate
 
-FIXTURE = json.loads((Path(__file__).resolve().parents[2] / "parity/middleware.fixtures.json").read_text())
+FIXTURE = json.loads((Path(__file__).resolve().parents[2] / "parity/middleware.fixtures.json").read_text(encoding="utf-8"))
 
 
 def inputs(binding=None):
