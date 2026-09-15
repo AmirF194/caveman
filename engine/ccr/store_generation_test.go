@@ -745,6 +745,12 @@ func TestOpenRefusesGenerationChangesAfterSQLiteInitialization(t *testing.T) {
 // terminal for the process, so latching it on those would make already-stored
 // recoveries unreadable for the rest of a session that is otherwise fine.
 func TestTransientInspectFailureDoesNotQuarantineStore(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		// os.Chmod(0o777) only toggles the read-only attribute on Windows, so it
+		// cannot produce the loose parent this test needs; the ACL equivalent is
+		// covered by TestWindowsACLRejectsBroadWriteGrant.
+		t.Skip("POSIX writable-parent setup does not model a Windows DACL")
+	}
 	dir := t.TempDir()
 	store, err := OpenWithBudget(filepath.Join(dir, "ccr.db"), DefaultMaxStorageBytes)
 	if err != nil {
