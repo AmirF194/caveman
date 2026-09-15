@@ -9,7 +9,7 @@ description = "Native framework adapters for the Caveman compression runtime."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.13"
-dependencies = ["caveman-sdk>=1.0,<2"]
+dependencies = ["caveman-sdk>=1.1,<2"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",

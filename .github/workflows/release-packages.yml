@@ -127,6 +127,9 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/package-dist"
           pnpm install --frozen-lockfile
+          # Build the workspace dependencies first: the adapters import the SDK's
+          # built `./middleware` types, which do not exist until the SDK is built.
+          pnpm --filter "./${{ steps.package.outputs.package }}..." build
           pnpm --filter ./${{ steps.package.outputs.package }} test
           pnpm --filter ./${{ steps.package.outputs.package }} pack --pack-destination "$RUNNER_TEMP/package-dist"
           mapfile -t tarballs < <(find "$RUNNER_TEMP/package-dist" -maxdepth 1 -type f -name '*.tgz' -print)
@@ -134,8 +137,9 @@ jobs:
           smoke="$RUNNER_TEMP/npm-artifact-smoke"
           mkdir -p "$smoke"
           (cd "$smoke" && npm init --yes >/dev/null)
-          # --legacy-peer-deps: every framework peer is optional and none is installed here.
-          (cd "$smoke" && npm install --ignore-scripts --no-audit --no-fund --legacy-peer-deps "${tarballs[0]}")
+          # The ai-sdk adapter imports `ai` at runtime, so the smoke installs the
+          # framework it exercises; every other adapter stays uninstalled.
+          (cd "$smoke" && npm install --ignore-scripts --no-audit --no-fund "${tarballs[0]}" "ai@^7.0.94" "@ai-sdk/provider@^4.0.11")
           # The workspace protocol must not survive into the published manifest.
           node -e 'const p=require(process.argv[1]); if(String(p.dependencies?.["@caveman-ai/sdk"]).startsWith("workspace:")) { console.error("workspace protocol leaked into the tarball"); process.exit(1) }' \
             "$smoke/node_modules/@caveman-ai/middleware/package.json"
