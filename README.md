@@ -2,10 +2,9 @@
 
 <img src="docs/assets/caveman-logo-banner.png" alt="Caveman" width="720">
 
-### why use many token when few do trick
+# why use many token when few do trick
 
-**Your AI coding agent bills by the word and writes like it knows that. Caveman make it stop.**<br>
-Brain still big. Mouth small. Bill small.
+**Your AI coding agent bills by the word and writes like it knows that. Caveman make it stop.**
 
 <a href="https://www.youtube.com/watch?v=L29q2LRiMRc">
   <img src="https://img.youtube.com/vi/L29q2LRiMRc/maxresdefault.jpg" alt="ThePrimeagen reacts to Caveman: No way this actually works" width="100%">
@@ -24,7 +23,7 @@ Brain still big. Mouth small. Bill small.
 
 **[#1 on Hacker News](https://news.ycombinator.com/item?id=47647455)** · 904 points · 366 comments &nbsp;·&nbsp; **[#8 Product of the Day](https://www.producthunt.com/products/caveman)** on Product Hunt
 
-📄 Cited in **[CAVEWOMAN](https://arxiv.org/abs/2606.24083)**, an Adobe Research paper on linguistic compression &nbsp;·&nbsp; 🧪 Tested by **[JetBrains](https://blog.jetbrains.com/ai/2026/07/speak-to-ai-agents-like-cavemen-tosave-tokens/)** on 86 real coding tasks: *"costs you nothing measurable in quality"*
+📄 Cited in **[CAVEWOMAN](https://arxiv.org/abs/2606.24083)**, an Adobe Research paper that measured caveman-style output cutting cost **1.4 to 2.4×, up to 3×** &nbsp;·&nbsp; 🧪 Tested by **[JetBrains](https://blog.jetbrains.com/ai/2026/07/speak-to-ai-agents-like-cavemen-tosave-tokens/)** on 86 real coding tasks: *"costs you nothing measurable in quality"*
 
 <a href="https://www.producthunt.com/products/caveman?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-caveman-2" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1220849&amp;theme=light&amp;t=1786634691828" alt="Caveman - why use many token when few do trick | Product Hunt" width="250" height="54"/></a>
 <a href="https://trendshift.io/repositories/25391?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-25391" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/25391" alt="JuliusBrussee%2Fcaveman | Trendshift" width="250" height="55"/></a>
@@ -156,13 +155,24 @@ The full 30+ agent matrix, dry runs, flags, and verification live in [INSTALL.md
 
 ### 🕐 The first five minutes
 
+**Small rock.** The skill, right after `npx skills add`:
+
 1. **Ask it something.** Any coding question. Watch the preamble vanish and the answer stay.
 2. **Turn the dial.** `/caveman lite` for tight-but-polite. `/caveman ultra` for grunts. `/caveman wenyan` for classical Chinese, because someone asked.
 3. **Commit like a caveman.** `/caveman-commit` writes a Conventional Commit in one line.
 4. **Review like a caveman.** `/caveman-review` gives one finding per line: `L42: 🔴 null deref. Guard it.`
-5. **Check the bill.** `/caveman-stats` shows your recorded token usage in Claude Code.
-6. **Graduate.** `caveman claude` puts the proxy in front of the agent and starts shrinking what it reads.
-7. **Come home.** Say `stop caveman`. Normal prose returns. No hard feelings.
+5. **Shrink your memory files.** `/caveman-compress CLAUDE.md` cuts the prose, keeps every heading, path, and command, and backs up the original.
+6. **Come home.** Say `stop caveman`. Normal prose returns. No hard feelings.
+
+**Big rock.** The proxy, right after `npm install -g @caveman-ai/cli`:
+
+1. **Find out where your tokens go.** `caveman learn` reads months of agent history already on your disk, locally, and ranks your token sinks worst-first with a one-line fix behind each. Do this before anything else. It is the most useful five minutes in this README.
+2. **Let it fix them.** `caveman learn implement` hands each fix to Claude Code or Codex one diff at a time, applied only on your yes, and reverts anything that did not lower tokens per turn.
+3. **Wrap your agent.** `caveman claude` (or `codex`, `gemini`, `aider`, `opencode`, `pi`, …) puts the proxy in front of it. Logs, test output, JSON, and diffs get shrunk before the provider sees them. Originals stay on disk, and the agent can pull any of them back.
+4. **Shrink the noisy stuff.** `caveman shrink -- pnpm test` compresses command output. `caveman browse <url>` gives the agent a compressed view of a web page instead of a 15,000-token accessibility dump.
+5. **Prove it on your own work.** `caveman trial -- claude` runs a real session with and without caveman, then `caveman trial report` shows the difference. That A/B outranks every number on this page.
+6. **Shrink caveman itself.** `caveman convert --dry-run` shows which installed skills get cheaper as PNG pages the model reads as an image. Convert the profitable ones, revert byte-for-byte any time.
+7. **Watch the bill.** `caveman stats` for history and estimates. `/caveman-stats` inside Claude Code for that session.
 
 ---
 
@@ -175,10 +185,14 @@ Every number below is either from a committed run in this repo or from a named t
 | Who measured | What they measured | Result |
 |---|---|---|
 | **[Adobe Research](https://arxiv.org/abs/2606.24083)** (CAVEWOMAN, arXiv 2606.24083) | Eight models, five datasets, five compression levels | Output-side caveman style cuts realized cost **1.4 to 2.4× per model, up to 3×** in the best case |
-| **[JetBrains](https://blog.jetbrains.com/ai/2026/07/speak-to-ai-agents-like-cavemen-tosave-tokens/)** | 86 real coding tasks, paired A/B, Claude Code 2.1.200 | **8.5% fewer output tokens**, about 10% cost. **No detectable quality change** (sign test p = 0.82) |
+| **[JetBrains](https://blog.jetbrains.com/ai/2026/07/speak-to-ai-agents-like-cavemen-tosave-tokens/)** | 86 real coding tasks, paired A/B, Claude Code 2.1.200. **Skill only, no proxy** (July 2026, before the proxy existed) | **8.5% fewer output tokens**, about 10% cost. **No detectable quality change** (sign test p = 0.82) |
 | **This repo** ([committed eval snapshot](./evals/README.md)) | Ten dev questions, skill vs a plain `Answer concisely.` control, claude-opus-4-6 | **50% fewer output tokens at the median** on top of the terse control. Length only, not correctness |
 
-Read those three together and you get the honest picture. Chat-style Q&A: big cut. Agentic coding sessions, where most tokens are code and tool calls that caveman never touches: high single digits on output, quality flat. The Adobe paper's other finding matters too: compressing the *human's* prompt into caveman-speak makes models answer longer and worse. Caveman never rewrites your prompts. Only the agent's mouth.
+Read those three together and you get the honest picture. Chat-style Q&A: big cut. Agentic coding sessions, where most tokens are code and tool calls that the skill never touches: high single digits on output, quality flat.
+
+**The JetBrains number is why the proxy exists.** They measured the skill alone, in July 2026, before the proxy shipped. Their finding was that an agent's bill is mostly *reading*, not writing, and no talking style fixes that. So we built the thing that shrinks the reading. The table below is what that changed.
+
+The Adobe paper's other finding matters too: compressing the *human's* prompt into caveman-speak makes models answer longer and worse. Caveman never rewrites your prompts. Only the agent's mouth.
 
 The rules add input tokens on every call, and whether shorter output pays for them depends on your agent, caching, and billing. Full accounting: [docs/HONEST-NUMBERS.md](./docs/HONEST-NUMBERS.md).
 
@@ -230,7 +244,7 @@ Your agent rereads logs, test output, diffs, and half your repo all day. The pro
 Adeyemi, Rossi, Dernoncourt · arXiv, June 2026 · cites this repo. The style is now a benchmarked register.
 
 **JetBrains** · [Speaking to AI Agents like Cavemen Saves 65% of Tokens. We Test.](https://blog.jetbrains.com/ai/2026/07/speak-to-ai-agents-like-cavemen-tosave-tokens/)<br>
-The most rigorous outside A/B so far. Their verdict: *"Use it if you like it. It is fun, and it costs you nothing measurable in quality."*
+The most rigorous outside A/B so far, run on the skill alone before the proxy existed. Their verdict: *"Use it if you like it. It is fun, and it costs you nothing measurable in quality."* Their 8.5% is the number that made us build the proxy.
 
 </td>
 <td width="50%" valign="top">
