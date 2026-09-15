@@ -129,7 +129,7 @@ jobs:
           pnpm install --frozen-lockfile
           # Build the workspace dependencies first: the adapters import the SDK's
           # built `./middleware` types, which do not exist until the SDK is built.
-          pnpm --filter "./${{ steps.package.outputs.package }}..." build
+          pnpm --filter @caveman-ai/sdk run build
           pnpm --filter ./${{ steps.package.outputs.package }} test
           pnpm --filter ./${{ steps.package.outputs.package }} pack --pack-destination "$RUNNER_TEMP/package-dist"
           mapfile -t tarballs < <(find "$RUNNER_TEMP/package-dist" -maxdepth 1 -type f -name '*.tgz' -print)
