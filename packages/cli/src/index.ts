@@ -5626,7 +5626,13 @@ function applyHermesAuthEnv(env: NodeJS.ProcessEnv, gw: string, modeGw = gw) {
   if (key && name) env[name] = key;
 }
 
-async function startWrapProxy(mode: WrapRuntimeMode, mcpRecovery: boolean, toon: boolean, pixelModels: string | undefined, pixelDensity: string | undefined, gw = gatewayURL(), purpose: "standard" | "codex-subscription" = "standard", observeEstimate = false): Promise<boolean> {
+// spawnLocalProxyProcess resolves the proxy binary, builds its env, and spawns
+// it detached + unref'd — the part every caller needs identically. Split out
+// of startWrapProxy so a caller that only wants to kick the proxy off (never
+// waiting to confirm it came up) doesn't have to either duplicate this env
+// assembly or pay for the readiness-poll loop below, which holds this
+// process's event loop open via a non-unref'd sleep() timer.
+function spawnLocalProxyProcess(mode: WrapRuntimeMode, mcpRecovery: boolean, toon: boolean, pixelModels: string | undefined, pixelDensity: string | undefined, gw: string, purpose: "standard" | "codex-subscription", observeEstimate: boolean): { host: string; port: number } | null {
   const bin = cavemanBin("caveman-proxy", "CAVEMAN_PROXY_BIN");
   const resolved = which(bin);
   if (!resolved) {
@@ -5635,7 +5641,7 @@ async function startWrapProxy(mode: WrapRuntimeMode, mcpRecovery: boolean, toon:
     } else {
       process.stderr.write(`${mark("warn")} ${bin} not found; wrap will still launch, but no local compression/metering will run — run ${cyan("caveman setup")} to see what's missing\n`);
     }
-    return false;
+    return null;
   }
   const { host, port } = gatewayHostPort(gw);
   const env: NodeJS.ProcessEnv = {
@@ -5683,14 +5689,56 @@ async function startWrapProxy(mode: WrapRuntimeMode, mcpRecovery: boolean, toon:
     process.stderr.write(`${mark("warn")} could not start ${bin}: ${(error as Error).message}\n`);
   });
   child.unref();
+  return { host, port };
+}
+
+// Best-effort "there should be a proxy on this port now" for the `enable` door.
+// Fire-and-forget: the caller never waits, so `enable` returns at its own pace.
+//
+// Deliberately not startWrapProxy: that readiness poll's sleep() timer is not
+// unref'd, so awaiting it would hold this command's process open for up to two
+// seconds on every enable where nothing is listening yet — the common case this
+// exists to cover. Probe first (one fast TCP connect, not the retry loop) so a
+// second enable against a live proxy spawns nothing; the redundant process that
+// skipping the probe would create is harmless, since run state is only written
+// once the listener binds, but free beats harmless.
+//
+// aider is excluded on purpose. It is the one native agent installed without an
+// MCP binary (see nativeMcpBinaryRequired's aider branch), so the recovery flag
+// derived below would stamp CAVEMAN_RECOVERY=mcp onto a proxy with no retrieve
+// tool to back it — the exact leak the explicit stamping elsewhere exists to
+// prevent. Giving aider a proxy needs recovery pinned off and its own coverage;
+// until then it keeps the pre-existing behaviour, no better and no worse.
+function ensureLocalProxyForNative(agent: NativeAgent, gw: string): void {
+  if (agent === "aider" || wrapMode(gw) !== "local") return;
+  void (async () => {
+    try {
+      const opts = defaultWrapOptions();
+      // Every other spawn site gates on this (agentShortcut, the native hook).
+      // Without it, `enable` starts a proxy the user's config switched off.
+      if (opts.noProxy) return;
+      const { host, port } = gatewayHostPort(gw);
+      if (await portListening(host, port)) return;
+      const subscription = agent === "codex" && detectCodexWrapAuthMode() === "subscription";
+      const mode = subscription && opts.mode === "pixel" ? "record" : opts.mode;
+      const recovery = Boolean(probeMcpBinary()?.probe.current);
+      spawnLocalProxyProcess(mode, recovery, subscription ? false : opts.toon, opts.pixelModels, opts.pixelDensity, gw, subscription ? "codex-subscription" : "standard", false);
+    } catch { /* fail-open, same as the SessionStart hook and the shortcut door */ }
+  })();
+}
+
+async function startWrapProxy(mode: WrapRuntimeMode, mcpRecovery: boolean, toon: boolean, pixelModels: string | undefined, pixelDensity: string | undefined, gw = gatewayURL(), purpose: "standard" | "codex-subscription" = "standard", observeEstimate = false): Promise<boolean> {
+  const spawned = spawnLocalProxyProcess(mode, mcpRecovery, toon, pixelModels, pixelDensity, gw, purpose, observeEstimate);
+  if (!spawned) return false;
+  const { host, port } = spawned;
   for (let i = 0; i < 20; i++) {
     await sleep(100);
     if (await portListening(host, port)) {
-      process.stderr.write(dim(`→ started Caveman proxy on ${host}:${port} (${env.CAVEMAN_MODE})\n`));
+      process.stderr.write(dim(`→ started Caveman proxy on ${host}:${port} (${mode})\n`));
       return true;
     }
   }
-  process.stderr.write(`${mark("warn")} started ${bin}, but proxy did not become ready on ${host}:${port}\n`);
+  process.stderr.write(`${mark("warn")} started ${cavemanBin("caveman-proxy", "CAVEMAN_PROXY_BIN")}, but proxy did not become ready on ${host}:${port}\n`);
   return false;
 }
 
@@ -8046,6 +8094,22 @@ function enableNative(argv: string[]) {
       applyNativeMutations(agent, profile, mutations);
       return "enabled" as const;
     });
+    // Outside the lock, and on BOTH outcomes. The native SessionStart hook
+    // autostarts the proxy, but only once the host has approved the installed
+    // hooks (Codex gates this behind /hooks), and `enable` run on its own —
+    // outside the `caveman <agent>` shortcut, which has its own blocking
+    // pre-start at its call site — otherwise leaves that window open
+    // indefinitely: config.toml/settings route every request through a proxy
+    // nothing has confirmed is listening, which is what turns a fresh Codex
+    // session into a mid-stream disconnect rather than a connection error.
+    //
+    // "already" has to run it too. Re-running `enable` is exactly what someone
+    // does when the route is dead, and the installed-state branch returns
+    // before any of this; gating on a fresh install would make proxy startup an
+    // accidental side effect of the first install rather than something the
+    // command does. The integration lock is for file mutations — a liveness
+    // probe and a detached spawn need no part of it.
+    ensureLocalProxyForNative(agent, gw);
     if (outcome === "already") {
       process.stderr.write(`${mark("ok")} ${profile.display_name}: ${agent === "aider" ? "shallow" : "native"} Caveman already enabled\n`);
       continue;
