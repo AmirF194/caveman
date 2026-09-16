@@ -8000,6 +8000,67 @@ function readPendingNativeJournal(agent: string): NativeJournal | undefined {
   return readNativeJournalAt(nativePendingJournalPath(agent), agent);
 }
 
+// nativeRoutePinnedFor reports the config file that pins this agent's base URL,
+// when native routing is installed for it, or null when nothing is pinned.
+//
+// It reads the install journal rather than re-deriving per-agent config shapes,
+// so it covers every native host by construction: claude's settings.json env
+// block, codex's config.toml model_provider, hermes/gemini/aider's marker
+// fences, opencode's routes map, pi's bundle. A caller that needs to point an
+// agent somewhere else for one run has to know that any of these outranks the
+// environment it is about to set.
+//
+// Deliberately journal-only and file-cheap: unlike nativeIntegrationStatus this
+// probes no binary, proxy or MCP server, because the question is only "is a
+// route pinned on disk", not "is the whole integration healthy".
+//
+// The PENDING journal has to be consulted too, and the two are read differently.
+// installNativeAgent writes the pending journal first, then each host file, and
+// publishes the committed journal LAST. So a process death between those leaves
+// a fully applied, fully readable pinned route on disk with only the pending
+// journal to show for it — which is exactly the state this guard exists to
+// catch, reached by a crash instead of a successful install.
+//
+// A committed journal is taken at its word: enable finished, the route is
+// pinned. A pending one is genuinely ambiguous — the mutation may or may not
+// have landed before the process died — so it is resolved against the file
+// itself using the after_sha256 the journal already records. That is
+// agent-agnostic (no per-host config shapes here) and avoids refusing a trial
+// over a stale pending journal whose writes never happened.
+function nativeRoutePinnedFor(agent: string): { file: string; route: string; pending: boolean } | null {
+  const routeIn = (owned: Record<string, unknown> | undefined): string | null => {
+    if (!owned) return null;
+    if (typeof owned.route === "string" && owned.route) return owned.route;
+    // opencode pins one route per protocol instead of a single base URL.
+    const routes = owned.routes;
+    if (routes && typeof routes === "object" && !Array.isArray(routes)) {
+      for (const value of Object.values(routes as Record<string, unknown>)) {
+        if (typeof value === "string" && value) return value;
+      }
+    }
+    return null;
+  };
+
+  const committed = readNativeJournal(agent);
+  for (const operation of committed?.operations ?? []) {
+    const route = routeIn(operation.owned);
+    if (route) return { file: operation.file, route, pending: false };
+  }
+
+  const pending = readPendingNativeJournal(agent);
+  for (const operation of pending?.operations ?? []) {
+    const route = routeIn(operation.owned);
+    if (!route) continue;
+    const current = fileBytes(operation.file);
+    // No file, or contents that are not what this operation would have written,
+    // means the interrupted install never got as far as pinning this route.
+    if (current && bytesHash(current) === operation.after_sha256) {
+      return { file: operation.file, route, pending: true };
+    }
+  }
+  return null;
+}
+
 function recoverPendingNativeInstallUnlocked(agent: NativeAgent): boolean {
   const pending = readPendingNativeJournal(agent);
   if (!pending) return false;
@@ -15546,6 +15607,40 @@ async function trial(rest: string[]) {
 
   const proxyResolved = which(proxyBin());
   if (!proxyResolved) return startMissingProxyUI(proxyBin());
+
+  // A trial measures traffic by standing up its OWN proxy on a free port under
+  // a `trial:<id>` label and pointing the child at it through the environment.
+  // Native routing pins the base URL inside the agent's own config file, and an
+  // agent reads its config in preference to its environment — so the child goes
+  // to the persistent listener instead, which carries no trial label.
+  // RecordPayload only stores payloads for a `trial:` label, so trial_payloads
+  // stays empty, the replay optimizer has nothing to replay, and every number
+  // in the report renders 0. Nothing errors; the trial exits 0 and reports a
+  // measurement of nothing. Refuse up front instead of producing that report,
+  // and refuse BEFORE `trial start` so no orphan trial row is opened. (#1068)
+  const pinned = nativeRoutePinnedFor(agent?.id ?? requested);
+  if (pinned) {
+    console.error(pinned.pending
+      ? `caveman trial cannot measure ${agent?.id ?? requested}: an interrupted native install left its routing in place.`
+      : `caveman trial cannot measure ${agent?.id ?? requested} while native routing is enabled.`);
+    console.error("");
+    console.error(`  ${pinned.file}`);
+    console.error(`  pins the base URL to ${pinned.route}`);
+    console.error("");
+    console.error("A trial runs its own proxy on its own port and points the agent at it through");
+    console.error("the environment. That config file wins, so the agent would keep talking to the");
+    console.error("persistent listener, the trial would capture nothing, and the report would say");
+    console.error("zero requests and $0.0000 — which reads as a measurement rather than as silence.");
+    console.error("");
+    // invokedAs(), not invokedCommand(): invokedCommand renders the verb of the
+    // CURRENT invocation, which is always "trial" here, so it would print
+    // "caveman trial <agent>" for the disable and enable lines.
+    console.error(`Turn native routing off for the duration of the trial, then put it back:`);
+    console.error(`  ${invokedAs()} disable ${agent?.id ?? requested}`);
+    console.error(`  ${invokedAs()} trial -- ${command.join(" ")}`);
+    console.error(`  ${invokedAs()} enable ${agent?.id ?? requested}`);
+    process.exit(2);
+  }
 
   const port = await freePort();
   const listen = `127.0.0.1:${port}`;
