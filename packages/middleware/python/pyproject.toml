@@ -18,6 +18,7 @@ classifiers = [
 ]
 
 [project.urls]
+Documentation = "https://docs.caveman.so/docs/sdk/middleware/python"
 Repository = "https://github.com/JuliusBrussee/caveman"
 Issues = "https://github.com/JuliusBrussee/caveman/issues"
 

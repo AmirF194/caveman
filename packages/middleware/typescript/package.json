@@ -8,7 +8,7 @@
     "url": "git+https://github.com/JuliusBrussee/caveman.git",
     "directory": "packages/middleware/typescript"
   },
-  "homepage": "https://caveman.so/docs/sdk/typescript",
+  "homepage": "https://docs.caveman.so/docs/sdk/middleware",
   "bugs": {
     "url": "https://github.com/JuliusBrussee/caveman/issues"
   },

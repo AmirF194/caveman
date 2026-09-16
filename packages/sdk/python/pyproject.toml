@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://caveman.so/docs/sdk/python"
+Homepage = "https://docs.caveman.so/docs/sdk/python"
 Repository = "https://github.com/JuliusBrussee/caveman"
 Issues = "https://github.com/JuliusBrussee/caveman/issues"
 

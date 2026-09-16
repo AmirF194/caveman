@@ -27,7 +27,7 @@
     "url": "git+https://github.com/JuliusBrussee/caveman.git",
     "directory": "packages/sdk/typescript"
   },
-  "homepage": "https://caveman.so/docs/sdk/typescript",
+  "homepage": "https://docs.caveman.so/docs/sdk/typescript",
   "bugs": {
     "url": "https://github.com/JuliusBrussee/caveman/issues"
   },
