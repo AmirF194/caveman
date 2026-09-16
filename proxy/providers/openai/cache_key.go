@@ -121,11 +121,20 @@ func (a Adapter) ApplyProviderNativeTransforms(ctx context.Context, body provide
 //
 // Nothing in this package asserts a decoded number's Go type, so carrying
 // json.Number through costs the decision helpers nothing.
+//
+// The More() check is not optional. json.Unmarshal rejects a document with
+// trailing bytes after the top-level value; a Decoder stops at the end of the
+// first value and does not care what follows. Without it, `{...}garbage` would
+// change from "malformed, pass through byte-identically" to "transform, and
+// drop the trailing bytes on the way out" — silently widening what this
+// adapter accepts and losing caller bytes, which is the opposite of the fix.
+// More() is true for trailing data and false for trailing whitespace, which
+// restores json.Unmarshal's acceptance set exactly.
 func decodeRequestBody(data []byte) (map[string]any, bool) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 	var root map[string]any
-	if decoder.Decode(&root) != nil {
+	if decoder.Decode(&root) != nil || decoder.More() {
 		return nil, false
 	}
 	return root, true

@@ -257,3 +257,23 @@ func TestRetrieveRewritesPreserveLargeIntegerLiterals(t *testing.T) {
 		}
 	})
 }
+
+// Same guard on the gateway side: switching from json.Unmarshal to a Decoder
+// must not start accepting a document with trailing bytes and silently drop
+// them on the re-marshal. Both rewrites hand the body back untouched instead.
+func TestRetrieveRewritesRejectTrailingBytes(t *testing.T) {
+	respBody := []byte(`{"id":"msg_1","type":"message","role":"assistant","stop_reason":"tool_use","content":[` +
+		`{"type":"tool_use","id":"tu_1","name":"caveman_retrieve","input":{"handle":"ccr_1","query":"schema"}}` +
+		`]}TRAILING`)
+	cleaned, ok := stripRetrieveCall("anthropic", "/v1/messages", respBody)
+	if ok || !bytes.Equal(cleaned, respBody) {
+		t.Fatalf("trailing bytes were accepted and rewritten: ok=%v body=%s", ok, cleaned)
+	}
+
+	reqBody := []byte(`{"model":"claude-fable-5","max_tokens":64,"messages":[]} {"second":"value"}`)
+	valid := []byte(`{"id":"msg_1","type":"message","role":"assistant","stop_reason":"tool_use","content":[` +
+		`{"type":"tool_use","id":"tu_1","name":"caveman_retrieve","input":{"handle":"ccr_1","query":"schema"}}]}`)
+	if _, ok := appendRetrieveResult("anthropic", "/v1/messages", reqBody, valid, "tu_1", "original bytes"); ok {
+		t.Fatal("a request body with a second top-level value was accepted for rewrite")
+	}
+}

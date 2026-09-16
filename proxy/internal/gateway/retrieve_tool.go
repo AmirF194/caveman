@@ -673,11 +673,18 @@ func bufferedBody(resp *http.Response, body []byte) *http.Response {
 //
 // Only string/slice/map assertions are made on these documents, so carrying
 // json.Number through costs the callers nothing.
+// The More() check is not optional. json.Unmarshal rejects a document with
+// trailing bytes after the top-level value; a Decoder stops at the end of the
+// first value and does not care what follows. Without it a body with trailing
+// bytes would go from "not JSON we understand, hand it back untouched" to
+// "rewrite it, and drop the trailing bytes", losing caller bytes. More() is
+// true for trailing data and false for trailing whitespace, which restores
+// json.Unmarshal's acceptance set exactly.
 func decodeForRewrite(body []byte) (map[string]any, bool) {
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.UseNumber()
 	var root map[string]any
-	if decoder.Decode(&root) != nil {
+	if decoder.Decode(&root) != nil || decoder.More() {
 		return nil, false
 	}
 	return root, true

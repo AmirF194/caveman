@@ -215,3 +215,33 @@ func TestTransformPreservesLargeIntegersOnRemarshalFallback(t *testing.T) {
 		})
 	}
 }
+
+// Decoding with a json.Decoder instead of json.Unmarshal must not widen what
+// this adapter accepts. json.Unmarshal rejects trailing bytes after the
+// top-level value; a Decoder stops at the end of the first value. A body that
+// used to be "malformed, pass through byte-identically" must not become
+// "transform it, and drop whatever followed".
+func TestTransformRejectsTrailingBytesAfterTheTopLevelValue(t *testing.T) {
+	const suffix = "TRAILING"
+	tests := []struct {
+		name string
+		body string
+		want bool // true = must pass through byte-identically
+	}{
+		{"trailing garbage", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]}` + suffix, true},
+		{"second json value", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]} {"b":2}`, true},
+		{"trailing whitespace is fine", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]}   `, false},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			res := apply(t, test.body, enabled())
+			passedThrough := len(res.OptimizerIDs) == 0 && string(res.Body) == test.body
+			if passedThrough != test.want {
+				t.Fatalf("passthrough=%v want %v; ids=%v body=%s", passedThrough, test.want, res.OptimizerIDs, res.Body)
+			}
+			if !test.want && strings.Contains(string(res.Body), suffix) {
+				t.Fatalf("unexpected trailing bytes survived: %s", res.Body)
+			}
+		})
+	}
+}
