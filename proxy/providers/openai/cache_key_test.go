@@ -159,3 +159,59 @@ func assertOnlyKeyAdded(t *testing.T, original string, result map[string]any) {
 		t.Errorf("transform changed model-visible content.\n original: %v\n result-minus-key: %v", orig, stripped)
 	}
 }
+
+// TestTransformPreservesLargeIntegersOnRemarshalFallback pins the sibling of
+// the Bedrock cache-points defect (#1057). spliceTopLevelFields cannot express
+// a NESTED mutation, so stream_options.include_usage and Responses-endpoint
+// reasoning.effort both fall through to json.Marshal(root). Go decodes untyped
+// JSON numbers into float64, which represents integers exactly only up to 2^53,
+// so every other integer literal in the body is silently rounded on the way out.
+func TestTransformPreservesLargeIntegersOnRemarshalFallback(t *testing.T) {
+	const largeInt = "9007199254740993" // 2^53 + 1, not representable as float64
+
+	streamUsageNested := providers.TransformPolicy{
+		RuntimeMode: "active",
+		Optimizers:  map[string]bool{StreamUsageOptimizerID: true},
+		EvalGates:   map[string]bool{StreamUsageOptimizerID: true},
+	}
+	reasoningResponses := providers.TransformPolicy{
+		RuntimeMode: "active",
+		Optimizers:  map[string]bool{ReasoningEffortOptimizerID: true},
+		EvalGates:   map[string]bool{ReasoningEffortOptimizerID: true},
+	}
+
+	tests := []struct {
+		name     string
+		body     string
+		endpoint string
+		policy   providers.TransformPolicy
+		wantID   string
+	}{
+		{
+			name:     "stream-options-nested-merge",
+			body:     `{"model":"gpt-5.5","stream":true,"stream_options":{"some_other_field":true},"messages":[{"role":"user","content":[{"type":"text","text":"hi"}]}],"amount_cents":` + largeInt + `}`,
+			endpoint: "",
+			policy:   streamUsageNested,
+			wantID:   StreamUsageOptimizerID,
+		},
+		{
+			name:     "responses-nested-reasoning-effort",
+			body:     `{"model":"gpt-5.5","instructions":"stable","input":"hi","reasoning":{"summary":"auto"},"amount_cents":` + largeInt + `}`,
+			endpoint: "/v1/responses",
+			policy:   reasoningResponses,
+			wantID:   ReasoningEffortOptimizerID,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			res := applyAtEndpoint(t, test.body, test.endpoint, test.policy)
+			if len(res.OptimizerIDs) != 1 || res.OptimizerIDs[0] != test.wantID {
+				t.Fatalf("optimizer did not fire: ids=%v, want [%s]", res.OptimizerIDs, test.wantID)
+			}
+			if !strings.Contains(string(res.Body), largeInt) {
+				t.Fatalf("large integer literal %s was silently rounded: %s", largeInt, res.Body)
+			}
+		})
+	}
+}

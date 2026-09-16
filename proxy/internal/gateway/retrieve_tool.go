@@ -493,12 +493,12 @@ func retrieveArgs(argBytes []byte) (handle, query string) {
 }
 
 func appendRetrieveResult(provider, routePath string, reqBody, respBody []byte, callID, recovered string) ([]byte, bool) {
-	var req map[string]any
-	if json.Unmarshal(reqBody, &req) != nil {
+	req, ok := decodeForRewrite(reqBody)
+	if !ok {
 		return nil, false
 	}
-	var resp map[string]any
-	if json.Unmarshal(respBody, &resp) != nil {
+	resp, ok := decodeForRewrite(respBody)
+	if !ok {
 		return nil, false
 	}
 	if providerUsesGeminiTools(provider, routePath) {
@@ -659,9 +659,33 @@ func bufferedBody(resp *http.Response, body []byte) *http.Response {
 	return resp
 }
 
-func stripRetrieveCall(provider, routePath string, respBody []byte) ([]byte, bool) {
+// decodeForRewrite decodes a document that will be re-marshalled after being
+// mutated, so it must not lose information the sender put in it.
+//
+// UseNumber is load-bearing. encoding/json decodes an untyped JSON number into
+// float64, which represents integers exactly only up to 2^53, so a plain
+// decode-mutate-remarshal silently rounds every larger integer literal
+// ANYWHERE in the document — not just near the field being changed. In this
+// file that reaches a sibling tool_use's arguments on the way back to the
+// agent, and the whole conversation history on the way back upstream.
+// json.Number keeps the literal and marshals it back verbatim. Same defect as
+// #1057 on the Bedrock adapter.
+//
+// Only string/slice/map assertions are made on these documents, so carrying
+// json.Number through costs the callers nothing.
+func decodeForRewrite(body []byte) (map[string]any, bool) {
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
 	var root map[string]any
-	if json.Unmarshal(respBody, &root) != nil {
+	if decoder.Decode(&root) != nil {
+		return nil, false
+	}
+	return root, true
+}
+
+func stripRetrieveCall(provider, routePath string, respBody []byte) ([]byte, bool) {
+	root, ok := decodeForRewrite(respBody)
+	if !ok {
 		return respBody, false
 	}
 	changed := false
