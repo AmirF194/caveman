@@ -349,3 +349,91 @@ INSERT INTO middleware_choices(scope,id,payload,grant_id,ccr_handle) SELECT 'sco
 		t.Fatalf("store stayed wedged after expiry: %v", err)
 	}
 }
+
+// A revoked marker must keep answering "deleted" on the RECOVERY path for its
+// whole grace period, not just on the optimize path.
+//
+// Two different rows carry that answer. previousPlan reads the scope row
+// (Scope -> ExpiresAt <= 0 -> "deleted"). recovery.retrieve reads the CHOICE
+// row (Grant -> a row with expires <= 0 -> "deleted"); Delete deliberately
+// keeps that row and only zeroes its payload, because a Grant that finds no row
+// at all is reported as "not_found" — a marker the caller never had — instead
+// of "deleted", the marker they had and lost.
+//
+// So the choice row has to outlive the first Expire pass, which runs in front
+// of every optimize request. Reclaiming revoked scopes at the same moment their
+// payloads become collectable would collapse the revocation grace to zero on
+// this path while leaving it at a full week on the other.
+func TestMiddlewareRevokedGrantAnswersDeletedThroughItsGracePeriod(t *testing.T) {
+	s, err := Open(filepath.Join(t.TempDir(), "store.db"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+	ctx := context.Background()
+	if err := s.InitMiddleware(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
+		if err := tx.SaveScope(MiddlewareScope{ID: "revoked", Authority: "auth", Manifest: []byte("[]"), ExpiresAt: 1 << 40}); err != nil {
+			return err
+		}
+		return tx.SaveChoice("revoked", "choice", "grant", "ccr", []byte("replacement"))
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error { return tx.Delete("auth", 100) }); err != nil {
+		t.Fatal(err)
+	}
+
+	assertTypedDeleted := func(t *testing.T, stage string) {
+		t.Helper()
+		if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
+			body, handle, expires, err := tx.Grant("auth", "grant")
+			if errors.Is(err, sql.ErrNoRows) {
+				t.Errorf("%s: revoked grant reports not_found, not deleted", stage)
+				return nil
+			}
+			if err != nil {
+				return err
+			}
+			if expires > 0 {
+				t.Errorf("%s: revoked grant still resolves, expires=%d", stage, expires)
+			}
+			if len(body) != 0 || handle != "" {
+				t.Errorf("%s: revocation retained recoverable payload", stage)
+			}
+			return nil
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	assertTypedDeleted(t, "immediately after revocation")
+
+	// Expire runs in front of every optimize request, so this is the very next
+	// thing that happens to the store in practice.
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error { return tx.Expire(101) }); err != nil {
+		t.Fatal(err)
+	}
+	assertTypedDeleted(t, "after an Expire pass inside the grace period")
+
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error { return tx.Expire(100 + MiddlewareGraceSeconds - 1) }); err != nil {
+		t.Fatal(err)
+	}
+	assertTypedDeleted(t, "one tick before the grace deadline")
+
+	// Past the deadline the row is reclaimed with the rest of the scope; that
+	// is the capacity leak this whole change exists to fix.
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error { return tx.Expire(100 + MiddlewareGraceSeconds) }); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.WithMiddleware(ctx, func(tx *MiddlewareTx) error {
+		if _, _, _, err := tx.Grant("auth", "grant"); !errors.Is(err, sql.ErrNoRows) {
+			t.Errorf("revoked grant outlived its grace period: %v", err)
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+}

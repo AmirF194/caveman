@@ -239,11 +239,26 @@ const MiddlewareGraceSeconds int64 = 7 * 24 * 60 * 60
 // period, measured from Delete's revocation time rather than a future deadline,
 // then reclaim on the same schedule as an elapsed scope (dead, below) instead of never.
 //
+// An elapsed scope and a revoked one reach `dead` on DIFFERENT clocks, and that
+// asymmetry is the point. An elapsed scope still holds replacement text, so its
+// payload-bearing rows are collectable the moment it lapses and only the
+// metadata tombstone waits out the grace period. A revoked scope's payloads are
+// already gone — Delete called purge synchronously — so there is nothing to
+// collect early, and its rows ARE the tombstone: recovery.retrieve reads the
+// typed "deleted" answer off the choice row via Grant, exactly as previousPlan
+// reads it off the scope row. Selecting a revoked scope into `dead` as soon as
+// it is revoked would delete that choice row on the next Expire pass — which
+// runs in front of every optimize request — and a Grant that finds no row is
+// reported as "not_found", a marker the caller never had, rather than
+// "deleted", the marker they had and lost. So revoked rows wait out the same
+// grace period here that they wait out in the scope delete below.
+//
 // Every statement is keyed on an indexed column so an idle store pays index
 // seeks, not table scans: this runs in front of every optimize request. SQLite is
 // not built with UPDATE/DELETE LIMIT here, so batching goes through rowid.
 var middlewareExpire = func() []string {
-	const dead = `SELECT id FROM middleware_scopes WHERE (expires_at>0 AND expires_at<=?1) OR expires_at<=0 LIMIT 128`
+	dead := fmt.Sprintf(`SELECT id FROM middleware_scopes
+ WHERE (expires_at>0 AND expires_at<=?1) OR (expires_at<=0 AND -expires_at<=?1-%d) LIMIT 128`, MiddlewareGraceSeconds)
 	return []string{
 		// Originals are credited per authority, and one authority can hold several
 		// scopes (adapter, policy or transform revisions). Drop a credit only once
