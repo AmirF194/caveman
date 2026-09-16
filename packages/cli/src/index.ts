@@ -212,7 +212,7 @@ const CLOUD_DISCOVERY: DiscoveryGroup[] = [
   { heading: "governance", verbs: [
     { verb: "audit", description: "import or report audit evidence" },
     { verb: "sync", description: "sync local metadata to connected org" },
-    { verb: "agent", description: "inspect proposal-only optimization PRs" },
+    { verb: "agent", description: "inspect agents and optimization proposals" },
   ] },
 ];
 
@@ -316,11 +316,18 @@ const CLOUD_HANDLERS: Record<string, CommandHandler> = {
   },
   audit,
   sync: () => sync(),
-  agent: (argv) => {
+  agent: async (argv) => {
+    if (argv[0] === "factory") {
+      if (argv[1] === "list" && argv.length === 2) return get(`/api/v1/projects/${await projectId()}/agents`).then(print);
+      if (argv[1] === "show" && argv.length === 3 && /^[A-Za-z0-9_-]+$/.test(argv[2]!)) {
+        return get(`/api/v1/projects/${await projectId()}/agents/${argv[2]}`).then(print);
+      }
+      return commandUsage("agent factory list|show <id>");
+    }
     if (argv[0] === "list") return get("/api/v1/optimization-proposals").then(print);
     if (argv[0] === "show") return get(`/api/v1/optimization-proposals/${argv[1] ?? ""}`).then(print);
     if (argv[0] === "run") return post(`/api/v1/optimization-proposals/${argv[1] ?? ""}/run`, {}).then(print);
-    return commandUsage("agent list|show <id>|run <id>");
+    return commandUsage("agent list|show <id>|run <id> | agent factory list|show <id>");
   },
 };
 
@@ -9427,27 +9434,58 @@ export function shouldOpenLoginBrowser(noBrowser: boolean, interactive = Boolean
   return interactive && !noBrowser;
 }
 
-function validateLoginArgs(argv: string[]): { noBrowser: boolean } {
+function validateLoginArgs(argv: string[]): { noBrowser: boolean; instance?: string } {
   let noBrowser = false;
+  const values = new Map<string, string>();
+  const usage = "login [--no-browser] [--instance <https-origin> | --base-url <url> [--gateway-url <url>]]";
   for (let index = 0; index < argv.length; index++) {
     const arg = argv[index]!;
     if (arg === "--no-browser") {
-      if (noBrowser) commandUsage("login [--no-browser] [--base-url <url>] [--gateway-url <url>]");
+      if (noBrowser) commandUsage(usage);
       noBrowser = true;
       continue;
     }
-    if (arg === "--base-url" || arg === "--gateway-url") {
-      const value = argv[++index];
-      if (!value || value.startsWith("-")) commandUsage("login [--no-browser] [--base-url <url>] [--gateway-url <url>]");
+    const flag = arg.split("=", 1)[0]!;
+    if (["--instance", "--base-url", "--gateway-url"].includes(flag)) {
+      const value = arg.includes("=") ? arg.slice(arg.indexOf("=") + 1) : argv[++index];
+      if (!value || value.startsWith("-") || values.has(flag)) commandUsage(usage);
+      values.set(flag, value);
       continue;
     }
-    if (arg.startsWith("--base-url=") || arg.startsWith("--gateway-url=")) {
-      if (!arg.slice(arg.indexOf("=") + 1)) commandUsage("login [--no-browser] [--base-url <url>] [--gateway-url <url>]");
-      continue;
-    }
-    commandUsage("login [--no-browser] [--base-url <url>] [--gateway-url <url>]");
+    commandUsage(usage);
   }
-  return { noBrowser };
+  const instance = values.get("--instance");
+  if (instance === undefined) return { noBrowser };
+  if (values.has("--base-url") || values.has("--gateway-url")) commandUsage(usage);
+  const url = new URL(instance);
+  if (!secureLoginURL(url) || url.pathname !== "/" || url.search || url.hash || url.hostname.replace(/\.$/, "") === new URL(PROD_API_URL).hostname) {
+    throw new Error("--instance requires a private HTTPS origin (HTTP loopback is allowed for local development)");
+  }
+  return { noBrowser, instance: url.origin };
+}
+
+function secureLoginURL(url: URL, allowLoopback = true): boolean {
+  return !url.username && !url.password && (url.protocol === "https:" ||
+    (allowLoopback && url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)));
+}
+
+function privateVerificationURL(code: Record<string, unknown>, instance: string): string {
+  if (typeof code.device_code !== "string" || !code.device_code || code.device_code.length > 4096 ||
+      typeof code.user_code !== "string" || !/^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/.test(code.user_code) ||
+      typeof code.expires_in !== "number" || !Number.isFinite(code.expires_in) || code.expires_in <= 0 || code.expires_in > 3600 ||
+      (code.interval !== undefined && (typeof code.interval !== "number" || !Number.isFinite(code.interval) || code.interval < 0 || code.interval > 60))) {
+    throw new Error("private device authorization returned an invalid code response");
+  }
+  const value = code.verification_uri_complete ?? code.verification_uri;
+  if (typeof value !== "string") throw new Error("private device authorization omitted its browser URL");
+  const url = new URL(value);
+  if (!secureLoginURL(url, new URL(instance).protocol === "http:") || url.hash) {
+    throw new Error("private device authorization returned an unsafe browser URL");
+  }
+  url.searchParams.set("user_code", code.user_code);
+  url.searchParams.set("connection", "mcp");
+  url.searchParams.set("client_name", "Caveman CLI");
+  return url.href;
 }
 
 function openLoginBrowser(url: string): void {
@@ -9472,6 +9510,7 @@ async function acknowledgeDeviceGrant(baseURL: string, accessToken: string, devi
     try {
       const response = await fetch(`${baseURL}/api/v1/auth/device/ack`, {
         method: "POST",
+        redirect: "manual",
         headers: {
           authorization: `Bearer ${accessToken}`,
           "content-type": "application/json",
@@ -9497,28 +9536,28 @@ async function acknowledgeDeviceGrant(baseURL: string, accessToken: string, devi
 
 // 0600 credentials file) — never in plaintext config. organization_id is bound
 // from the returned token, never from any local input.
-// Keep device-flow implementation dormant for later beta reopening. This gate
-// runs before argument parsing, network requests, browser launch, or local writes.
+// Hosted login remains gated; explicit private instances use project access.
 function blockCloudLoginWhileBeta(): void {
   throw new Error("Caveman Cloud platform is still in beta.");
 }
 
 async function login(argv: string[] = []) {
-  blockCloudLoginWhileBeta();
-  const { noBrowser } = validateLoginArgs(argv);
-  const baseURL = resolveLoginBaseUrl(argv);
+  if (!argv.some((arg) => arg === "--instance" || arg.startsWith("--instance="))) blockCloudLoginWhileBeta();
+  const { noBrowser, instance } = validateLoginArgs(argv);
+  const baseURL = instance ?? resolveLoginBaseUrl(argv);
 
   const codeResp = await fetch(`${baseURL}/api/v1/auth/device/code`, {
     method: "POST",
+    redirect: "error",
     headers: { "content-type": "application/json" },
     body: "{}",
     signal: AbortSignal.timeout(5000),
   });
   if (!codeResp.ok) throw new Error(`device authorization failed: HTTP ${codeResp.status}`);
   const code = await codeResp.json();
-  if (!code.device_code) throw new Error(`device authorization failed: ${JSON.stringify(code)}`);
+  if (!code.device_code) throw new Error("device authorization failed: missing device code");
 
-  const verificationURL = code.verification_uri_complete ?? code.verification_uri;
+  const verificationURL = instance ? privateVerificationURL(code, instance) : code.verification_uri_complete ?? code.verification_uri;
   console.error(`\n  Authorize this device in your browser:`);
   console.error(`    ${verificationURL}`);
   console.error(`    code: ${code.user_code}\n`);
@@ -9533,6 +9572,7 @@ async function login(argv: string[] = []) {
     try {
       const tokResp = await fetch(`${baseURL}/api/v1/auth/device/token`, {
         method: "POST",
+        redirect: "manual",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ device_code: code.device_code }),
         signal: AbortSignal.timeout(5000),
@@ -9543,7 +9583,7 @@ async function login(argv: string[] = []) {
         const seconds = Number(retryAfter);
         if (Number.isFinite(seconds) && seconds >= 0) retryAfterMs = seconds * 1000;
       }
-      tok = await tokResp.json() as Record<string, unknown>;
+      tok = tokenStatus >= 300 && tokenStatus < 400 ? {} : await tokResp.json() as Record<string, unknown>;
     } catch (error) {
       // RFC 8628 polling is retryable: a dropped connection or malformed
       // transient response must not consume the approved code or abort login
@@ -9555,6 +9595,7 @@ async function login(argv: string[] = []) {
       await sleep(Math.max(intervalMs, retryAfterMs, 200));
       continue;
     }
+    if (tokenStatus >= 300 && tokenStatus < 400) throw new Error("device login refused a redirected token endpoint");
     if (tokenStatus === 429) {
       // rateLimitAuth returns a nested cave error envelope rather than the RFC
       // `error` string. Status is the authoritative retry signal here.
@@ -9563,6 +9604,13 @@ async function login(argv: string[] = []) {
     }
     const accessToken = typeof tok.access_token === "string" ? tok.access_token : "";
     if (accessToken) {
+	  if (instance && (tokenStatus < 200 || tokenStatus >= 300 || tok.credential_kind !== "none" ||
+	      ["gateway_api_key", "gateway_key_id", "gateway_url"].some((key) => tok[key] != null) ||
+	      typeof tok.refresh_token !== "string" || !tok.refresh_token || typeof tok.project_id !== "string" || !tok.project_id ||
+	      typeof tok.delivery_ack_token !== "string" || !tok.delivery_ack_token || typeof tok.scope !== "string" || !tok.scope ||
+	      tok.scope.split(/\s+/).some((scope) => scope === "proxy:write" || scope === "sdk:write"))) {
+	    throw new Error("private device login requires a keyless project grant with a refresh token and delivery acknowledgement");
+	  }
 	  const credentials: StoredCredentials = {
 	    access_token: accessToken,
 	    ...(typeof tok.refresh_token === "string" && tok.refresh_token ? { refresh_token: tok.refresh_token } : {}),
@@ -9572,7 +9620,7 @@ async function login(argv: string[] = []) {
 	  };
 	  const tokenStore = storeCredentials(credentials);
 	  const organizationId = orgFromToken(accessToken);
-	  const gateway = resolveLoginGatewayUrl(baseURL, tok, code, argv);
+	  const gateway = instance ? "" : resolveLoginGatewayUrl(baseURL, tok, code, argv);
 	  const saved: Config = { baseURL, token: "", tokenStore };
 	  if (organizationId) saved.organizationId = organizationId;
 	  if (credentials.project_id) saved.projectId = credentials.project_id;
@@ -9590,6 +9638,10 @@ async function login(argv: string[] = []) {
 	    // until the control plane has recorded that this CLI stored the bundle.
 	    await acknowledgeDeviceGrant(baseURL, credentials.access_token, code.device_code, ackToken);
 	  }
+      if (instance) {
+        print({ authenticated: true, baseURL, organization_id: organizationId ?? null, project_id: credentials.project_id, scope: tok.scope, credential_kind: "none", token_store: tokenStore });
+        return;
+      }
       // Mint/refresh the local-wrap entitlement for this device. Best
       // effort: login never fails for seats or a down entitlement service.
       await fetchAndStoreWrapEntitlement(baseURL, credentials.access_token);
@@ -9644,6 +9696,7 @@ async function logout() {
 	  };
 	  const request: RequestInit = {
 	    method: "POST",
+	    redirect: "manual",
 	    headers,
 	    signal: AbortSignal.timeout(5000),
 	  };
@@ -18411,6 +18464,7 @@ async function refreshCLIConfig(cfg: Config): Promise<Config> {
 	try {
 	  const response = await fetch(`${cfg.baseURL}/api/v1/auth/refresh`, {
 	    method: "POST",
+	    redirect: "manual",
 	    headers: { "content-type": "application/json", "x-cave-client": "cli" },
 	    body: JSON.stringify({ refresh_token: cfg.refreshToken }),
 	    signal: AbortSignal.timeout(5000),
