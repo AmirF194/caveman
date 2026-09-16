@@ -673,18 +673,27 @@ func bufferedBody(resp *http.Response, body []byte) *http.Response {
 //
 // Only string/slice/map assertions are made on these documents, so carrying
 // json.Number through costs the callers nothing.
-// The More() check is not optional. json.Unmarshal rejects a document with
-// trailing bytes after the top-level value; a Decoder stops at the end of the
-// first value and does not care what follows. Without it a body with trailing
-// bytes would go from "not JSON we understand, hand it back untouched" to
-// "rewrite it, and drop the trailing bytes", losing caller bytes. More() is
-// true for trailing data and false for trailing whitespace, which restores
-// json.Unmarshal's acceptance set exactly.
+// The trailing-input check is not optional. json.Unmarshal rejects a document
+// with trailing bytes after the top-level value; a Decoder stops at the end of
+// the first value and does not care what follows. Without the check a body with
+// trailing bytes would go from "not JSON we understand, hand it back untouched"
+// to "rewrite it, and drop the trailing bytes", losing caller bytes.
+//
+// It has to be a second Decode returning io.EOF, not decoder.More(). More()
+// answers "is there another element in the current array or object", which is
+// not the same question: it returns FALSE for a trailing closing delimiter, so
+// `{...}]` and `{...}}` would still be accepted and silently lose that byte.
+// Requiring io.EOF matches json.Unmarshal's acceptance set exactly — trailing
+// whitespace passes, any trailing byte at all does not.
 func decodeForRewrite(body []byte) (map[string]any, bool) {
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.UseNumber()
 	var root map[string]any
-	if decoder.Decode(&root) != nil || decoder.More() {
+	if decoder.Decode(&root) != nil {
+		return nil, false
+	}
+	var trailing json.RawMessage
+	if decoder.Decode(&trailing) != io.EOF {
 		return nil, false
 	}
 	return root, true

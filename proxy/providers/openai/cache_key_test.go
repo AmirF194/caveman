@@ -230,6 +230,12 @@ func TestTransformRejectsTrailingBytesAfterTheTopLevelValue(t *testing.T) {
 	}{
 		{"trailing garbage", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]}` + suffix, true},
 		{"second json value", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]} {"b":2}`, true},
+		// A closing delimiter is the case decoder.More() gets wrong: it answers
+		// "another element in the current array or object", and a stray `]` or
+		// `}` is not one, so More() reports false and the byte is dropped.
+		{"trailing close bracket", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]}]`, true},
+		{"trailing close brace", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]}}`, true},
+		{"trailing comma", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]},`, true},
 		{"trailing whitespace is fine", `{"model":"gpt-5.5","tools":[{"type":"function"}],"messages":[]}   `, false},
 	}
 	for _, test := range tests {

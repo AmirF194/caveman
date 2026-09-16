@@ -262,12 +262,20 @@ func TestRetrieveRewritesPreserveLargeIntegerLiterals(t *testing.T) {
 // must not start accepting a document with trailing bytes and silently drop
 // them on the re-marshal. Both rewrites hand the body back untouched instead.
 func TestRetrieveRewritesRejectTrailingBytes(t *testing.T) {
-	respBody := []byte(`{"id":"msg_1","type":"message","role":"assistant","stop_reason":"tool_use","content":[` +
+	base := `{"id":"msg_1","type":"message","role":"assistant","stop_reason":"tool_use","content":[` +
 		`{"type":"tool_use","id":"tu_1","name":"caveman_retrieve","input":{"handle":"ccr_1","query":"schema"}}` +
-		`]}TRAILING`)
-	cleaned, ok := stripRetrieveCall("anthropic", "/v1/messages", respBody)
-	if ok || !bytes.Equal(cleaned, respBody) {
-		t.Fatalf("trailing bytes were accepted and rewritten: ok=%v body=%s", ok, cleaned)
+		`]}`
+	// The closing-delimiter rows are the ones decoder.More() gets wrong: it
+	// answers "another element in the current array or object", and a stray `]`
+	// or `}` is not one, so More() reports false and the byte is silently lost.
+	for _, suffix := range []string{"TRAILING", " {\"second\":1}", "]", "}", ","} {
+		t.Run("suffix="+suffix, func(t *testing.T) {
+			respBody := []byte(base + suffix)
+			cleaned, ok := stripRetrieveCall("anthropic", "/v1/messages", respBody)
+			if ok || !bytes.Equal(cleaned, respBody) {
+				t.Fatalf("trailing bytes were accepted and rewritten: ok=%v body=%s", ok, cleaned)
+			}
+		})
 	}
 
 	reqBody := []byte(`{"model":"claude-fable-5","max_tokens":64,"messages":[]} {"second":"value"}`)

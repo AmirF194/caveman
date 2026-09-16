@@ -8005,22 +8005,50 @@ function readPendingNativeJournal(agent: string): NativeJournal | undefined {
 //
 // Deliberately journal-only and file-cheap: unlike nativeIntegrationStatus this
 // probes no binary, proxy or MCP server, because the question is only "is a
-// route pinned on disk", not "is the whole integration healthy". A pending
-// (uncommitted) journal is not consulted — a half-applied install has not
-// pinned anything the child would read yet.
-function nativeRoutePinnedFor(agent: string): { file: string; route: string } | null {
-  const journal = readNativeJournal(agent);
-  if (!journal) return null;
-  for (const operation of journal.operations) {
-    const owned = operation.owned;
-    if (!owned) continue;
-    if (typeof owned.route === "string" && owned.route) return { file: operation.file, route: owned.route };
+// route pinned on disk", not "is the whole integration healthy".
+//
+// The PENDING journal has to be consulted too, and the two are read differently.
+// installNativeAgent writes the pending journal first, then each host file, and
+// publishes the committed journal LAST. So a process death between those leaves
+// a fully applied, fully readable pinned route on disk with only the pending
+// journal to show for it — which is exactly the state this guard exists to
+// catch, reached by a crash instead of a successful install.
+//
+// A committed journal is taken at its word: enable finished, the route is
+// pinned. A pending one is genuinely ambiguous — the mutation may or may not
+// have landed before the process died — so it is resolved against the file
+// itself using the after_sha256 the journal already records. That is
+// agent-agnostic (no per-host config shapes here) and avoids refusing a trial
+// over a stale pending journal whose writes never happened.
+function nativeRoutePinnedFor(agent: string): { file: string; route: string; pending: boolean } | null {
+  const routeIn = (owned: Record<string, unknown> | undefined): string | null => {
+    if (!owned) return null;
+    if (typeof owned.route === "string" && owned.route) return owned.route;
     // opencode pins one route per protocol instead of a single base URL.
     const routes = owned.routes;
     if (routes && typeof routes === "object" && !Array.isArray(routes)) {
       for (const value of Object.values(routes as Record<string, unknown>)) {
-        if (typeof value === "string" && value) return { file: operation.file, route: value };
+        if (typeof value === "string" && value) return value;
       }
+    }
+    return null;
+  };
+
+  const committed = readNativeJournal(agent);
+  for (const operation of committed?.operations ?? []) {
+    const route = routeIn(operation.owned);
+    if (route) return { file: operation.file, route, pending: false };
+  }
+
+  const pending = readPendingNativeJournal(agent);
+  for (const operation of pending?.operations ?? []) {
+    const route = routeIn(operation.owned);
+    if (!route) continue;
+    const current = fileBytes(operation.file);
+    // No file, or contents that are not what this operation would have written,
+    // means the interrupted install never got as far as pinning this route.
+    if (current && bytesHash(current) === operation.after_sha256) {
+      return { file: operation.file, route, pending: true };
     }
   }
   return null;
@@ -15539,7 +15567,9 @@ async function trial(rest: string[]) {
   // and refuse BEFORE `trial start` so no orphan trial row is opened. (#1068)
   const pinned = nativeRoutePinnedFor(agent?.id ?? requested);
   if (pinned) {
-    console.error(`caveman trial cannot measure ${agent?.id ?? requested} while native routing is enabled.`);
+    console.error(pinned.pending
+      ? `caveman trial cannot measure ${agent?.id ?? requested}: an interrupted native install left its routing in place.`
+      : `caveman trial cannot measure ${agent?.id ?? requested} while native routing is enabled.`);
     console.error("");
     console.error(`  ${pinned.file}`);
     console.error(`  pins the base URL to ${pinned.route}`);

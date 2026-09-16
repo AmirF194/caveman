@@ -122,19 +122,29 @@ func (a Adapter) ApplyProviderNativeTransforms(ctx context.Context, body provide
 // Nothing in this package asserts a decoded number's Go type, so carrying
 // json.Number through costs the decision helpers nothing.
 //
-// The More() check is not optional. json.Unmarshal rejects a document with
-// trailing bytes after the top-level value; a Decoder stops at the end of the
-// first value and does not care what follows. Without it, `{...}garbage` would
-// change from "malformed, pass through byte-identically" to "transform, and
-// drop the trailing bytes on the way out" — silently widening what this
-// adapter accepts and losing caller bytes, which is the opposite of the fix.
-// More() is true for trailing data and false for trailing whitespace, which
-// restores json.Unmarshal's acceptance set exactly.
+// The trailing-input check is not optional. json.Unmarshal rejects a document
+// with trailing bytes after the top-level value; a Decoder stops at the end of
+// the first value and does not care what follows. Without the check,
+// `{...}garbage` would change from "malformed, pass through byte-identically"
+// to "transform, and drop the trailing bytes on the way out" — silently
+// widening what this adapter accepts and losing caller bytes, which is the
+// opposite of the fix.
+//
+// It has to be a second Decode returning io.EOF, not decoder.More(). More()
+// answers "is there another element in the current array or object", which is
+// not the same question: it returns FALSE for a trailing closing delimiter, so
+// `{...}]` and `{...}}` would still be accepted and silently lose that byte.
+// Requiring io.EOF matches json.Unmarshal's acceptance set exactly — trailing
+// whitespace passes, any trailing byte at all does not.
 func decodeRequestBody(data []byte) (map[string]any, bool) {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 	var root map[string]any
-	if decoder.Decode(&root) != nil || decoder.More() {
+	if decoder.Decode(&root) != nil {
+		return nil, false
+	}
+	var trailing json.RawMessage
+	if decoder.Decode(&trailing) != io.EOF {
 		return nil, false
 	}
 	return root, true
