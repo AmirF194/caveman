@@ -151,6 +151,55 @@ test('never eats a hyphen-joined component of a compound word', () => {
   assert.doesNotMatch(compressed, /\bmaybe\b/i);
 });
 
+test('never eats "sure" out of the "make sure" / "be sure" / "not sure" collocations', () => {
+  // `sure` is a pleasantry as a bare interjection ("Sure, this returns the
+  // value"), but in these fixed collocations it is the complement of the verb,
+  // so dropping it does not weaken the sentence — it changes what the sentence
+  // says. "Make sure the file exists" is a check; "Make file exists" reads as a
+  // create. Same class as the hyphenated-compound corruption above: a word that
+  // is filler on its own is not filler inside a collocation. The proxy rewrites
+  // MCP tool descriptions in place via compressDescriptionsInPlace, so the
+  // mangled contract is what the model reads as the tool's behavior (#1073).
+  const cases = [
+    'Make sure the file exists.',
+    'Make sure to call init before any other tool.',
+    'Be sure to pass an absolute path.',
+    'Not sure why this fails.',
+    'Please make sure.',
+    "I'm sure that works.",
+    'Ensure you make sure of the ordering.',
+    // CRLF: the interjection rule anchors on line starts, so a Windows-newline
+    // description must not take a different branch from the LF one.
+    'Step one.\r\nMake sure the file exists.',
+    'MAKE SURE THE PATH IS ABSOLUTE.',
+    'Surely, this works.',
+  ];
+  for (const input of cases) {
+    const { compressed } = compress(input);
+    assert.match(
+      compressed,
+      /sure/i,
+      `dropped the verb complement "sure": "${input}" → "${compressed}"`
+    );
+  }
+  // The bare interjection is still dropped — the fix must not turn the rule
+  // off, only stop it from reaching inside a collocation.
+  for (const input of [
+    'Sure, this returns the value',
+    'Sure! That is the default.',
+    'Done. Sure, that works too.',
+    'Done.\r\nSure, that works.',
+    'Done.\nSure, that works.',
+  ]) {
+    const { compressed } = compress(input);
+    assert.doesNotMatch(
+      compressed,
+      /sure/i,
+      `kept a bare "sure" interjection: "${input}" → "${compressed}"`
+    );
+  }
+});
+
 test('compresses real MCP-style description', () => {
   const input = 'Get the current weather for a given location. ' +
     'Returns the temperature in Fahrenheit. ' +
