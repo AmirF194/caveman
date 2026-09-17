@@ -112,3 +112,28 @@ func TestClaudeStructuredSkillReferencesReadsAgentSubagentType(t *testing.T) {
 		t.Fatalf("Agent spawn did not contribute its subagent_type: refs = %+v", refs)
 	}
 }
+
+// claudeTaskSpawns counted raw JSON substrings, so ANY nested object carrying
+// name:"agent" satisfied the byte sequence regardless of the enclosing tool's
+// real name. Adding the "agent" alternative for the Task -> Agent rename made
+// that pre-existing weakness reachable by ordinary payloads: a tool whose own
+// input has a "name" field, or a tool_result quoting a transcript, would book
+// phantom spawns and inflate exactly the subagent findings the rename fix was
+// meant to make trustworthy. Count decoded tool_use blocks instead.
+func TestClaudeTaskSpawnsIgnoresNestedAgentFields(t *testing.T) {
+	root := t.TempDir()
+	writeClaudeProject(t, root, "repo", "s.jsonl", []string{
+		// The invoked tool is Configure; "agent" is just one of its arguments.
+		`{"type":"assistant","timestamp":"2026-09-16T00:00:00Z","message":{"model":"claude-sonnet-5","content":[{"type":"tool_use","id":"t1","name":"Configure","input":{"name":"agent"}}],"usage":{"input_tokens":100,"output_tokens":10}}}`,
+		// A tool result that happens to quote a spawn block is not a spawn.
+		`{"type":"user","timestamp":"2026-09-16T00:00:01Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","content":"wrote {\"name\":\"agent\"} to config"}]}}`,
+	})
+
+	beh := behaviorScan{SkillUse: map[string]int{}, SessionsBySource: map[string]int{}}
+	if truncated := scanSessionSourceUntil(claudeSessionSource{root: root}, time.Time{}, nil, &beh, newRecurringMiner(), nil); truncated {
+		t.Fatal("fixture scan truncated")
+	}
+	if beh.TaskSpawns != 0 {
+		t.Fatalf("TaskSpawns = %d, want 0 (no tool_use block is actually a spawn)", beh.TaskSpawns)
+	}
+}

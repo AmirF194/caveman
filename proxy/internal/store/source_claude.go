@@ -75,7 +75,6 @@ func (s claudeSessionSource) scanSession(ref sessionRef, since time.Time, emit f
 		ctx, hasUsage := claudeTurnContext(obj)
 		cacheRead, cacheCreation, hasCacheUsage := claudeCacheUsage(obj)
 		fresh, out, hasBilling := claudeBillingUsage(obj)
-		lower := strings.ToLower(string(line))
 		emit(turnEvent{
 			Timestamp: ts, ContextTotal: ctx, ContextUsagePresent: hasUsage,
 			CacheReadInputTokens: cacheRead, CacheCreationInputTokens: cacheCreation,
@@ -83,7 +82,7 @@ func (s claudeSessionSource) scanSession(ref sessionRef, since time.Time, emit f
 			InputFreshTokens:  fresh, OutputTokens: out, BillingUsagePresent: hasBilling,
 			UsageMessageID: claudeUsageMessageID(obj), Model: claudeModel(obj), ProviderKey: "anthropic",
 			ToolCalls: claudeTurnToolCalls(obj, pendingTools), TextPayloads: claudeTextPayloads(obj),
-			TaskSpawns: claudeTaskSpawns(lower), SkillUses: claudeStructuredSkillReferences(obj),
+			TaskSpawns: claudeTaskSpawns(obj), SkillUses: claudeStructuredSkillReferences(obj),
 			Compaction: claudeCompactionMarker(obj),
 			JSONLLine:  lineNo, RelPath: ref.relPath, Repo: repo, Side: obj["isSidechain"] == true,
 		})
@@ -146,13 +145,34 @@ func claudeCompactionMarker(obj map[string]any) bool {
 	return firstString(obj["subtype"]) == "compact_boundary" || obj["isCompactSummary"] == true
 }
 
-// The subagent-spawn tool_use block is named "Agent" in current transcripts;
-// "task" is kept for older sessions that still carry it. This counts raw
-// JSON rather than decoded blocks, so it stays a cheap per-line heuristic —
-// the names it looks for are the ones isSubagentSpawnTool accepts, and the
-// two must be kept in step.
-func claudeTaskSpawns(lower string) int {
-	return strings.Count(lower, `"name":"task"`) + strings.Count(lower, `"name":"agent"`)
+// claudeTaskSpawns counts the tool_use blocks in one transcript record whose
+// OWN name is a subagent-spawn tool ("Agent" in current transcripts, "task" in
+// older ones — see isSubagentSpawnTool).
+//
+// It decodes rather than scanning the serialized line. A substring count
+// matches a nested "name" field exactly as readily as the block's own, so an
+// ordinary tool whose input carries a name argument
+// (`{"name":"Configure","input":{"name":"agent"}}`) or a tool_result quoting a
+// spawn booked phantom spawns — inflating the very subagent findings the
+// Task -> Agent rename fix exists to make trustworthy. Flagged by review on
+// #1082.
+//
+// Reads message.content only, the same place claudeTurnToolCalls and
+// claudeStructuredSkillReferences look for tool_use blocks.
+func claudeTaskSpawns(obj map[string]any) int {
+	message := asMap(obj["message"])
+	blocks, _ := message["content"].([]any)
+	spawns := 0
+	for _, raw := range blocks {
+		block := asMap(raw)
+		if !strings.EqualFold(firstString(block["type"]), "tool_use") {
+			continue
+		}
+		if isSubagentSpawnTool(firstString(block["name"])) {
+			spawns++
+		}
+	}
+	return spawns
 }
 
 func claudeRepoFromRelPath(relPath string) string {
