@@ -146,9 +146,11 @@ func claudeCompactionMarker(obj map[string]any) bool {
 	return firstString(obj["subtype"]) == "compact_boundary" || obj["isCompactSummary"] == true
 }
 
-// The subagent-spawn tool_use block is named "Agent" in current transcripts
-// (verified against real sessions on this machine); "task" is kept for
-// older sessions that still carry it.
+// The subagent-spawn tool_use block is named "Agent" in current transcripts;
+// "task" is kept for older sessions that still carry it. This counts raw
+// JSON rather than decoded blocks, so it stays a cheap per-line heuristic —
+// the names it looks for are the ones isSubagentSpawnTool accepts, and the
+// two must be kept in step.
 func claudeTaskSpawns(lower string) int {
 	return strings.Count(lower, `"name":"task"`) + strings.Count(lower, `"name":"agent"`)
 }
@@ -210,7 +212,7 @@ func claudeStructuredSkillReferences(obj map[string]any) []string {
 		switch {
 		case strings.EqualFold(firstString(block["name"]), "Skill"):
 			refs = append(refs, firstString(input["skill"]), firstString(input["command"]))
-		case strings.EqualFold(firstString(block["name"]), "Task"):
+		case isSubagentSpawnTool(firstString(block["name"])):
 			refs = append(refs, firstString(input["subagent_type"]))
 		}
 	}

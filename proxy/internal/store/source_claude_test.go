@@ -80,3 +80,35 @@ func TestClaudeTaskSpawnsCountsAgentToolName(t *testing.T) {
 		t.Fatalf("TaskSpawns = %d, want 1 for an Agent-named tool_use block", beh.TaskSpawns)
 	}
 }
+
+// The structured reference scan classified a spawn by the literal name "Task",
+// so an Agent-named tool_use block never contributed its subagent_type. That
+// is the label the learn report uses to say WHICH subagent ran, so the
+// per-type breakdown went blank on current transcripts even once the spawn
+// count itself was fixed (#1075).
+func TestClaudeStructuredSkillReferencesReadsAgentSubagentType(t *testing.T) {
+	obj := map[string]any{
+		"type": "assistant",
+		"message": map[string]any{
+			"role": "assistant",
+			"content": []any{
+				map[string]any{
+					"type":  "tool_use",
+					"id":    "t1",
+					"name":  "Agent",
+					"input": map[string]any{"subagent_type": "Explore"},
+				},
+			},
+		},
+	}
+	refs := claudeStructuredSkillReferences(obj)
+	found := false
+	for _, ref := range refs {
+		if ref == "Explore" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("Agent spawn did not contribute its subagent_type: refs = %+v", refs)
+	}
+}
